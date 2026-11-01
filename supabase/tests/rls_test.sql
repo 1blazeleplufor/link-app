@@ -150,6 +150,49 @@ do $$ begin
 exception when insufficient_privilege then raise notice 'ok  random users cannot scan tickets';
 end $$;
 
+
+-- Payment fulfilment (service role): duplicate webhook is a no-op; amount mismatch is refused; refund revokes
+reset role;
+insert into orders(id, buyer_id, event_id, status, currency, subtotal, total, hold_expires_at) values ('30000000-0000-0000-0000-000000000002','00000000-0000-0000-0000-00000000000b','10000000-0000-0000-0000-000000000001','held','EUR',40,40, now()+interval '10 minutes');
+insert into order_items(order_id, ticket_type_id, quantity, unit_price) values ('30000000-0000-0000-0000-000000000002','20000000-0000-0000-0000-000000000001',2,20);
+set role service_role;
+do $$ begin
+  perform fulfil_order('30000000-0000-0000-0000-000000000002','stripe','pi_bad',39,'eur');
+  raise exception 'FAIL: amount mismatch accepted';
+exception when raise_exception then
+  if sqlerrm like 'FAIL%' then raise; end if; raise notice 'ok  amount mismatch is refused (%)', sqlerrm;
+end $$;
+select pg_temp.check(fulfil_order('30000000-0000-0000-0000-000000000002','stripe','pi_1',40,'eur') = 2, 'paid order issues 2 tickets');
+select pg_temp.check(fulfil_order('30000000-0000-0000-0000-000000000002','stripe','pi_1',40,'eur') = 0, 'duplicate webhook issues nothing');
+select pg_temp.check((select count(*) from tickets where order_id='30000000-0000-0000-0000-000000000002') = 2, 'still exactly 2 tickets');
+select pg_temp.check((select sold from ticket_types where id='20000000-0000-0000-0000-000000000001') = 2, 'stock decremented once');
+select apply_refund('30000000-0000-0000-0000-000000000002', 40, 're_1');
+select pg_temp.check((select count(*) from tickets where order_id='30000000-0000-0000-0000-000000000002' and status='revoked') = 2, 'full refund revokes tickets');
+select pg_temp.check(validate_ticket_by_id((select id from tickets where order_id='30000000-0000-0000-0000-000000000002' limit 1),'10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-00000000000d') = 'revoked', 'revoked ticket is refused at the door');
+reset role;
+set role authenticated;
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000b');
+do $$ begin
+  perform fulfil_order('30000000-0000-0000-0000-000000000002','stripe','pi_x',40,'eur');
+  raise exception 'FAIL: user could fulfil an order';
+exception when insufficient_privilege then raise notice 'ok  users cannot mark orders paid';
+end $$;
+
+
+-- KYC decision path: only the service role can verify someone
+set role service_role;
+select set_identity_status('00000000-0000-0000-0000-00000000000c', 'verified', true);
+reset role;
+select pg_temp.check((select identity_status from profiles where id='00000000-0000-0000-0000-00000000000c') = 'verified', 'KYC webhook path verifies a user');
+select pg_temp.check((select count(*) from audit_logs where action='identity.verified') = 1, 'verification decision is audited');
+set role authenticated;
+select pg_temp.as_user('00000000-0000-0000-0000-00000000000c');
+do $$ begin
+  perform set_identity_status('00000000-0000-0000-0000-00000000000c', 'verified', true);
+  raise exception 'FAIL: user called set_identity_status';
+exception when insufficient_privilege then raise notice 'ok  users cannot call the verification function';
+end $$;
+
 -- Data export returns the caller's own data only
 select pg_temp.as_user('00000000-0000-0000-0000-00000000000a');
 select pg_temp.check((export_my_data()->'profile'->>'first_name') = 'Ana', 'export returns own profile');

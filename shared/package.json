@@ -1,0 +1,8 @@
+{
+  "name": "@link/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Logique partagée LINK (prix, recommandations, QR de billets, règles d'invitation) — app mobile + Edge Functions",
+  "scripts": { "test": "tsx --test test/*.test.ts", "typecheck": "tsc --noEmit" }
+}
