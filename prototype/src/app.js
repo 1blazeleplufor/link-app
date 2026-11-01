@@ -6,10 +6,12 @@
 /* ---------- state ---------- */
 const STORE_KEY = "link-proto-v1";
 const DEFAULT_STATE = () => ({
-  v:1, onboarded:false, lang:guessLang(), brand:"fiesta", theme:"system",
+  v:1, onboarded:false, lang:guessLang(), brand:"afterglow", afterglowSeen:true, theme:"system",
   tab:"explore", city:"paris", mode:"local", cat:"all", when:"all", budget:"any",
   customCities:[], peopleAll:false, actTab:"invites", inviteDir:"in",
-  profile:{name:"", bio:"", city:"paris", langs:["fr"], interests:["concerts","rooftops"], music:["House"], trips:[], dating:false, showAge:true, visibility:"public"},
+  profile:{name:"", bio:"", city:"paris", langs:["fr"], interests:["concerts","rooftops"], music:["House"], trips:[], dating:false, showAge:true, visibility:"public",
+    photos:[], job:"", lookingFor:["friends","outings"], availability:"weekends",
+    prompts:[{q:"pr_ideal_night",a:""},{q:"pr_never_no",a:""},{q:"pr_hidden_spot",a:""}]},
   verif:"none", outings:[], invites:SEED_INVITES.map(i=>({...i})), convos:[], tickets:[], blocked:[], reports:[], joined:[],
   notif:{invites:true, messages:true, events:true, tickets:true, marketing:false, quietFrom:"23:00", quietTo:"08:00"}
 });
@@ -20,7 +22,15 @@ let S = load();
 function load(){
   try{
     const raw = localStorage.getItem(STORE_KEY);
-    if(raw){ const s = JSON.parse(raw); if(s && s.v===1) return Object.assign(DEFAULT_STATE(), s); }
+    if(raw){
+      const s = JSON.parse(raw);
+      if(s && s.v===1){
+        const d = DEFAULT_STATE(); const m = Object.assign(d, s);
+        m.profile = Object.assign(DEFAULT_STATE().profile, s.profile||{});
+        if(!s.afterglowSeen){ m.brand = "afterglow"; m.afterglowSeen = true; }   // new default look after Indira's feedback
+        return m;
+      }
+    }
   }catch(e){}
   return DEFAULT_STATE();
 }
@@ -202,7 +212,23 @@ function renderExplore(){
     <div class="row" style="justify-content:center"><button class="btn" data-action="tab" data-v="create">${t("create_first")}</button><button class="btn ghost" data-action="resetFilters">${t("reset_filters")}</button></div></div>`}</div>`;
 }
 
-function avatar(p, lg){ return `<div class="avatar${lg?" lg":""}" style="background:linear-gradient(135deg, ${p.color}, ${p.color}aa)" aria-hidden="true">${esc(p.name[0])}</div>`; }
+function photo(url, color, initial, cls, alt){
+  return `<div class="ph ${cls||""}" style="background:linear-gradient(135deg, ${color}, ${color}99)"><span aria-hidden="true">${esc(initial)}</span>${url?`<img src="${esc(url)}" alt="${esc(alt||"")}" loading="lazy" referrerpolicy="no-referrer">`:""}</div>`;
+}
+function avatar(p, lg){ return photo(p.photos&&p.photos[0], p.color||"#FF4D7E", (p.name||"?")[0], "avatar"+(lg?" lg":""), ""); }
+function meAsPerson(){
+  const P = S.profile;
+  return {id:"me", name:P.name||t("you"), age:null, city:P.city, langs:P.langs, interests:P.interests, music:P.music, verified:verified(), color:"#FF4D7E",
+    bio:{en:P.bio, fr:P.bio}, trips:P.trips.map(tr=>({city:tr.city})), photos:P.photos, job:P.job?{en:P.job}:null, lookingFor:P.lookingFor,
+    availability:P.availability, prompts:P.prompts.filter(x=>x.a&&x.a.trim()).map(x=>({q:x.q, a:{en:x.a}}))};
+}
+const LIKE_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 4.5 6.7 4.5c2.1 0 3.6 1.1 4.3 2.4h2c.7-1.3 2.2-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.2C19.5 16.4 12 21 12 21z"/></svg>';
+const VI = {
+  job:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2"/></svg>',
+  lf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>',
+  av:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  music:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>'
+};
 function renderPeople(){
   const list = visiblePeople();
   const city = cityById(S.city);
@@ -212,12 +238,13 @@ function renderPeople(){
   <div class="seg" role="group"><button data-action="peopleAll" data-v="0" aria-pressed="${!S.peopleAll}">${esc(t("people_filter_city",{c:city.name}))}</button><button data-action="peopleAll" data-v="1" aria-pressed="${S.peopleAll}">${t("people_all")}</button></div>
   ${verified()?"":lockBanner()}
   <div class="list">${list.length? list.map(({p,shared})=>`
-    <article class="card"><button class="event-card person" data-action="person" data-id="${p.id}">
-      ${avatar(p)}
-      <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1">
-        <div class="row" style="justify-content:space-between"><h3>${esc(p.name)}, ${esc(t("years",{n:p.age}))}</h3>${p.verified?`<span class="status ok" title="${t("verified_badge")}">${I.shield.replace('<svg','<svg width="13" height="13"')}</span>`:""}</div>
-        <p class="small muted">${esc(cityById(p.city).name)} · ${p.langs.map(l=>LANG_NAMES[l]||l).join(", ")}</p>
-        <p class="small">${esc(loc(p.bio))}</p>
+    <article class="card"><button class="event-card" data-action="person" data-id="${p.id}" aria-label="${esc(p.name)}">
+      <div class="pcard-photo">${photo(p.photos&&p.photos[0], p.color, p.name[0], "", "")}
+        ${p.verified?`<span class="vbadge">${I.shield}${t("verified_badge").replace(/\s*\(.*\)/,"")}</span>`:""}
+        <div class="overlay"><h3>${esc(p.name)}, ${esc(t("years",{n:p.age}))}</h3><span class="small">${esc(cityById(p.city).name)}${p.job?" · "+esc(loc(p.job)):""}</span></div>
+      </div>
+      <div class="card-body">
+        ${p.prompts&&p.prompts[0]?`<p class="small muted" style="font-weight:700">${esc(t(p.prompts[0].q))}</p><p style="font-family:var(--font-display);font-weight:700;font-size:17px;line-height:1.3">${esc(loc(p.prompts[0].a))}</p>`:`<p class="small">${esc(loc(p.bio))}</p>`}
         <div class="tags">${p.interests.map(i=>`<span class="tag${shared.includes(i)?" match":""}">${esc(t("cat_"+i))}</span>`).join("")}</div>
         ${p.trips.filter(tr=>tr.city===S.city && p.city!==S.city).map(tr=>`<p class="small" style="color:var(--accent-3);font-weight:700">${esc(t("p_trip",{x:cityById(tr.city).name}))}</p>`).join("")}
       </div></button></article>`).join("") : `<div class="empty"><h3>${t("no_results")}</h3><button class="btn ghost" data-action="peopleAll" data-v="1">${t("people_all")}</button></div>`}</div>`;
@@ -327,6 +354,7 @@ function toggleRow(id, label, desc, checked){
 }
 function brandOptions(){
   const B = [
+    ["afterglow","Afterglow","#FF6A4D","#F0367F","#9B2FD6","Unbounded"],
     ["fiesta","Fiesta","#FF5A4E","#FFC233","#0E9F9A","Bricolage Grotesque"],
     ["midnight","Midnight Club","#140F2E","#FF3DA0","#3FDFFF","Unbounded"],
     ["riviera","Riviera","#1559D6","#F2D635","#19B58C","Syne"]
@@ -338,16 +366,36 @@ function brandOptions(){
 function renderProfile(){
   const P = S.profile;
   const vs = {none:["muted","verif_none"],pending:["warn","verif_pending"],ok:["ok","verif_ok"],failed:["bad","verif_failed"],manual:["warn","v_manual"]}[S.verif];
-  const me = {name:P.name||"?", color:"#FF5A4E"};
+  const me = {name:P.name||"?", color:"#FF4D7E", photos:P.photos};
   const pendingMod = S.outings.filter(o=>o.type==="public"&&o.status==="pending");
   return `
   <div class="row" style="gap:14px">${avatar(me,true)}<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"><h1>${esc(P.name||t("tab_profile"))}</h1><span class="status ${vs[0]}">${t("verif_status")} : ${t(vs[1])}</span></div></div>
   ${S.verif!=="ok"?`<button class="btn block" data-action="verify">${I.shield.replace('<svg','<svg width="20" height="20"')}${t("verify_now")}</button>`:""}
 
+  <button class="btn block secondary" data-action="preview">${t("preview")}</button>
+
+  <section class="card"><div class="card-body">
+    <h2>${t("photos")}</h2><p class="small muted">${t("my_photo_hint")}</p>
+    <div class="photo-grid">
+      ${P.photos.map((src,i)=>`<div class="slot"><img src="${esc(src)}" alt="${esc(t("photos"))} ${i+1}"><button class="rm" data-action="photoDel" data-v="${i}" aria-label="${t("remove")}">${I.x}</button></div>`).join("")}
+      ${P.photos.length<6?`<label class="slot" for="photoInput" aria-label="${t("add_photo")}">+<input id="photoInput" type="file" accept="image/*" class="sr"></label>`:""}
+    </div>
+  </div></section>
+
+  <section class="card"><div class="card-body">
+    <h2>${t("prompts")}</h2>
+    ${P.prompts.map((pr,i)=>`<div class="field"><label for="pq_${i}">${t("prompt_pick")} ${i+1}</label>
+      <select id="pq_${i}">${PROMPT_KEYS.map(k=>`<option value="${k}"${pr.q===k?" selected":""}>${esc(t(k))}</option>`).join("")}</select>
+      <label class="sr" for="pa_${i}">${t("prompt_answer")}</label><textarea id="pa_${i}" maxlength="150" placeholder="${esc(t("prompt_answer"))}">${esc(pr.a)}</textarea></div>`).join("")}
+  </div></section>
+
   <section class="card"><div class="card-body">
     <h2>${t("edit_profile")}</h2>
     <div class="field"><label for="p_name">${t("name")}</label><input id="p_name" type="text" maxlength="40" value="${esc(P.name)}"></div>
+    <div class="field"><label for="p_job">${t("job")}</label><input id="p_job" type="text" maxlength="60" value="${esc(P.job)}"></div>
     <div class="field"><label for="p_bio">${t("bio")}</label><textarea id="p_bio" maxlength="300">${esc(P.bio)}</textarea></div>
+    <div class="field"><span class="label">${t("looking_for")}</span><div class="tags">${["friends","outings","travel"].concat(P.dating?["dating"]:[]).map(k=>`<button class="chip" data-action="pLf" data-v="${k}" aria-pressed="${P.lookingFor.includes(k)}">${t("lf_"+k)}</button>`).join("")}</div></div>
+    <div class="field"><span class="label">${t("availability")}</span><div class="seg">${["weekends","weeknights","flexible"].map(k=>`<button data-action="pAv" data-v="${k}" aria-pressed="${P.availability===k}">${t("av_"+k)}</button>`).join("")}</div></div>
     <div class="field"><label for="p_city">${t("city_home")}</label><select id="p_city">${cityOptions(P.city)}</select></div>
     <div class="field"><span class="label">${t("languages")}</span><div class="tags">${Object.keys(LANG_NAMES).map(l=>`<button class="chip" data-action="pLang" data-v="${l}" aria-pressed="${P.langs.includes(l)}">${LANG_NAMES[l]}</button>`).join("")}</div></div>
     <div class="field"><span class="label">${t("interests")}</span><div class="tags">${INTERESTS.map(i=>`<button class="chip" data-action="pInt" data-v="${i}" aria-pressed="${P.interests.includes(i)}">${esc(t("cat_"+i))}</button>`).join("")}</div></div>
@@ -490,27 +538,50 @@ function openEvent(id){
     <div class="grid2"><button class="btn secondary" data-action="join" data-id="${ev.id}">${t("join")}</button><button class="btn secondary" data-action="inviteFromEvent" data-id="${ev.id}">${t("invite")}</button></div>`);
 }
 
+/* Hinge-style profile: photos and prompts interleaved, a vitals card, and a like button on each item
+   that opens an invitation quoting what was liked. Also used to preview your own profile (id "me"). */
 function openPerson(id){
-  const p = person(id); if(!p) return;
+  const p = id==="me" ? meAsPerson() : person(id); if(!p) return;
+  const self = id==="me";
   const shared = p.interests.filter(i=>S.profile.interests.includes(i));
+  const photos = p.photos||[]; const prompts = p.prompts||[];
+  const likeBtn = (label)=> self ? "" : `<button class="like" data-action="like" data-id="${p.id}" data-v="${esc(label)}" aria-label="${esc(t("like_invite"))}">${LIKE_ICON}</button>`;
+  const hPhoto = (i)=> photos[i] ? `<div class="h-photo${i>0?" sq":""}">${photo(photos[i], p.color, p.name[0], "", p.name)}${likeBtn(t("photos")+" "+(i+1))}</div>` : "";
+  const hPrompt = (i)=> prompts[i] ? `<div class="prompt-card"><span class="q">${esc(t(prompts[i].q))}</span><span class="a">${esc(loc(prompts[i].a))}</span>${likeBtn(t(prompts[i].q)+" — "+loc(prompts[i].a))}</div>` : "";
+  const lf = (p.lookingFor||[]).map(k=>t("lf_"+k)).join(", ");
+  const vitals = `<div class="vitals">
+    <div class="vscroll">${p.age&&(!self)?`<span>${esc(t("years",{n:p.age}))}</span>`:""}<span>${I.pin.replace('<svg','<svg width="16" height="16"')}${esc(cityById(p.city).name)}</span><span>${esc(p.langs.map(l=>LANG_NAMES[l]||l).join(" · "))}</span></div>
+    ${p.job?`<div class="vrow">${VI.job}<span>${esc(loc(p.job))}</span></div>`:""}
+    ${lf?`<div class="vrow">${VI.lf}<span><b>${t("looking_for")}</b> · ${esc(lf)}</span></div>`:""}
+    ${p.availability?`<div class="vrow">${VI.av}<span><b>${t("availability")}</b> · ${esc(t("av_"+p.availability))}</span></div>`:""}
+    ${p.music&&p.music.length?`<div class="vrow">${VI.music}<span>${esc(p.music.join(", "))}</span></div>`:""}
+    <div class="vrow">${I.shield}<span>${p.verified?t("verified_badge"):t("not_verified")}</span></div>
+  </div>`;
   openSheet(`${sheetHead(p.name)}
-    <div class="row" style="gap:14px">${avatar(p,true)}<div style="display:flex;flex-direction:column;gap:4px"><h2>${esc(p.name)}, ${esc(t("years",{n:p.age}))}</h2><p class="muted">${esc(cityById(p.city).name)}</p>${p.verified?`<span class="status ok">${t("verified_badge")}</span>`:`<span class="status muted">${t("not_verified")}</span>`}</div></div>
-    <p>${esc(loc(p.bio))}</p>
-    <div class="field"><span class="label">${t("interests")}</span><div class="tags">${p.interests.map(i=>`<span class="tag${shared.includes(i)?" match":""}">${esc(t("cat_"+i))}</span>`).join("")}</div></div>
-    <div class="field"><span class="label">${t("music")}</span><div class="tags">${p.music.map(m=>`<span class="tag">${esc(m)}</span>`).join("")}</div></div>
-    <div class="field"><span class="label">${t("languages")}</span><p>${p.langs.map(l=>LANG_NAMES[l]||l).join(", ")}</p></div>
-    ${p.trips.length?`<div class="field"><span class="label">${t("trips")}</span><p>${p.trips.map(tr=>esc(cityById(tr.city).name)).join(", ")}</p></div>`:""}
+    <div class="hinge">
+      ${hPhoto(0)}${hPrompt(0)}${vitals}${hPhoto(1)}${hPrompt(1)}
+      <div class="card"><div class="card-body"><span class="label">${t("interests")}</span><div class="tags">${p.interests.map(i=>`<span class="tag${shared.includes(i)&&!self?" match":""}">${esc(t("cat_"+i))}</span>`).join("")}</div>
+        ${loc(p.bio)?`<p>${esc(loc(p.bio))}</p>`:""}
+        ${p.trips.length?`<p class="small" style="color:var(--accent-3);font-weight:700">${p.trips.map(tr=>esc(t("p_trip",{x:cityById(tr.city).name}))).join(" · ")}</p>`:""}</div></div>
+      ${hPhoto(2)}${hPrompt(2)}
+      ${photos.slice(3).map((_,j)=>hPhoto(3+j)).join("")}
+      ${!self && photos.length && photos[0].includes("unsplash")?`<p class="small muted">${t("photo_note")}</p>`:""}
+    </div>
+    ${self?`<button class="btn block secondary" data-action="close">${t("close")}</button>`:`
     <button class="btn block" data-action="invitePerson" data-id="${p.id}">${verified()?"":I.lock.replace('<svg','<svg width="18" height="18"')}${esc(t("invite_to",{n:p.name}))}</button>
-    <div class="grid2"><button class="btn ghost" data-action="block" data-id="${p.id}">${t("block")}</button><button class="btn danger" data-action="report" data-id="${p.id}">${t("report")}</button></div>`);
+    <div class="grid2"><button class="btn ghost" data-action="block" data-id="${p.id}">${t("block")}</button><button class="btn danger" data-action="report" data-id="${p.id}">${t("report")}</button></div>`}`);
 }
 
 function requireVerified(){ if(verified()) return true; openVerify(); return false; }
-function openInvite(pid, presetEvent){
+let likedNote = "";
+function openInvite(pid, presetEvent, liked){
   if(!requireVerified()) return;
   const p = person(pid);
+  likedNote = liked || "";
   const events = allEvents().filter(e=>dayOffset(e)>=0).sort((a,b)=>(a.city===p.city?-1:1)-(b.city===p.city?-1:1));
   const priv = S.outings.filter(o=>o.type==="private");
   openSheet(`${sheetHead(t("invite_to",{n:p.name}))}
+    ${likedNote?`<div class="liked-box"><b>${t("liked")}</b> : ${esc(likedNote)}</div>`:""}
     <div class="field"><label for="inv_ev">${t("invite_pick")}</label><select id="inv_ev">
       ${priv.map(o=>`<option value="${o.id}">🔒 ${esc(o.title)} · ${esc(cityById(o.city).name)}</option>`).join("")}
       ${events.map(e=>`<option value="${e.id}"${e.id===presetEvent?" selected":""}>${esc(e.title)} · ${esc(cityById(e.city).name)} · ${esc(fmtDay(evDate(e)))}</option>`).join("")}</select></div>
@@ -684,7 +755,10 @@ const A = {
     const sentToday = S.invites.filter(i=>i.dir==="out" && new Date(i.created).toDateString()===today).length;
     if(sentToday>=10){ toast(t("invite_limit")); return; }
     const pid=el.dataset.id;
-    S.invites.unshift({id:uid("i"), dir:"out", to:pid, event:document.getElementById("inv_ev").value, note:document.getElementById("inv_note").value.trim(), status:"pending", d:3, created:new Date().toISOString()});
+    const typed = document.getElementById("inv_note").value.trim();
+    const note = likedNote ? `${t("liked")} « ${likedNote} »${typed?" — "+typed:""}` : typed;
+    S.invites.unshift({id:uid("i"), dir:"out", to:pid, event:document.getElementById("inv_ev").value, note, status:"pending", d:3, created:new Date().toISOString()});
+    likedNote = "";
     save(); closeSheet(); render(true); toast(t("invite_sent",{n:person(pid).name}));
   },
   inviteAccept(el){
@@ -711,7 +785,18 @@ const A = {
   pLang(el){ toggleIn(S.profile.langs, el.dataset.v); save(); render(true); },
   pInt(el){ toggleIn(S.profile.interests, el.dataset.v); save(); render(true); },
   pMusic(el){ toggleIn(S.profile.music, el.dataset.v); save(); render(true); },
-  saveProfile(){ S.profile.name=document.getElementById("p_name").value.trim().slice(0,40); S.profile.bio=document.getElementById("p_bio").value.trim(); S.profile.city=document.getElementById("p_city").value; save(); render(true); toast(t("saved")); },
+  saveProfile(){
+    const g = id=>document.getElementById(id);
+    S.profile.name=g("p_name").value.trim().slice(0,40); S.profile.bio=g("p_bio").value.trim(); S.profile.city=g("p_city").value;
+    S.profile.job=g("p_job").value.trim().slice(0,60);
+    S.profile.prompts = S.profile.prompts.map((_,i)=>({q:g("pq_"+i).value, a:g("pa_"+i).value.trim().slice(0,150)}));
+    save(); render(true); toast(t("saved"));
+  },
+  preview(){ A.saveProfile(); openPerson("me"); },
+  like(el){ openInvite(el.dataset.id, null, el.dataset.v); },
+  pLf(el){ toggleIn(S.profile.lookingFor, el.dataset.v); save(); render(true); },
+  pAv(el){ S.profile.availability=el.dataset.v; save(); render(true); },
+  photoDel(el){ S.profile.photos.splice(Number(el.dataset.v),1); save(); render(true); },
   tripAdd(){ S.profile.trips.push({city:document.getElementById("tr_city").value, from:document.getElementById("tr_from").value, to:document.getElementById("tr_to").value}); save(); render(true); toast(t("saved")); },
   tripDel(el){ S.profile.trips.splice(Number(el.dataset.v),1); save(); render(true); },
   vis(el){ S.profile.visibility=el.dataset.v; save(); render(true); },
@@ -723,6 +808,25 @@ const A = {
   resetDo(){ const keep={lang:S.lang, brand:S.brand}; S=Object.assign(DEFAULT_STATE(), keep, {onboarded:true}); save(); closeSheet(); render(); toast(t("reset_done")); },
   obStart(){ S.profile.name=document.getElementById("ob_name").value.trim().slice(0,40); S.onboarded=true; save(); closeSheet(); render(); }
 };
+/* Resize to max 900 px JPEG before keeping it on this device (localStorage space is small). */
+function addPhoto(file){
+  if(!file.type.startsWith("image/")) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const k = Math.min(1, 900/Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+      const url = c.toDataURL("image/jpeg", 0.78);
+      S.profile.photos.push(url);
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }catch(e){ S.profile.photos.pop(); toast("Storage full"); return; }
+      render(true);
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
 function toggleIn(arr, v){ const i=arr.indexOf(v); if(i>=0) arr.splice(i,1); else arr.push(v); }
 
 document.addEventListener("click", e=>{
@@ -739,6 +843,7 @@ document.addEventListener("change", e=>{
       tg_n_tickets:()=>S.notif.tickets=el.checked, tg_n_marketing:()=>S.notif.marketing=el.checked};
     if(map[el.id]){ map[el.id](); save(); }
   }
+  if(el.id==="photoInput" && el.files && el.files[0]) addPhoto(el.files[0]);
   if(el.id==="q_from"||el.id==="q_to"){ S.notif[el.id==="q_from"?"quietFrom":"quietTo"]=el.value; save(); render(true); }
 });
 document.addEventListener("submit", e=>{
@@ -755,6 +860,8 @@ document.addEventListener("submit", e=>{
     const c=S.convos.find(c=>c.id===openConvoId); c.msgs.push({me:true, text:txt, at:now()}); save(); render(); document.getElementById("msgInput").focus();
   }
 });
+// A photo that cannot load (offline, blocked host) is removed so the coloured tile with the initial shows.
+document.addEventListener("error", e=>{ if(e.target && e.target.tagName==="IMG" && e.target.parentElement && e.target.parentElement.classList.contains("ph")) e.target.remove(); }, true);
 window.addEventListener("online", ()=>render(true));
 window.addEventListener("offline", ()=>render(true));
 document.addEventListener("keydown", e=>{ if(e.key==="Escape" && S.onboarded) closeSheet(); });

@@ -58,7 +58,7 @@ en:{
   dating:"Dating (optional)", dating_d:"Off by default. Friendship and outings stay the core of LINK.",
   visibility:"Profile visibility", vis_public:"All members", vis_verified:"Verified members only", vis_hidden:"Hidden",
   show_age:"Show my age", show_age_d:"Your full date of birth is never shown.",
-  app_lang:"App language", brand:"Visual direction", brand_d:"Three directions to choose from. Indira picks the final one.",
+  app_lang:"App language", brand:"Visual direction", brand_d:"Four directions to choose from. Afterglow mixes Midnight with the concert poster colours.",
   theme:"Appearance", theme_system:"System", theme_light:"Light", theme_dark:"Dark",
   notif:"Notifications", n_invites:"Invitations", n_messages:"Messages", n_events:"Event changes", n_tickets:"Tickets", n_marketing:"News and offers",
   quiet:"Quiet hours", quiet_d:"No push between {a} and {b}",
@@ -80,6 +80,8 @@ en:{
   offline:"You're offline. Showing data saved on this device.",
   close:"Close", back:"Back", cancel:"Cancel", years:"{n}", you:"You", today:"Today", tomorrow:"Tomorrow",
   storage_note:"Your demo data stays in this browser only.",
+  pr_ideal_night:"My ideal night out", pr_never_no:"I never say no to", pr_best_concert:"Best concert of my life", pr_hidden_spot:"A spot in my city you should know", pr_looking_crew:"I'm looking for people to", pr_next_trip:"Next trip on my list", pr_green_flag:"Green flag in an outing buddy", pr_sunday:"My typical Sunday",
+  job:"Job", looking_for:"Here for", lf_friends:"New friends", lf_outings:"Going out", lf_travel:"Travel buddies", lf_dating:"Dating", availability:"Usually free", av_weekends:"Weekends", av_weeknights:"Weeknights", av_flexible:"Flexible", liked:"You liked", like_invite:"Like & invite", photos:"Photos", add_photo:"Add a photo", photo_note:"Demo photos: free stock images, people are fictional.", prompts:"Prompts", prompt_pick:"Prompt", prompt_answer:"Your answer", preview:"Preview my profile", my_photo_hint:"Up to 6 photos, stored on this device only.", remove:"Remove",
   welcome_back:"Hi {n}"
 },
 fr:{
@@ -134,7 +136,7 @@ fr:{
   dating:"Rencontres (facultatif)", dating_d:"Désactivé par défaut. L'amitié et les sorties restent le cœur de LINK.",
   visibility:"Visibilité du profil", vis_public:"Tous les membres", vis_verified:"Membres vérifiés seulement", vis_hidden:"Masqué",
   show_age:"Afficher mon âge", show_age_d:"Ta date de naissance complète n'est jamais affichée.",
-  app_lang:"Langue de l'app", brand:"Direction visuelle", brand_d:"Trois directions au choix. C'est Indira qui choisit la version finale.",
+  app_lang:"Langue de l'app", brand:"Direction visuelle", brand_d:"Quatre directions au choix. Afterglow mélange Midnight et les couleurs de l'affiche concert.",
   theme:"Apparence", theme_system:"Système", theme_light:"Clair", theme_dark:"Sombre",
   notif:"Notifications", n_invites:"Invitations", n_messages:"Messages", n_events:"Changements d'événement", n_tickets:"Billets", n_marketing:"Actus et offres",
   quiet:"Heures calmes", quiet_d:"Pas de notification entre {a} et {b}",
@@ -156,6 +158,8 @@ fr:{
   offline:"Tu es hors ligne. Affichage des données gardées sur cet appareil.",
   close:"Fermer", back:"Retour", cancel:"Annuler", years:"{n} ans", you:"Toi", today:"Aujourd'hui", tomorrow:"Demain",
   storage_note:"Tes données de démo restent uniquement dans ce navigateur.",
+  pr_ideal_night:"Ma soirée idéale", pr_never_no:"Je ne dis jamais non à", pr_best_concert:"Le meilleur concert de ma vie", pr_hidden_spot:"Un spot de ma ville à connaître", pr_looking_crew:"Je cherche du monde pour", pr_next_trip:"Mon prochain voyage", pr_green_flag:"Green flag chez un·e partenaire de sortie", pr_sunday:"Mon dimanche type",
+  job:"Métier", looking_for:"Ici pour", lf_friends:"Nouveaux amis", lf_outings:"Sortir", lf_travel:"Voyager à plusieurs", lf_dating:"Rencontres", availability:"Plutôt dispo", av_weekends:"Le week-end", av_weeknights:"En semaine le soir", av_flexible:"Flexible", liked:"Tu as aimé", like_invite:"Aimer et inviter", photos:"Photos", add_photo:"Ajouter une photo", photo_note:"Photos de démonstration : images libres de droits, personnes fictives.", prompts:"Questions", prompt_pick:"Question", prompt_answer:"Ta réponse", preview:"Voir mon profil", my_photo_hint:"Jusqu'à 6 photos, gardées sur cet appareil uniquement.", remove:"Retirer",
   welcome_back:"Salut {n}"
 },
 es:{
@@ -210,7 +214,7 @@ es:{
   dating:"Citas (opcional)", dating_d:"Desactivado por defecto. La amistad y los planes son lo esencial de LINK.",
   visibility:"Visibilidad del perfil", vis_public:"Todos los miembros", vis_verified:"Solo miembros verificados", vis_hidden:"Oculto",
   show_age:"Mostrar mi edad", show_age_d:"Tu fecha de nacimiento completa nunca se muestra.",
-  app_lang:"Idioma de la app", brand:"Dirección visual", brand_d:"Tres direcciones para elegir. Indira elige la final.",
+  app_lang:"Idioma de la app", brand:"Dirección visual", brand_d:"Cuatro direcciones para elegir. Afterglow mezcla Midnight con los colores del cartel del concierto.",
   theme:"Apariencia", theme_system:"Sistema", theme_light:"Claro", theme_dark:"Oscuro",
   notif:"Notificaciones", n_invites:"Invitaciones", n_messages:"Mensajes", n_events:"Cambios de evento", n_tickets:"Entradas", n_marketing:"Novedades y ofertas",
   quiet:"Horas de silencio", quiet_d:"Sin notificaciones entre {a} y {b}",
@@ -232,6 +236,8 @@ es:{
   offline:"Sin conexión. Mostrando los datos guardados en este dispositivo.",
   close:"Cerrar", back:"Volver", cancel:"Cancelar", years:"{n} años", you:"Tú", today:"Hoy", tomorrow:"Mañana",
   storage_note:"Tus datos de demo se quedan solo en este navegador.",
+  pr_ideal_night:"Mi noche ideal", pr_never_no:"Nunca digo que no a", pr_best_concert:"El mejor concierto de mi vida", pr_hidden_spot:"Un sitio de mi ciudad que debes conocer", pr_looking_crew:"Busco gente para", pr_next_trip:"Mi próximo viaje", pr_green_flag:"Señal verde en un compañero de planes", pr_sunday:"Mi domingo típico",
+  job:"Trabajo", looking_for:"Aquí para", lf_friends:"Nuevos amigos", lf_outings:"Salir", lf_travel:"Viajar en grupo", lf_dating:"Citas", availability:"Suele estar libre", av_weekends:"Fines de semana", av_weeknights:"Entre semana por la noche", av_flexible:"Flexible", liked:"Te gustó", like_invite:"Me gusta e invitar", photos:"Fotos", add_photo:"Añadir una foto", photo_note:"Fotos de demo: imágenes libres de derechos, personas ficticias.", prompts:"Preguntas", prompt_pick:"Pregunta", prompt_answer:"Tu respuesta", preview:"Ver mi perfil", my_photo_hint:"Hasta 6 fotos, guardadas solo en este dispositivo.", remove:"Quitar",
   welcome_back:"Hola {n}"
 },
 de:{
@@ -286,7 +292,7 @@ de:{
   dating:"Dating (optional)", dating_d:"Standardmäßig aus. Freundschaft und Unternehmungen stehen bei LINK im Mittelpunkt.",
   visibility:"Profil-Sichtbarkeit", vis_public:"Alle Mitglieder", vis_verified:"Nur verifizierte Mitglieder", vis_hidden:"Versteckt",
   show_age:"Mein Alter zeigen", show_age_d:"Dein vollständiges Geburtsdatum wird nie angezeigt.",
-  app_lang:"App-Sprache", brand:"Visuelle Richtung", brand_d:"Drei Richtungen zur Wahl. Indira wählt die finale.",
+  app_lang:"App-Sprache", brand:"Visuelle Richtung", brand_d:"Vier Richtungen zur Wahl. Afterglow mischt Midnight mit den Farben des Konzertplakats.",
   theme:"Darstellung", theme_system:"System", theme_light:"Hell", theme_dark:"Dunkel",
   notif:"Benachrichtigungen", n_invites:"Einladungen", n_messages:"Nachrichten", n_events:"Event-Änderungen", n_tickets:"Tickets", n_marketing:"News und Angebote",
   quiet:"Ruhezeiten", quiet_d:"Keine Push-Nachrichten zwischen {a} und {b}",
@@ -308,6 +314,8 @@ de:{
   offline:"Du bist offline. Angezeigt werden die auf diesem Gerät gespeicherten Daten.",
   close:"Schließen", back:"Zurück", cancel:"Abbrechen", years:"{n} J.", you:"Du", today:"Heute", tomorrow:"Morgen",
   storage_note:"Deine Demodaten bleiben nur in diesem Browser.",
+  pr_ideal_night:"Mein perfekter Abend", pr_never_no:"Ich sage nie nein zu", pr_best_concert:"Das beste Konzert meines Lebens", pr_hidden_spot:"Ein Ort in meiner Stadt, den du kennen solltest", pr_looking_crew:"Ich suche Leute, um", pr_next_trip:"Meine nächste Reise", pr_green_flag:"Green Flag bei Ausgeh-Buddys", pr_sunday:"Mein typischer Sonntag",
+  job:"Beruf", looking_for:"Hier für", lf_friends:"Neue Freunde", lf_outings:"Ausgehen", lf_travel:"Gemeinsam reisen", lf_dating:"Dating", availability:"Meist frei", av_weekends:"Am Wochenende", av_weeknights:"Unter der Woche abends", av_flexible:"Flexibel", liked:"Dir gefällt", like_invite:"Liken & einladen", photos:"Fotos", add_photo:"Foto hinzufügen", photo_note:"Demofotos: lizenzfreie Bilder, fiktive Personen.", prompts:"Fragen", prompt_pick:"Frage", prompt_answer:"Deine Antwort", preview:"Mein Profil ansehen", my_photo_hint:"Bis zu 6 Fotos, nur auf diesem Gerät gespeichert.", remove:"Entfernen",
   welcome_back:"Hallo {n}"
 },
 pt:{
@@ -362,7 +370,7 @@ pt:{
   dating:"Encontros (opcional)", dating_d:"Desligado por defeito. Amizade e programas são o centro da LINK.",
   visibility:"Visibilidade do perfil", vis_public:"Todos os membros", vis_verified:"Só membros verificados", vis_hidden:"Oculto",
   show_age:"Mostrar a minha idade", show_age_d:"A tua data de nascimento completa nunca é mostrada.",
-  app_lang:"Idioma da app", brand:"Direção visual", brand_d:"Três direções à escolha. A Indira escolhe a final.",
+  app_lang:"Idioma da app", brand:"Direção visual", brand_d:"Quatro direções à escolha. Afterglow mistura Midnight com as cores do cartaz do concerto.",
   theme:"Aparência", theme_system:"Sistema", theme_light:"Claro", theme_dark:"Escuro",
   notif:"Notificações", n_invites:"Convites", n_messages:"Mensagens", n_events:"Alterações de eventos", n_tickets:"Bilhetes", n_marketing:"Novidades e ofertas",
   quiet:"Horas de silêncio", quiet_d:"Sem notificações entre {a} e {b}",
@@ -384,6 +392,8 @@ pt:{
   offline:"Estás offline. A mostrar os dados guardados neste dispositivo.",
   close:"Fechar", back:"Voltar", cancel:"Cancelar", years:"{n} anos", you:"Tu", today:"Hoje", tomorrow:"Amanhã",
   storage_note:"Os teus dados de demo ficam só neste navegador.",
+  pr_ideal_night:"A minha noite ideal", pr_never_no:"Nunca digo não a", pr_best_concert:"O melhor concerto da minha vida", pr_hidden_spot:"Um sítio da minha cidade que tens de conhecer", pr_looking_crew:"Procuro pessoas para", pr_next_trip:"A minha próxima viagem", pr_green_flag:"Green flag num parceiro de saídas", pr_sunday:"O meu domingo típico",
+  job:"Profissão", looking_for:"Aqui para", lf_friends:"Novos amigos", lf_outings:"Sair", lf_travel:"Viajar em grupo", lf_dating:"Encontros", availability:"Normalmente livre", av_weekends:"Fins de semana", av_weeknights:"Dias de semana à noite", av_flexible:"Flexível", liked:"Gostaste de", like_invite:"Gostar e convidar", photos:"Fotos", add_photo:"Adicionar foto", photo_note:"Fotos de demo: imagens livres de direitos, pessoas fictícias.", prompts:"Perguntas", prompt_pick:"Pergunta", prompt_answer:"A tua resposta", preview:"Ver o meu perfil", my_photo_hint:"Até 6 fotos, guardadas só neste dispositivo.", remove:"Remover",
   welcome_back:"Olá {n}"
 },
 it:{
@@ -438,7 +448,7 @@ it:{
   dating:"Incontri (facoltativo)", dating_d:"Disattivato di default. Amicizia e uscite restano il cuore di LINK.",
   visibility:"Visibilità del profilo", vis_public:"Tutti i membri", vis_verified:"Solo membri verificati", vis_hidden:"Nascosto",
   show_age:"Mostra la mia età", show_age_d:"La data di nascita completa non viene mai mostrata.",
-  app_lang:"Lingua dell'app", brand:"Direzione visiva", brand_d:"Tre direzioni tra cui scegliere. Indira sceglie quella finale.",
+  app_lang:"Lingua dell'app", brand:"Direzione visiva", brand_d:"Quattro direzioni tra cui scegliere. Afterglow unisce Midnight ai colori del poster del concerto.",
   theme:"Aspetto", theme_system:"Sistema", theme_light:"Chiaro", theme_dark:"Scuro",
   notif:"Notifiche", n_invites:"Inviti", n_messages:"Messaggi", n_events:"Modifiche agli eventi", n_tickets:"Biglietti", n_marketing:"Novità e offerte",
   quiet:"Ore di silenzio", quiet_d:"Nessuna notifica tra le {a} e le {b}",
@@ -460,12 +470,14 @@ it:{
   offline:"Sei offline. Mostro i dati salvati su questo dispositivo.",
   close:"Chiudi", back:"Indietro", cancel:"Annulla", years:"{n} anni", you:"Tu", today:"Oggi", tomorrow:"Domani",
   storage_note:"I tuoi dati demo restano solo in questo browser.",
+  pr_ideal_night:"La mia serata ideale", pr_never_no:"Non dico mai di no a", pr_best_concert:"Il concerto più bello della mia vita", pr_hidden_spot:"Un posto della mia città da conoscere", pr_looking_crew:"Cerco persone per", pr_next_trip:"Il mio prossimo viaggio", pr_green_flag:"Green flag in un compagno di uscite", pr_sunday:"La mia domenica tipo",
+  job:"Lavoro", looking_for:"Qui per", lf_friends:"Nuovi amici", lf_outings:"Uscire", lf_travel:"Viaggiare insieme", lf_dating:"Incontri", availability:"Di solito libero", av_weekends:"Nel weekend", av_weeknights:"In settimana la sera", av_flexible:"Flessibile", liked:"Ti è piaciuto", like_invite:"Mi piace e invita", photos:"Foto", add_photo:"Aggiungi una foto", photo_note:"Foto demo: immagini libere da diritti, persone fittizie.", prompts:"Domande", prompt_pick:"Domanda", prompt_answer:"La tua risposta", preview:"Vedi il mio profilo", my_photo_hint:"Fino a 6 foto, salvate solo su questo dispositivo.", remove:"Rimuovi",
   welcome_back:"Ciao {n}"
 }
 };
 
 /* Long-form "what works" panel, per language (fallback en). */
 const ABOUT = {
-  fr:[["ok","Navigation, 6 langues, 3 directions visuelles, mode clair/sombre"],["ok","13 villes prioritaires + n'importe quelle autre ville (liste extensible)"],["ok","Découverte locale, internationale et personnalisée, avec la raison de chaque recommandation"],["ok","Création de sorties publiques (modération) et privées, gardées sur ton appareil"],["ok","Invitations et messages bloqués tant que l'identité n'est pas vérifiée"],["ok","Blocage, signalement, export des données, visibilité, heures calmes"],["test","Vérification d'identité : simulée (prestataire KYC à contracter)"],["test","Billetterie : parcours complet en mode test, aucun vrai paiement ni vrai billet"],["test","Événements et profils : fictifs, marqués comme démo"],["bad","Comptes, base de données serveur, notifications push, stores : à brancher (voir le dossier)"]],
-  en:[["ok","Navigation, 6 languages, 3 visual directions, light/dark mode"],["ok","13 priority cities + any other city (extensible list)"],["ok","Local, international and personalised discovery, with the reason for each pick"],["ok","Public (moderated) and private outings, saved on your device"],["ok","Invitations and messages locked until identity is verified"],["ok","Block, report, data export, visibility, quiet hours"],["test","ID verification: simulated (KYC provider to contract)"],["test","Ticketing: full flow in test mode, no real payment or ticket"],["test","Events and profiles: fictional, marked as demo"],["bad","Accounts, server database, push notifications, app stores: to connect (see the brief)"]]
+  fr:[["ok","Navigation, 6 langues, 4 directions visuelles, mode clair/sombre"],["ok","13 villes prioritaires + n'importe quelle autre ville (liste extensible)"],["ok","Découverte locale, internationale et personnalisée, avec la raison de chaque recommandation"],["ok","Création de sorties publiques (modération) et privées, gardées sur ton appareil"],["ok","Invitations et messages bloqués tant que l'identité n'est pas vérifiée"],["ok","Blocage, signalement, export des données, visibilité, heures calmes"],["test","Vérification d'identité : simulée (prestataire KYC à contracter)"],["test","Billetterie : parcours complet en mode test, aucun vrai paiement ni vrai billet"],["test","Événements et profils : fictifs, marqués comme démo"],["bad","Comptes, base de données serveur, notifications push, stores : à brancher (voir le dossier)"]],
+  en:[["ok","Navigation, 6 languages, 4 visual directions, light/dark mode"],["ok","13 priority cities + any other city (extensible list)"],["ok","Local, international and personalised discovery, with the reason for each pick"],["ok","Public (moderated) and private outings, saved on your device"],["ok","Invitations and messages locked until identity is verified"],["ok","Block, report, data export, visibility, quiet hours"],["test","ID verification: simulated (KYC provider to contract)"],["test","Ticketing: full flow in test mode, no real payment or ticket"],["test","Events and profiles: fictional, marked as demo"],["bad","Accounts, server database, push notifications, app stores: to connect (see the brief)"]]
 };

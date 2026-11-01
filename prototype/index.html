@@ -31,6 +31,16 @@
   --line:#3A3170; --accent:#FF3DA0; --accent-fg:#140F2E; --accent-2:#3FDFFF; --accent-3:#FFD23F;
   --ok:#4CE29A; --warn:#FFC24A; --bad:#FF6680; --test:#C9A6FF; color-scheme:dark;
 }
+/* Direction 4 — Afterglow: Midnight's night-blue base + the concert poster gradient (coral → fuchsia → violet) and gold.
+   Built from Indira's feedback (she liked the Midnight layout and the concert poster colours). Committed dark look. */
+:root[data-brand="afterglow"]{
+  --font-display:"Unbounded", "Arial Black", system-ui, sans-serif;
+  --bg:#130F2A; --surface:#1C1640; --surface-2:#271E52; --fg:#F7F1FF; --muted:#B8AED8;
+  --line:#372C6C; --accent:#FF4D7E; --accent-fg:#FFFFFF; --accent-2:#FF7A4D; --accent-3:#FFC94A;
+  --ok:#4CE29A; --warn:#FFC24A; --bad:#FF6680; --test:#C9A6FF; color-scheme:dark;
+  --grad:linear-gradient(120deg,#FF6A4D 0%,#F0367F 45%,#9B2FD6 100%);
+  --btn-bg:var(--grad);
+}
 /* Direction 3 — Riviera: sea blue, lemon, mint */
 :root[data-brand="riviera"]{
   --font-display:"Syne", "Futura", system-ui, sans-serif;
@@ -81,7 +91,13 @@ main{flex:1;padding-block:14px 110px;padding-left:max(16px,env(safe-area-inset-l
 .tab{background:none;border:0;padding:8px 2px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:600;color:var(--muted);min-height:56px;position:relative}
 .tab svg{width:23px;height:23px}
 .tab[aria-current="page"]{color:var(--accent)}
-.tab.create svg{width:34px;height:34px;color:var(--accent-fg);background:var(--accent);border-radius:12px;padding:6px}
+.tab.create svg{width:34px;height:34px;color:var(--accent-fg);background:var(--btn-bg, var(--accent));border-radius:12px;padding:6px}
+:root[data-brand="afterglow"] .logo .dot{background:#FF6A4D}
+:root[data-brand="afterglow"] .logo .dot.b{background:#C03BE0}
+:root[data-brand="afterglow"] .seg button[aria-pressed="true"]{background:var(--grad);color:#fff;box-shadow:none}
+:root[data-brand="afterglow"] .hero h1{background:linear-gradient(100deg,#FFFFFF 40%,#FFB3C8 75%,#E7A8FF);-webkit-background-clip:text;background-clip:text;color:transparent}
+:root[data-brand="afterglow"] .tab[aria-current="page"]{color:#FF6A8E}
+:root[data-brand="afterglow"] .card{border-color:var(--line);box-shadow:0 10px 30px -18px rgb(155 47 214 / .6)}
 .tab .badge{position:absolute;top:5px;right:calc(50% - 18px);min-width:17px;height:17px;border-radius:9px;background:var(--accent);color:var(--accent-fg);font-size:10px;display:grid;place-items:center;padding:0 4px}
 
 .seg{display:flex;background:var(--surface-2);border-radius:999px;padding:3px;gap:2px}
@@ -96,7 +112,7 @@ main{flex:1;padding-block:14px 110px;padding-left:max(16px,env(safe-area-inset-l
 .field label,.label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
 input[type=text],input[type=date],input[type=time],input[type=number],input[type=search],select,textarea{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:11px 12px;min-height:44px}
 textarea{min-height:84px;resize:vertical}
-.btn{border:0;border-radius:999px;padding:12px 18px;font-weight:700;min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:var(--accent-fg)}
+.btn{border:0;border-radius:999px;padding:12px 18px;font-weight:700;min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--btn-bg, var(--accent));color:var(--accent-fg)}
 .btn.secondary{background:var(--surface-2);color:var(--fg)}
 .btn.ghost{background:none;border:1px solid var(--line);color:var(--fg)}
 .btn.danger{background:none;border:1px solid var(--bad);color:var(--bad)}
@@ -185,6 +201,42 @@ textarea{min-height:84px;resize:vertical}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media (max-width:360px){.grid2{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* Photos (demo stock images; tile with initial shows if an image cannot load) */
+.ph{position:relative;overflow:hidden;display:grid;place-items:center;color:#fff;font-family:var(--font-display);font-weight:800;font-size:28px;max-width:100%}
+.ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.avatar.ph{font-size:22px}
+.pcard-photo{position:relative;aspect-ratio:4/4.4;max-width:100%}
+.pcard-photo .ph{position:absolute;inset:0;font-size:72px}
+.pcard-photo .overlay{position:absolute;inset:auto 0 0 0;padding:40px 14px 12px;background:linear-gradient(transparent,rgb(10 6 25 / .85));color:#fff;display:flex;flex-direction:column;gap:2px}
+.pcard-photo .overlay h3{font-size:22px}
+.pcard-photo .vbadge{position:absolute;top:12px;right:12px;background:rgb(0 0 0 / .45);color:#fff;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:700;display:flex;gap:4px;align-items:center;backdrop-filter:blur(4px)}
+.pcard-photo .vbadge svg{width:14px;height:14px}
+/* Hinge-style profile */
+.hinge{display:flex;flex-direction:column;gap:12px}
+.h-photo{position:relative;border-radius:var(--radius);overflow:hidden;aspect-ratio:4/5;max-width:100%}
+.h-photo.sq{aspect-ratio:1}
+.h-photo .ph{position:absolute;inset:0;font-size:96px}
+.like{position:absolute;right:12px;bottom:12px;width:52px;height:52px;border-radius:50%;border:0;background:var(--surface);color:var(--accent);display:grid;place-items:center;box-shadow:0 6px 18px rgb(0 0 0 / .35)}
+.like svg{width:26px;height:26px}
+.prompt-card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px 18px 24px;display:flex;flex-direction:column;gap:8px}
+.prompt-card .q{font-size:13px;font-weight:700;color:var(--muted)}
+.prompt-card .a{font-family:var(--font-display);font-size:22px;font-weight:700;line-height:1.25;padding-right:46px;overflow-wrap:anywhere}
+.prompt-card .like{bottom:14px;right:14px;width:46px;height:46px;background:var(--surface-2)}
+.vitals{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.vitals .vrow{display:flex;gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);font-size:14px}
+.vitals .vrow:last-child{border-bottom:0}
+.vitals .vrow svg{width:18px;height:18px;flex:none;color:var(--muted)}
+.vitals .vscroll{display:flex;gap:18px;overflow-x:auto;padding:12px 14px;border-bottom:1px solid var(--line);scrollbar-width:none;font-weight:600;font-size:14px}
+.vitals .vscroll span{display:flex;gap:6px;align-items:center;white-space:nowrap}
+.liked-box{border-left:4px solid var(--accent);background:var(--surface-2);padding:10px 12px;border-radius:0 12px 12px 0;font-size:14px}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.photo-grid .slot{position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;border:2px dashed var(--line);display:grid;place-items:center;color:var(--muted);font-size:28px;background:var(--surface)}
+.photo-grid .slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo-grid .slot .rm{position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:50%;border:0;background:rgb(0 0 0 / .6);color:#fff;display:grid;place-items:center}
+.photo-grid .slot .rm svg{width:14px;height:14px}
+.photo-grid label.slot{cursor:pointer}
+:root[data-brand="afterglow"] .tag.match{color:#1C1640}
 </style>
 <div class="app"><header class="topbar" id="top"></header><main id="main" tabindex="-1"></main></div>
 <nav class="tabbar" id="tabs" aria-label="Navigation"></nav>
@@ -250,7 +302,7 @@ en:{
   dating:"Dating (optional)", dating_d:"Off by default. Friendship and outings stay the core of LINK.",
   visibility:"Profile visibility", vis_public:"All members", vis_verified:"Verified members only", vis_hidden:"Hidden",
   show_age:"Show my age", show_age_d:"Your full date of birth is never shown.",
-  app_lang:"App language", brand:"Visual direction", brand_d:"Three directions to choose from. Indira picks the final one.",
+  app_lang:"App language", brand:"Visual direction", brand_d:"Four directions to choose from. Afterglow mixes Midnight with the concert poster colours.",
   theme:"Appearance", theme_system:"System", theme_light:"Light", theme_dark:"Dark",
   notif:"Notifications", n_invites:"Invitations", n_messages:"Messages", n_events:"Event changes", n_tickets:"Tickets", n_marketing:"News and offers",
   quiet:"Quiet hours", quiet_d:"No push between {a} and {b}",
@@ -272,6 +324,8 @@ en:{
   offline:"You're offline. Showing data saved on this device.",
   close:"Close", back:"Back", cancel:"Cancel", years:"{n}", you:"You", today:"Today", tomorrow:"Tomorrow",
   storage_note:"Your demo data stays in this browser only.",
+  pr_ideal_night:"My ideal night out", pr_never_no:"I never say no to", pr_best_concert:"Best concert of my life", pr_hidden_spot:"A spot in my city you should know", pr_looking_crew:"I'm looking for people to", pr_next_trip:"Next trip on my list", pr_green_flag:"Green flag in an outing buddy", pr_sunday:"My typical Sunday",
+  job:"Job", looking_for:"Here for", lf_friends:"New friends", lf_outings:"Going out", lf_travel:"Travel buddies", lf_dating:"Dating", availability:"Usually free", av_weekends:"Weekends", av_weeknights:"Weeknights", av_flexible:"Flexible", liked:"You liked", like_invite:"Like & invite", photos:"Photos", add_photo:"Add a photo", photo_note:"Demo photos: free stock images, people are fictional.", prompts:"Prompts", prompt_pick:"Prompt", prompt_answer:"Your answer", preview:"Preview my profile", my_photo_hint:"Up to 6 photos, stored on this device only.", remove:"Remove",
   welcome_back:"Hi {n}"
 },
 fr:{
@@ -326,7 +380,7 @@ fr:{
   dating:"Rencontres (facultatif)", dating_d:"Désactivé par défaut. L'amitié et les sorties restent le cœur de LINK.",
   visibility:"Visibilité du profil", vis_public:"Tous les membres", vis_verified:"Membres vérifiés seulement", vis_hidden:"Masqué",
   show_age:"Afficher mon âge", show_age_d:"Ta date de naissance complète n'est jamais affichée.",
-  app_lang:"Langue de l'app", brand:"Direction visuelle", brand_d:"Trois directions au choix. C'est Indira qui choisit la version finale.",
+  app_lang:"Langue de l'app", brand:"Direction visuelle", brand_d:"Quatre directions au choix. Afterglow mélange Midnight et les couleurs de l'affiche concert.",
   theme:"Apparence", theme_system:"Système", theme_light:"Clair", theme_dark:"Sombre",
   notif:"Notifications", n_invites:"Invitations", n_messages:"Messages", n_events:"Changements d'événement", n_tickets:"Billets", n_marketing:"Actus et offres",
   quiet:"Heures calmes", quiet_d:"Pas de notification entre {a} et {b}",
@@ -348,6 +402,8 @@ fr:{
   offline:"Tu es hors ligne. Affichage des données gardées sur cet appareil.",
   close:"Fermer", back:"Retour", cancel:"Annuler", years:"{n} ans", you:"Toi", today:"Aujourd'hui", tomorrow:"Demain",
   storage_note:"Tes données de démo restent uniquement dans ce navigateur.",
+  pr_ideal_night:"Ma soirée idéale", pr_never_no:"Je ne dis jamais non à", pr_best_concert:"Le meilleur concert de ma vie", pr_hidden_spot:"Un spot de ma ville à connaître", pr_looking_crew:"Je cherche du monde pour", pr_next_trip:"Mon prochain voyage", pr_green_flag:"Green flag chez un·e partenaire de sortie", pr_sunday:"Mon dimanche type",
+  job:"Métier", looking_for:"Ici pour", lf_friends:"Nouveaux amis", lf_outings:"Sortir", lf_travel:"Voyager à plusieurs", lf_dating:"Rencontres", availability:"Plutôt dispo", av_weekends:"Le week-end", av_weeknights:"En semaine le soir", av_flexible:"Flexible", liked:"Tu as aimé", like_invite:"Aimer et inviter", photos:"Photos", add_photo:"Ajouter une photo", photo_note:"Photos de démonstration : images libres de droits, personnes fictives.", prompts:"Questions", prompt_pick:"Question", prompt_answer:"Ta réponse", preview:"Voir mon profil", my_photo_hint:"Jusqu'à 6 photos, gardées sur cet appareil uniquement.", remove:"Retirer",
   welcome_back:"Salut {n}"
 },
 es:{
@@ -402,7 +458,7 @@ es:{
   dating:"Citas (opcional)", dating_d:"Desactivado por defecto. La amistad y los planes son lo esencial de LINK.",
   visibility:"Visibilidad del perfil", vis_public:"Todos los miembros", vis_verified:"Solo miembros verificados", vis_hidden:"Oculto",
   show_age:"Mostrar mi edad", show_age_d:"Tu fecha de nacimiento completa nunca se muestra.",
-  app_lang:"Idioma de la app", brand:"Dirección visual", brand_d:"Tres direcciones para elegir. Indira elige la final.",
+  app_lang:"Idioma de la app", brand:"Dirección visual", brand_d:"Cuatro direcciones para elegir. Afterglow mezcla Midnight con los colores del cartel del concierto.",
   theme:"Apariencia", theme_system:"Sistema", theme_light:"Claro", theme_dark:"Oscuro",
   notif:"Notificaciones", n_invites:"Invitaciones", n_messages:"Mensajes", n_events:"Cambios de evento", n_tickets:"Entradas", n_marketing:"Novedades y ofertas",
   quiet:"Horas de silencio", quiet_d:"Sin notificaciones entre {a} y {b}",
@@ -424,6 +480,8 @@ es:{
   offline:"Sin conexión. Mostrando los datos guardados en este dispositivo.",
   close:"Cerrar", back:"Volver", cancel:"Cancelar", years:"{n} años", you:"Tú", today:"Hoy", tomorrow:"Mañana",
   storage_note:"Tus datos de demo se quedan solo en este navegador.",
+  pr_ideal_night:"Mi noche ideal", pr_never_no:"Nunca digo que no a", pr_best_concert:"El mejor concierto de mi vida", pr_hidden_spot:"Un sitio de mi ciudad que debes conocer", pr_looking_crew:"Busco gente para", pr_next_trip:"Mi próximo viaje", pr_green_flag:"Señal verde en un compañero de planes", pr_sunday:"Mi domingo típico",
+  job:"Trabajo", looking_for:"Aquí para", lf_friends:"Nuevos amigos", lf_outings:"Salir", lf_travel:"Viajar en grupo", lf_dating:"Citas", availability:"Suele estar libre", av_weekends:"Fines de semana", av_weeknights:"Entre semana por la noche", av_flexible:"Flexible", liked:"Te gustó", like_invite:"Me gusta e invitar", photos:"Fotos", add_photo:"Añadir una foto", photo_note:"Fotos de demo: imágenes libres de derechos, personas ficticias.", prompts:"Preguntas", prompt_pick:"Pregunta", prompt_answer:"Tu respuesta", preview:"Ver mi perfil", my_photo_hint:"Hasta 6 fotos, guardadas solo en este dispositivo.", remove:"Quitar",
   welcome_back:"Hola {n}"
 },
 de:{
@@ -478,7 +536,7 @@ de:{
   dating:"Dating (optional)", dating_d:"Standardmäßig aus. Freundschaft und Unternehmungen stehen bei LINK im Mittelpunkt.",
   visibility:"Profil-Sichtbarkeit", vis_public:"Alle Mitglieder", vis_verified:"Nur verifizierte Mitglieder", vis_hidden:"Versteckt",
   show_age:"Mein Alter zeigen", show_age_d:"Dein vollständiges Geburtsdatum wird nie angezeigt.",
-  app_lang:"App-Sprache", brand:"Visuelle Richtung", brand_d:"Drei Richtungen zur Wahl. Indira wählt die finale.",
+  app_lang:"App-Sprache", brand:"Visuelle Richtung", brand_d:"Vier Richtungen zur Wahl. Afterglow mischt Midnight mit den Farben des Konzertplakats.",
   theme:"Darstellung", theme_system:"System", theme_light:"Hell", theme_dark:"Dunkel",
   notif:"Benachrichtigungen", n_invites:"Einladungen", n_messages:"Nachrichten", n_events:"Event-Änderungen", n_tickets:"Tickets", n_marketing:"News und Angebote",
   quiet:"Ruhezeiten", quiet_d:"Keine Push-Nachrichten zwischen {a} und {b}",
@@ -500,6 +558,8 @@ de:{
   offline:"Du bist offline. Angezeigt werden die auf diesem Gerät gespeicherten Daten.",
   close:"Schließen", back:"Zurück", cancel:"Abbrechen", years:"{n} J.", you:"Du", today:"Heute", tomorrow:"Morgen",
   storage_note:"Deine Demodaten bleiben nur in diesem Browser.",
+  pr_ideal_night:"Mein perfekter Abend", pr_never_no:"Ich sage nie nein zu", pr_best_concert:"Das beste Konzert meines Lebens", pr_hidden_spot:"Ein Ort in meiner Stadt, den du kennen solltest", pr_looking_crew:"Ich suche Leute, um", pr_next_trip:"Meine nächste Reise", pr_green_flag:"Green Flag bei Ausgeh-Buddys", pr_sunday:"Mein typischer Sonntag",
+  job:"Beruf", looking_for:"Hier für", lf_friends:"Neue Freunde", lf_outings:"Ausgehen", lf_travel:"Gemeinsam reisen", lf_dating:"Dating", availability:"Meist frei", av_weekends:"Am Wochenende", av_weeknights:"Unter der Woche abends", av_flexible:"Flexibel", liked:"Dir gefällt", like_invite:"Liken & einladen", photos:"Fotos", add_photo:"Foto hinzufügen", photo_note:"Demofotos: lizenzfreie Bilder, fiktive Personen.", prompts:"Fragen", prompt_pick:"Frage", prompt_answer:"Deine Antwort", preview:"Mein Profil ansehen", my_photo_hint:"Bis zu 6 Fotos, nur auf diesem Gerät gespeichert.", remove:"Entfernen",
   welcome_back:"Hallo {n}"
 },
 pt:{
@@ -554,7 +614,7 @@ pt:{
   dating:"Encontros (opcional)", dating_d:"Desligado por defeito. Amizade e programas são o centro da LINK.",
   visibility:"Visibilidade do perfil", vis_public:"Todos os membros", vis_verified:"Só membros verificados", vis_hidden:"Oculto",
   show_age:"Mostrar a minha idade", show_age_d:"A tua data de nascimento completa nunca é mostrada.",
-  app_lang:"Idioma da app", brand:"Direção visual", brand_d:"Três direções à escolha. A Indira escolhe a final.",
+  app_lang:"Idioma da app", brand:"Direção visual", brand_d:"Quatro direções à escolha. Afterglow mistura Midnight com as cores do cartaz do concerto.",
   theme:"Aparência", theme_system:"Sistema", theme_light:"Claro", theme_dark:"Escuro",
   notif:"Notificações", n_invites:"Convites", n_messages:"Mensagens", n_events:"Alterações de eventos", n_tickets:"Bilhetes", n_marketing:"Novidades e ofertas",
   quiet:"Horas de silêncio", quiet_d:"Sem notificações entre {a} e {b}",
@@ -576,6 +636,8 @@ pt:{
   offline:"Estás offline. A mostrar os dados guardados neste dispositivo.",
   close:"Fechar", back:"Voltar", cancel:"Cancelar", years:"{n} anos", you:"Tu", today:"Hoje", tomorrow:"Amanhã",
   storage_note:"Os teus dados de demo ficam só neste navegador.",
+  pr_ideal_night:"A minha noite ideal", pr_never_no:"Nunca digo não a", pr_best_concert:"O melhor concerto da minha vida", pr_hidden_spot:"Um sítio da minha cidade que tens de conhecer", pr_looking_crew:"Procuro pessoas para", pr_next_trip:"A minha próxima viagem", pr_green_flag:"Green flag num parceiro de saídas", pr_sunday:"O meu domingo típico",
+  job:"Profissão", looking_for:"Aqui para", lf_friends:"Novos amigos", lf_outings:"Sair", lf_travel:"Viajar em grupo", lf_dating:"Encontros", availability:"Normalmente livre", av_weekends:"Fins de semana", av_weeknights:"Dias de semana à noite", av_flexible:"Flexível", liked:"Gostaste de", like_invite:"Gostar e convidar", photos:"Fotos", add_photo:"Adicionar foto", photo_note:"Fotos de demo: imagens livres de direitos, pessoas fictícias.", prompts:"Perguntas", prompt_pick:"Pergunta", prompt_answer:"A tua resposta", preview:"Ver o meu perfil", my_photo_hint:"Até 6 fotos, guardadas só neste dispositivo.", remove:"Remover",
   welcome_back:"Olá {n}"
 },
 it:{
@@ -630,7 +692,7 @@ it:{
   dating:"Incontri (facoltativo)", dating_d:"Disattivato di default. Amicizia e uscite restano il cuore di LINK.",
   visibility:"Visibilità del profilo", vis_public:"Tutti i membri", vis_verified:"Solo membri verificati", vis_hidden:"Nascosto",
   show_age:"Mostra la mia età", show_age_d:"La data di nascita completa non viene mai mostrata.",
-  app_lang:"Lingua dell'app", brand:"Direzione visiva", brand_d:"Tre direzioni tra cui scegliere. Indira sceglie quella finale.",
+  app_lang:"Lingua dell'app", brand:"Direzione visiva", brand_d:"Quattro direzioni tra cui scegliere. Afterglow unisce Midnight ai colori del poster del concerto.",
   theme:"Aspetto", theme_system:"Sistema", theme_light:"Chiaro", theme_dark:"Scuro",
   notif:"Notifiche", n_invites:"Inviti", n_messages:"Messaggi", n_events:"Modifiche agli eventi", n_tickets:"Biglietti", n_marketing:"Novità e offerte",
   quiet:"Ore di silenzio", quiet_d:"Nessuna notifica tra le {a} e le {b}",
@@ -652,14 +714,16 @@ it:{
   offline:"Sei offline. Mostro i dati salvati su questo dispositivo.",
   close:"Chiudi", back:"Indietro", cancel:"Annulla", years:"{n} anni", you:"Tu", today:"Oggi", tomorrow:"Domani",
   storage_note:"I tuoi dati demo restano solo in questo browser.",
+  pr_ideal_night:"La mia serata ideale", pr_never_no:"Non dico mai di no a", pr_best_concert:"Il concerto più bello della mia vita", pr_hidden_spot:"Un posto della mia città da conoscere", pr_looking_crew:"Cerco persone per", pr_next_trip:"Il mio prossimo viaggio", pr_green_flag:"Green flag in un compagno di uscite", pr_sunday:"La mia domenica tipo",
+  job:"Lavoro", looking_for:"Qui per", lf_friends:"Nuovi amici", lf_outings:"Uscire", lf_travel:"Viaggiare insieme", lf_dating:"Incontri", availability:"Di solito libero", av_weekends:"Nel weekend", av_weeknights:"In settimana la sera", av_flexible:"Flessibile", liked:"Ti è piaciuto", like_invite:"Mi piace e invita", photos:"Foto", add_photo:"Aggiungi una foto", photo_note:"Foto demo: immagini libere da diritti, persone fittizie.", prompts:"Domande", prompt_pick:"Domanda", prompt_answer:"La tua risposta", preview:"Vedi il mio profilo", my_photo_hint:"Fino a 6 foto, salvate solo su questo dispositivo.", remove:"Rimuovi",
   welcome_back:"Ciao {n}"
 }
 };
 
 /* Long-form "what works" panel, per language (fallback en). */
 const ABOUT = {
-  fr:[["ok","Navigation, 6 langues, 3 directions visuelles, mode clair/sombre"],["ok","13 villes prioritaires + n'importe quelle autre ville (liste extensible)"],["ok","Découverte locale, internationale et personnalisée, avec la raison de chaque recommandation"],["ok","Création de sorties publiques (modération) et privées, gardées sur ton appareil"],["ok","Invitations et messages bloqués tant que l'identité n'est pas vérifiée"],["ok","Blocage, signalement, export des données, visibilité, heures calmes"],["test","Vérification d'identité : simulée (prestataire KYC à contracter)"],["test","Billetterie : parcours complet en mode test, aucun vrai paiement ni vrai billet"],["test","Événements et profils : fictifs, marqués comme démo"],["bad","Comptes, base de données serveur, notifications push, stores : à brancher (voir le dossier)"]],
-  en:[["ok","Navigation, 6 languages, 3 visual directions, light/dark mode"],["ok","13 priority cities + any other city (extensible list)"],["ok","Local, international and personalised discovery, with the reason for each pick"],["ok","Public (moderated) and private outings, saved on your device"],["ok","Invitations and messages locked until identity is verified"],["ok","Block, report, data export, visibility, quiet hours"],["test","ID verification: simulated (KYC provider to contract)"],["test","Ticketing: full flow in test mode, no real payment or ticket"],["test","Events and profiles: fictional, marked as demo"],["bad","Accounts, server database, push notifications, app stores: to connect (see the brief)"]]
+  fr:[["ok","Navigation, 6 langues, 4 directions visuelles, mode clair/sombre"],["ok","13 villes prioritaires + n'importe quelle autre ville (liste extensible)"],["ok","Découverte locale, internationale et personnalisée, avec la raison de chaque recommandation"],["ok","Création de sorties publiques (modération) et privées, gardées sur ton appareil"],["ok","Invitations et messages bloqués tant que l'identité n'est pas vérifiée"],["ok","Blocage, signalement, export des données, visibilité, heures calmes"],["test","Vérification d'identité : simulée (prestataire KYC à contracter)"],["test","Billetterie : parcours complet en mode test, aucun vrai paiement ni vrai billet"],["test","Événements et profils : fictifs, marqués comme démo"],["bad","Comptes, base de données serveur, notifications push, stores : à brancher (voir le dossier)"]],
+  en:[["ok","Navigation, 6 languages, 4 visual directions, light/dark mode"],["ok","13 priority cities + any other city (extensible list)"],["ok","Local, international and personalised discovery, with the reason for each pick"],["ok","Public (moderated) and private outings, saved on your device"],["ok","Invitations and messages locked until identity is verified"],["ok","Block, report, data export, visibility, quiet hours"],["test","ID verification: simulated (KYC provider to contract)"],["test","Ticketing: full flow in test mode, no real payment or ticket"],["test","Events and profiles: fictional, marked as demo"],["bad","Accounts, server database, push notifications, app stores: to connect (see the brief)"]]
 };
 
 /* LINK prototype — DEMO DATA ONLY. Every event, venue and person below is fictional.
@@ -787,6 +851,89 @@ const SEED_INVITES = [
   {id:"i2", dir:"in", from:"p7", event:"e22", note:{en:"Sunset at Graça this week?", fr:"Coucher de soleil à Graça cette semaine ?"}, status:"pending", d:1}
 ];
 
+/* LINK prototype — richer demo profiles (Hinge-style): photos, prompts, vitals.
+   DEMO ONLY: names and details are fictional; photos are free stock images from Unsplash, loaded at view time
+   (if an image can't load, a coloured tile with the initial is shown instead). */
+const U = (id, w=720, h=900) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&crop=faces&w=${w}&h=${h}&q=70`;
+const LIFESTYLE = {
+  concerts:["1501386761578-eac5c94b800a","1470229722913-7c0e2dbbafd3","1493225457124-a3eb161ffa5f"],
+  festivals:["1533174072545-7a4b6ad7a6c3","1459749411175-04bf5292ceea"],
+  clubs:["1514525253161-7a46d19cd819","1566737236500-c8ac43014a67"],
+  rooftops:["1514362545857-3bc16c4c7d1b","1470337458703-46ad1756a187"],
+  culture:["1554907984-15263bfd63bd","1518998053901-5348d3961a04"],
+  activities:["1551632811-561732d1e306","1528605248644-14dd04022da1"],
+  sports:["1461896836934-ffe607ba8211","1517649763962-0c623066013b"],
+  trips:["1507525428034-b723cf961d3e","1469854523086-cc02fe5d8800"],
+  food:["1504674900247-0877df9cc836","1414235077428-338989a2e8c0"]
+};
+const PROMPT_KEYS = ["pr_ideal_night","pr_never_no","pr_best_concert","pr_hidden_spot","pr_looking_crew","pr_next_trip","pr_green_flag","pr_sunday"];
+
+const PROFILE_EXTRA = {
+  p1:{portrait:"1494790108377-be9c29b29330", job:{en:"Graphic designer",fr:"Graphiste"}, lf:["friends","outings"], av:"weeknights",
+    prompts:[["pr_best_concert",{en:"A tiny jazz club in Montmartre, 40 people, the band played until 2am.",fr:"Un mini club de jazz à Montmartre, 40 personnes, le groupe a joué jusqu'à 2 h."}],
+             ["pr_looking_crew",{en:"go to gigs on a Tuesday without overthinking it.",fr:"aller à des concerts un mardi sans se prendre la tête."}],
+             ["pr_hidden_spot",{en:"The rooftop above the Belleville bookshop. Ask me.",fr:"Le toit au-dessus de la librairie de Belleville. Demande-moi."}]]},
+  p2:{portrait:"1500648767791-00dcc994a43e", job:{en:"Sound engineer",fr:"Ingé son"}, lf:["friends","outings","travel"], av:"weekends",
+    prompts:[["pr_ideal_night",{en:"Dinner at 9, club at 1, croissant at 6.",fr:"Dîner à 21 h, club à 1 h, croissant à 6 h."}],
+             ["pr_next_trip",{en:"Ibiza in June — still need a crew.",fr:"Ibiza en juin — il me manque la team."}],
+             ["pr_green_flag",{en:"Shares the playlist before the road trip.",fr:"Partage la playlist avant le road trip."}]]},
+  p3:{portrait:"1517841905240-472988babdf9", job:{en:"Physio",fr:"Kiné"}, lf:["friends","outings"], av:"flexible",
+    prompts:[["pr_sunday",{en:"Climbing gym, then the longest brunch in Paris.",fr:"Salle d'escalade, puis le brunch le plus long de Paris."}],
+             ["pr_never_no",{en:"A spontaneous tasting menu.",fr:"Un menu dégustation improvisé."}],
+             ["pr_looking_crew",{en:"try every bouldering gym in the city.",fr:"tester toutes les salles de bloc de la ville."}]]},
+  p4:{portrait:"1507003211169-0a1dd7228f2d", job:{en:"Product manager",fr:"Product manager"}, lf:["friends","outings"], av:"weekends",
+    prompts:[["pr_ideal_night",{en:"Pub quiz, then whatever happens.",fr:"Quiz au pub, puis advienne que pourra."}],
+             ["pr_best_concert",{en:"Underworld at Brixton. Still recovering.",fr:"Underworld à Brixton. Je m'en remets encore."}],
+             ["pr_next_trip",{en:"Berlin for a long weekend of techno.",fr:"Berlin pour un long week-end techno."}]]},
+  p5:{portrait:"1524504388940-b1c1722653e1", job:{en:"Architect",fr:"Architecte"}, lf:["friends","outings","dating"], av:"weeknights",
+    prompts:[["pr_hidden_spot",{en:"A terrace in Gràcia with the best vermouth.",fr:"Une terrasse à Gràcia avec le meilleur vermouth."}],
+             ["pr_green_flag",{en:"Knows when to stay for one more.",fr:"Sait quand rester pour un dernier verre."}],
+             ["pr_next_trip",{en:"Milan design week.",fr:"La design week de Milan."}]]},
+  p6:{portrait:"1506794778202-cad84cf45f1d", job:{en:"Museum curator",fr:"Conservateur de musée"}, lf:["friends","outings"], av:"weekends",
+    prompts:[["pr_ideal_night",{en:"Late opening at a museum, then techno until sunrise.",fr:"Nocturne au musée, puis techno jusqu'au lever du soleil."}],
+             ["pr_never_no",{en:"A guided tour nobody else signed up for.",fr:"Une visite guidée où personne d'autre ne s'est inscrit."}],
+             ["pr_looking_crew",{en:"discover Berlin's courtyards.",fr:"découvrir les arrière-cours de Berlin."}]]},
+  p7:{portrait:"1544005313-94ddf0286df2", job:{en:"Photographer",fr:"Photographe"}, lf:["friends","outings","travel"], av:"flexible",
+    prompts:[["pr_hidden_spot",{en:"Miradouro da Graça at 6:40pm in October.",fr:"Le Miradouro da Graça à 18 h 40 en octobre."}],
+             ["pr_next_trip",{en:"Paris in two weeks — show me your city?",fr:"Paris dans deux semaines — tu me fais visiter ?"}],
+             ["pr_green_flag",{en:"Lets me stop every 5 minutes for photos.",fr:"Me laisse m'arrêter toutes les 5 minutes pour une photo."}]]},
+  p8:{portrait:"1519085360753-af0119f7cbe7", job:{en:"Chef",fr:"Chef cuisinier"}, lf:["friends","outings"], av:"weeknights",
+    prompts:[["pr_never_no",{en:"Seconds of anything with guanciale.",fr:"Une deuxième assiette de n'importe quoi avec du guanciale."}],
+             ["pr_ideal_night",{en:"Long table, ten strangers, one jazz record.",fr:"Une grande tablée, dix inconnus, un vinyle de jazz."}],
+             ["pr_sunday",{en:"Market at Campo de' Fiori, then I cook for everyone.",fr:"Marché du Campo de' Fiori, puis je cuisine pour tout le monde."}]]},
+  p9:{portrait:"1438761681033-6461ffad8d80", job:{en:"UX researcher",fr:"UX researcher"}, lf:["friends","travel"], av:"weekends",
+    prompts:[["pr_sunday",{en:"Kayak on the canals before the tourists wake up.",fr:"Kayak sur les canaux avant que les touristes se lèvent."}],
+             ["pr_next_trip",{en:"Barcelona, beach volley included.",fr:"Barcelone, beach-volley compris."}],
+             ["pr_looking_crew",{en:"go to open-air festivals all summer.",fr:"faire tous les festivals open-air de l'été."}]]},
+  p10:{portrait:"1539571696357-5a69c17a67c6", job:{en:"Boat skipper",fr:"Skipper"}, lf:["friends","outings","travel"], av:"flexible",
+    prompts:[["pr_hidden_spot",{en:"A beach with no name, 20 min by boat.",fr:"Une plage sans nom, à 20 min en bateau."}],
+             ["pr_ideal_night",{en:"Sunset on the water, then dinner in Ano Mera.",fr:"Coucher de soleil en mer, puis dîner à Ano Mera."}],
+             ["pr_green_flag",{en:"Doesn't get seasick. Bonus if they bring snacks.",fr:"N'a pas le mal de mer. Bonus si on ramène à grignoter."}]]},
+  p11:{portrait:"1531123897727-8f129e1688ce", job:{en:"Music journalist",fr:"Journaliste musique"}, lf:["friends","outings"], av:"weeknights",
+    prompts:[["pr_best_concert",{en:"A surprise set in a Brooklyn warehouse.",fr:"Un set surprise dans un entrepôt de Brooklyn."}],
+             ["pr_never_no",{en:"A 7am run if there's coffee after.",fr:"Un footing à 7 h s'il y a un café après."}],
+             ["pr_next_trip",{en:"London in December for gigs.",fr:"Londres en décembre pour des concerts."}]]},
+  p12:{portrait:"1492562080023-ab3db95bfbce", job:{en:"Brewer",fr:"Brasseur"}, lf:["friends","outings"], av:"weeknights",
+    prompts:[["pr_ideal_night",{en:"Jam session in a cellar, my guitar, your voice.",fr:"Jam dans une cave, ma guitare, ta voix."}],
+             ["pr_hidden_spot",{en:"The fries stand nobody posts about.",fr:"La baraque à frites dont personne ne parle."}],
+             ["pr_sunday",{en:"Flea market at Jeu de Balle.",fr:"Marché aux puces du Jeu de Balle."}]]},
+  p13:{portrait:"1529626455594-4ff0802cfb7e", job:{en:"Event planner",fr:"Organisatrice d'événements"}, lf:["friends","outings","travel"], av:"weekends",
+    prompts:[["pr_never_no",{en:"One more tapas bar.",fr:"Un bar à tapas de plus."}],
+             ["pr_next_trip",{en:"Paris — I want the bakery tour.",fr:"Paris — je veux la tournée des boulangeries."}],
+             ["pr_looking_crew",{en:"watch the derby with real fans.",fr:"regarder le derby avec de vrais supporters."}]]},
+  p14:{portrait:"1488426862026-3ee34a7d66df", job:{en:"Fashion buyer",fr:"Acheteuse mode"}, lf:["friends","outings"], av:"flexible",
+    prompts:[["pr_hidden_spot",{en:"An aperitivo bar on the Navigli with live vinyl.",fr:"Un bar à apéritivo sur les Navigli avec vinyles en live."}],
+             ["pr_ideal_night",{en:"Gallery opening, rooftop, house music.",fr:"Vernissage, rooftop, house music."}],
+             ["pr_green_flag",{en:"Always on time for the aperitivo.",fr:"Toujours à l'heure pour l'apéritivo."}]]}
+};
+
+for (const p of PEOPLE) {
+  const x = PROFILE_EXTRA[p.id]; if (!x) continue;
+  p.photos = [U(x.portrait)].concat(p.interests.slice(0,2).map((cat,i)=>{ const pool=LIFESTYLE[cat]||LIFESTYLE.activities; return U(pool[i%pool.length], 720, 720); }));
+  p.photoCats = ["portrait"].concat(p.interests.slice(0,2));
+  p.job = x.job; p.lookingFor = x.lf; p.availability = x.av; p.prompts = x.prompts.map(([q,a])=>({q, a}));
+}
+
 /* LINK prototype — application logic (vanilla JS, no build step).
    State lives in memory and is mirrored to localStorage on this device only. */
 (function(){
@@ -795,10 +942,12 @@ const SEED_INVITES = [
 /* ---------- state ---------- */
 const STORE_KEY = "link-proto-v1";
 const DEFAULT_STATE = () => ({
-  v:1, onboarded:false, lang:guessLang(), brand:"fiesta", theme:"system",
+  v:1, onboarded:false, lang:guessLang(), brand:"afterglow", afterglowSeen:true, theme:"system",
   tab:"explore", city:"paris", mode:"local", cat:"all", when:"all", budget:"any",
   customCities:[], peopleAll:false, actTab:"invites", inviteDir:"in",
-  profile:{name:"", bio:"", city:"paris", langs:["fr"], interests:["concerts","rooftops"], music:["House"], trips:[], dating:false, showAge:true, visibility:"public"},
+  profile:{name:"", bio:"", city:"paris", langs:["fr"], interests:["concerts","rooftops"], music:["House"], trips:[], dating:false, showAge:true, visibility:"public",
+    photos:[], job:"", lookingFor:["friends","outings"], availability:"weekends",
+    prompts:[{q:"pr_ideal_night",a:""},{q:"pr_never_no",a:""},{q:"pr_hidden_spot",a:""}]},
   verif:"none", outings:[], invites:SEED_INVITES.map(i=>({...i})), convos:[], tickets:[], blocked:[], reports:[], joined:[],
   notif:{invites:true, messages:true, events:true, tickets:true, marketing:false, quietFrom:"23:00", quietTo:"08:00"}
 });
@@ -809,7 +958,15 @@ let S = load();
 function load(){
   try{
     const raw = localStorage.getItem(STORE_KEY);
-    if(raw){ const s = JSON.parse(raw); if(s && s.v===1) return Object.assign(DEFAULT_STATE(), s); }
+    if(raw){
+      const s = JSON.parse(raw);
+      if(s && s.v===1){
+        const d = DEFAULT_STATE(); const m = Object.assign(d, s);
+        m.profile = Object.assign(DEFAULT_STATE().profile, s.profile||{});
+        if(!s.afterglowSeen){ m.brand = "afterglow"; m.afterglowSeen = true; }   // new default look after Indira's feedback
+        return m;
+      }
+    }
   }catch(e){}
   return DEFAULT_STATE();
 }
@@ -991,7 +1148,23 @@ function renderExplore(){
     <div class="row" style="justify-content:center"><button class="btn" data-action="tab" data-v="create">${t("create_first")}</button><button class="btn ghost" data-action="resetFilters">${t("reset_filters")}</button></div></div>`}</div>`;
 }
 
-function avatar(p, lg){ return `<div class="avatar${lg?" lg":""}" style="background:linear-gradient(135deg, ${p.color}, ${p.color}aa)" aria-hidden="true">${esc(p.name[0])}</div>`; }
+function photo(url, color, initial, cls, alt){
+  return `<div class="ph ${cls||""}" style="background:linear-gradient(135deg, ${color}, ${color}99)"><span aria-hidden="true">${esc(initial)}</span>${url?`<img src="${esc(url)}" alt="${esc(alt||"")}" loading="lazy" referrerpolicy="no-referrer">`:""}</div>`;
+}
+function avatar(p, lg){ return photo(p.photos&&p.photos[0], p.color||"#FF4D7E", (p.name||"?")[0], "avatar"+(lg?" lg":""), ""); }
+function meAsPerson(){
+  const P = S.profile;
+  return {id:"me", name:P.name||t("you"), age:null, city:P.city, langs:P.langs, interests:P.interests, music:P.music, verified:verified(), color:"#FF4D7E",
+    bio:{en:P.bio, fr:P.bio}, trips:P.trips.map(tr=>({city:tr.city})), photos:P.photos, job:P.job?{en:P.job}:null, lookingFor:P.lookingFor,
+    availability:P.availability, prompts:P.prompts.filter(x=>x.a&&x.a.trim()).map(x=>({q:x.q, a:{en:x.a}}))};
+}
+const LIKE_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 4.5 6.7 4.5c2.1 0 3.6 1.1 4.3 2.4h2c.7-1.3 2.2-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.2C19.5 16.4 12 21 12 21z"/></svg>';
+const VI = {
+  job:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2"/></svg>',
+  lf:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>',
+  av:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  music:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>'
+};
 function renderPeople(){
   const list = visiblePeople();
   const city = cityById(S.city);
@@ -1001,12 +1174,13 @@ function renderPeople(){
   <div class="seg" role="group"><button data-action="peopleAll" data-v="0" aria-pressed="${!S.peopleAll}">${esc(t("people_filter_city",{c:city.name}))}</button><button data-action="peopleAll" data-v="1" aria-pressed="${S.peopleAll}">${t("people_all")}</button></div>
   ${verified()?"":lockBanner()}
   <div class="list">${list.length? list.map(({p,shared})=>`
-    <article class="card"><button class="event-card person" data-action="person" data-id="${p.id}">
-      ${avatar(p)}
-      <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1">
-        <div class="row" style="justify-content:space-between"><h3>${esc(p.name)}, ${esc(t("years",{n:p.age}))}</h3>${p.verified?`<span class="status ok" title="${t("verified_badge")}">${I.shield.replace('<svg','<svg width="13" height="13"')}</span>`:""}</div>
-        <p class="small muted">${esc(cityById(p.city).name)} · ${p.langs.map(l=>LANG_NAMES[l]||l).join(", ")}</p>
-        <p class="small">${esc(loc(p.bio))}</p>
+    <article class="card"><button class="event-card" data-action="person" data-id="${p.id}" aria-label="${esc(p.name)}">
+      <div class="pcard-photo">${photo(p.photos&&p.photos[0], p.color, p.name[0], "", "")}
+        ${p.verified?`<span class="vbadge">${I.shield}${t("verified_badge").replace(/\s*\(.*\)/,"")}</span>`:""}
+        <div class="overlay"><h3>${esc(p.name)}, ${esc(t("years",{n:p.age}))}</h3><span class="small">${esc(cityById(p.city).name)}${p.job?" · "+esc(loc(p.job)):""}</span></div>
+      </div>
+      <div class="card-body">
+        ${p.prompts&&p.prompts[0]?`<p class="small muted" style="font-weight:700">${esc(t(p.prompts[0].q))}</p><p style="font-family:var(--font-display);font-weight:700;font-size:17px;line-height:1.3">${esc(loc(p.prompts[0].a))}</p>`:`<p class="small">${esc(loc(p.bio))}</p>`}
         <div class="tags">${p.interests.map(i=>`<span class="tag${shared.includes(i)?" match":""}">${esc(t("cat_"+i))}</span>`).join("")}</div>
         ${p.trips.filter(tr=>tr.city===S.city && p.city!==S.city).map(tr=>`<p class="small" style="color:var(--accent-3);font-weight:700">${esc(t("p_trip",{x:cityById(tr.city).name}))}</p>`).join("")}
       </div></button></article>`).join("") : `<div class="empty"><h3>${t("no_results")}</h3><button class="btn ghost" data-action="peopleAll" data-v="1">${t("people_all")}</button></div>`}</div>`;
@@ -1116,6 +1290,7 @@ function toggleRow(id, label, desc, checked){
 }
 function brandOptions(){
   const B = [
+    ["afterglow","Afterglow","#FF6A4D","#F0367F","#9B2FD6","Unbounded"],
     ["fiesta","Fiesta","#FF5A4E","#FFC233","#0E9F9A","Bricolage Grotesque"],
     ["midnight","Midnight Club","#140F2E","#FF3DA0","#3FDFFF","Unbounded"],
     ["riviera","Riviera","#1559D6","#F2D635","#19B58C","Syne"]
@@ -1127,16 +1302,36 @@ function brandOptions(){
 function renderProfile(){
   const P = S.profile;
   const vs = {none:["muted","verif_none"],pending:["warn","verif_pending"],ok:["ok","verif_ok"],failed:["bad","verif_failed"],manual:["warn","v_manual"]}[S.verif];
-  const me = {name:P.name||"?", color:"#FF5A4E"};
+  const me = {name:P.name||"?", color:"#FF4D7E", photos:P.photos};
   const pendingMod = S.outings.filter(o=>o.type==="public"&&o.status==="pending");
   return `
   <div class="row" style="gap:14px">${avatar(me,true)}<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"><h1>${esc(P.name||t("tab_profile"))}</h1><span class="status ${vs[0]}">${t("verif_status")} : ${t(vs[1])}</span></div></div>
   ${S.verif!=="ok"?`<button class="btn block" data-action="verify">${I.shield.replace('<svg','<svg width="20" height="20"')}${t("verify_now")}</button>`:""}
 
+  <button class="btn block secondary" data-action="preview">${t("preview")}</button>
+
+  <section class="card"><div class="card-body">
+    <h2>${t("photos")}</h2><p class="small muted">${t("my_photo_hint")}</p>
+    <div class="photo-grid">
+      ${P.photos.map((src,i)=>`<div class="slot"><img src="${esc(src)}" alt="${esc(t("photos"))} ${i+1}"><button class="rm" data-action="photoDel" data-v="${i}" aria-label="${t("remove")}">${I.x}</button></div>`).join("")}
+      ${P.photos.length<6?`<label class="slot" for="photoInput" aria-label="${t("add_photo")}">+<input id="photoInput" type="file" accept="image/*" class="sr"></label>`:""}
+    </div>
+  </div></section>
+
+  <section class="card"><div class="card-body">
+    <h2>${t("prompts")}</h2>
+    ${P.prompts.map((pr,i)=>`<div class="field"><label for="pq_${i}">${t("prompt_pick")} ${i+1}</label>
+      <select id="pq_${i}">${PROMPT_KEYS.map(k=>`<option value="${k}"${pr.q===k?" selected":""}>${esc(t(k))}</option>`).join("")}</select>
+      <label class="sr" for="pa_${i}">${t("prompt_answer")}</label><textarea id="pa_${i}" maxlength="150" placeholder="${esc(t("prompt_answer"))}">${esc(pr.a)}</textarea></div>`).join("")}
+  </div></section>
+
   <section class="card"><div class="card-body">
     <h2>${t("edit_profile")}</h2>
     <div class="field"><label for="p_name">${t("name")}</label><input id="p_name" type="text" maxlength="40" value="${esc(P.name)}"></div>
+    <div class="field"><label for="p_job">${t("job")}</label><input id="p_job" type="text" maxlength="60" value="${esc(P.job)}"></div>
     <div class="field"><label for="p_bio">${t("bio")}</label><textarea id="p_bio" maxlength="300">${esc(P.bio)}</textarea></div>
+    <div class="field"><span class="label">${t("looking_for")}</span><div class="tags">${["friends","outings","travel"].concat(P.dating?["dating"]:[]).map(k=>`<button class="chip" data-action="pLf" data-v="${k}" aria-pressed="${P.lookingFor.includes(k)}">${t("lf_"+k)}</button>`).join("")}</div></div>
+    <div class="field"><span class="label">${t("availability")}</span><div class="seg">${["weekends","weeknights","flexible"].map(k=>`<button data-action="pAv" data-v="${k}" aria-pressed="${P.availability===k}">${t("av_"+k)}</button>`).join("")}</div></div>
     <div class="field"><label for="p_city">${t("city_home")}</label><select id="p_city">${cityOptions(P.city)}</select></div>
     <div class="field"><span class="label">${t("languages")}</span><div class="tags">${Object.keys(LANG_NAMES).map(l=>`<button class="chip" data-action="pLang" data-v="${l}" aria-pressed="${P.langs.includes(l)}">${LANG_NAMES[l]}</button>`).join("")}</div></div>
     <div class="field"><span class="label">${t("interests")}</span><div class="tags">${INTERESTS.map(i=>`<button class="chip" data-action="pInt" data-v="${i}" aria-pressed="${P.interests.includes(i)}">${esc(t("cat_"+i))}</button>`).join("")}</div></div>
@@ -1279,27 +1474,50 @@ function openEvent(id){
     <div class="grid2"><button class="btn secondary" data-action="join" data-id="${ev.id}">${t("join")}</button><button class="btn secondary" data-action="inviteFromEvent" data-id="${ev.id}">${t("invite")}</button></div>`);
 }
 
+/* Hinge-style profile: photos and prompts interleaved, a vitals card, and a like button on each item
+   that opens an invitation quoting what was liked. Also used to preview your own profile (id "me"). */
 function openPerson(id){
-  const p = person(id); if(!p) return;
+  const p = id==="me" ? meAsPerson() : person(id); if(!p) return;
+  const self = id==="me";
   const shared = p.interests.filter(i=>S.profile.interests.includes(i));
+  const photos = p.photos||[]; const prompts = p.prompts||[];
+  const likeBtn = (label)=> self ? "" : `<button class="like" data-action="like" data-id="${p.id}" data-v="${esc(label)}" aria-label="${esc(t("like_invite"))}">${LIKE_ICON}</button>`;
+  const hPhoto = (i)=> photos[i] ? `<div class="h-photo${i>0?" sq":""}">${photo(photos[i], p.color, p.name[0], "", p.name)}${likeBtn(t("photos")+" "+(i+1))}</div>` : "";
+  const hPrompt = (i)=> prompts[i] ? `<div class="prompt-card"><span class="q">${esc(t(prompts[i].q))}</span><span class="a">${esc(loc(prompts[i].a))}</span>${likeBtn(t(prompts[i].q)+" — "+loc(prompts[i].a))}</div>` : "";
+  const lf = (p.lookingFor||[]).map(k=>t("lf_"+k)).join(", ");
+  const vitals = `<div class="vitals">
+    <div class="vscroll">${p.age&&(!self)?`<span>${esc(t("years",{n:p.age}))}</span>`:""}<span>${I.pin.replace('<svg','<svg width="16" height="16"')}${esc(cityById(p.city).name)}</span><span>${esc(p.langs.map(l=>LANG_NAMES[l]||l).join(" · "))}</span></div>
+    ${p.job?`<div class="vrow">${VI.job}<span>${esc(loc(p.job))}</span></div>`:""}
+    ${lf?`<div class="vrow">${VI.lf}<span><b>${t("looking_for")}</b> · ${esc(lf)}</span></div>`:""}
+    ${p.availability?`<div class="vrow">${VI.av}<span><b>${t("availability")}</b> · ${esc(t("av_"+p.availability))}</span></div>`:""}
+    ${p.music&&p.music.length?`<div class="vrow">${VI.music}<span>${esc(p.music.join(", "))}</span></div>`:""}
+    <div class="vrow">${I.shield}<span>${p.verified?t("verified_badge"):t("not_verified")}</span></div>
+  </div>`;
   openSheet(`${sheetHead(p.name)}
-    <div class="row" style="gap:14px">${avatar(p,true)}<div style="display:flex;flex-direction:column;gap:4px"><h2>${esc(p.name)}, ${esc(t("years",{n:p.age}))}</h2><p class="muted">${esc(cityById(p.city).name)}</p>${p.verified?`<span class="status ok">${t("verified_badge")}</span>`:`<span class="status muted">${t("not_verified")}</span>`}</div></div>
-    <p>${esc(loc(p.bio))}</p>
-    <div class="field"><span class="label">${t("interests")}</span><div class="tags">${p.interests.map(i=>`<span class="tag${shared.includes(i)?" match":""}">${esc(t("cat_"+i))}</span>`).join("")}</div></div>
-    <div class="field"><span class="label">${t("music")}</span><div class="tags">${p.music.map(m=>`<span class="tag">${esc(m)}</span>`).join("")}</div></div>
-    <div class="field"><span class="label">${t("languages")}</span><p>${p.langs.map(l=>LANG_NAMES[l]||l).join(", ")}</p></div>
-    ${p.trips.length?`<div class="field"><span class="label">${t("trips")}</span><p>${p.trips.map(tr=>esc(cityById(tr.city).name)).join(", ")}</p></div>`:""}
+    <div class="hinge">
+      ${hPhoto(0)}${hPrompt(0)}${vitals}${hPhoto(1)}${hPrompt(1)}
+      <div class="card"><div class="card-body"><span class="label">${t("interests")}</span><div class="tags">${p.interests.map(i=>`<span class="tag${shared.includes(i)&&!self?" match":""}">${esc(t("cat_"+i))}</span>`).join("")}</div>
+        ${loc(p.bio)?`<p>${esc(loc(p.bio))}</p>`:""}
+        ${p.trips.length?`<p class="small" style="color:var(--accent-3);font-weight:700">${p.trips.map(tr=>esc(t("p_trip",{x:cityById(tr.city).name}))).join(" · ")}</p>`:""}</div></div>
+      ${hPhoto(2)}${hPrompt(2)}
+      ${photos.slice(3).map((_,j)=>hPhoto(3+j)).join("")}
+      ${!self && photos.length && photos[0].includes("unsplash")?`<p class="small muted">${t("photo_note")}</p>`:""}
+    </div>
+    ${self?`<button class="btn block secondary" data-action="close">${t("close")}</button>`:`
     <button class="btn block" data-action="invitePerson" data-id="${p.id}">${verified()?"":I.lock.replace('<svg','<svg width="18" height="18"')}${esc(t("invite_to",{n:p.name}))}</button>
-    <div class="grid2"><button class="btn ghost" data-action="block" data-id="${p.id}">${t("block")}</button><button class="btn danger" data-action="report" data-id="${p.id}">${t("report")}</button></div>`);
+    <div class="grid2"><button class="btn ghost" data-action="block" data-id="${p.id}">${t("block")}</button><button class="btn danger" data-action="report" data-id="${p.id}">${t("report")}</button></div>`}`);
 }
 
 function requireVerified(){ if(verified()) return true; openVerify(); return false; }
-function openInvite(pid, presetEvent){
+let likedNote = "";
+function openInvite(pid, presetEvent, liked){
   if(!requireVerified()) return;
   const p = person(pid);
+  likedNote = liked || "";
   const events = allEvents().filter(e=>dayOffset(e)>=0).sort((a,b)=>(a.city===p.city?-1:1)-(b.city===p.city?-1:1));
   const priv = S.outings.filter(o=>o.type==="private");
   openSheet(`${sheetHead(t("invite_to",{n:p.name}))}
+    ${likedNote?`<div class="liked-box"><b>${t("liked")}</b> : ${esc(likedNote)}</div>`:""}
     <div class="field"><label for="inv_ev">${t("invite_pick")}</label><select id="inv_ev">
       ${priv.map(o=>`<option value="${o.id}">🔒 ${esc(o.title)} · ${esc(cityById(o.city).name)}</option>`).join("")}
       ${events.map(e=>`<option value="${e.id}"${e.id===presetEvent?" selected":""}>${esc(e.title)} · ${esc(cityById(e.city).name)} · ${esc(fmtDay(evDate(e)))}</option>`).join("")}</select></div>
@@ -1473,7 +1691,10 @@ const A = {
     const sentToday = S.invites.filter(i=>i.dir==="out" && new Date(i.created).toDateString()===today).length;
     if(sentToday>=10){ toast(t("invite_limit")); return; }
     const pid=el.dataset.id;
-    S.invites.unshift({id:uid("i"), dir:"out", to:pid, event:document.getElementById("inv_ev").value, note:document.getElementById("inv_note").value.trim(), status:"pending", d:3, created:new Date().toISOString()});
+    const typed = document.getElementById("inv_note").value.trim();
+    const note = likedNote ? `${t("liked")} « ${likedNote} »${typed?" — "+typed:""}` : typed;
+    S.invites.unshift({id:uid("i"), dir:"out", to:pid, event:document.getElementById("inv_ev").value, note, status:"pending", d:3, created:new Date().toISOString()});
+    likedNote = "";
     save(); closeSheet(); render(true); toast(t("invite_sent",{n:person(pid).name}));
   },
   inviteAccept(el){
@@ -1500,7 +1721,18 @@ const A = {
   pLang(el){ toggleIn(S.profile.langs, el.dataset.v); save(); render(true); },
   pInt(el){ toggleIn(S.profile.interests, el.dataset.v); save(); render(true); },
   pMusic(el){ toggleIn(S.profile.music, el.dataset.v); save(); render(true); },
-  saveProfile(){ S.profile.name=document.getElementById("p_name").value.trim().slice(0,40); S.profile.bio=document.getElementById("p_bio").value.trim(); S.profile.city=document.getElementById("p_city").value; save(); render(true); toast(t("saved")); },
+  saveProfile(){
+    const g = id=>document.getElementById(id);
+    S.profile.name=g("p_name").value.trim().slice(0,40); S.profile.bio=g("p_bio").value.trim(); S.profile.city=g("p_city").value;
+    S.profile.job=g("p_job").value.trim().slice(0,60);
+    S.profile.prompts = S.profile.prompts.map((_,i)=>({q:g("pq_"+i).value, a:g("pa_"+i).value.trim().slice(0,150)}));
+    save(); render(true); toast(t("saved"));
+  },
+  preview(){ A.saveProfile(); openPerson("me"); },
+  like(el){ openInvite(el.dataset.id, null, el.dataset.v); },
+  pLf(el){ toggleIn(S.profile.lookingFor, el.dataset.v); save(); render(true); },
+  pAv(el){ S.profile.availability=el.dataset.v; save(); render(true); },
+  photoDel(el){ S.profile.photos.splice(Number(el.dataset.v),1); save(); render(true); },
   tripAdd(){ S.profile.trips.push({city:document.getElementById("tr_city").value, from:document.getElementById("tr_from").value, to:document.getElementById("tr_to").value}); save(); render(true); toast(t("saved")); },
   tripDel(el){ S.profile.trips.splice(Number(el.dataset.v),1); save(); render(true); },
   vis(el){ S.profile.visibility=el.dataset.v; save(); render(true); },
@@ -1512,6 +1744,25 @@ const A = {
   resetDo(){ const keep={lang:S.lang, brand:S.brand}; S=Object.assign(DEFAULT_STATE(), keep, {onboarded:true}); save(); closeSheet(); render(); toast(t("reset_done")); },
   obStart(){ S.profile.name=document.getElementById("ob_name").value.trim().slice(0,40); S.onboarded=true; save(); closeSheet(); render(); }
 };
+/* Resize to max 900 px JPEG before keeping it on this device (localStorage space is small). */
+function addPhoto(file){
+  if(!file.type.startsWith("image/")) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const k = Math.min(1, 900/Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+      const url = c.toDataURL("image/jpeg", 0.78);
+      S.profile.photos.push(url);
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }catch(e){ S.profile.photos.pop(); toast("Storage full"); return; }
+      render(true);
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
 function toggleIn(arr, v){ const i=arr.indexOf(v); if(i>=0) arr.splice(i,1); else arr.push(v); }
 
 document.addEventListener("click", e=>{
@@ -1528,6 +1779,7 @@ document.addEventListener("change", e=>{
       tg_n_tickets:()=>S.notif.tickets=el.checked, tg_n_marketing:()=>S.notif.marketing=el.checked};
     if(map[el.id]){ map[el.id](); save(); }
   }
+  if(el.id==="photoInput" && el.files && el.files[0]) addPhoto(el.files[0]);
   if(el.id==="q_from"||el.id==="q_to"){ S.notif[el.id==="q_from"?"quietFrom":"quietTo"]=el.value; save(); render(true); }
 });
 document.addEventListener("submit", e=>{
@@ -1544,6 +1796,8 @@ document.addEventListener("submit", e=>{
     const c=S.convos.find(c=>c.id===openConvoId); c.msgs.push({me:true, text:txt, at:now()}); save(); render(); document.getElementById("msgInput").focus();
   }
 });
+// A photo that cannot load (offline, blocked host) is removed so the coloured tile with the initial shows.
+document.addEventListener("error", e=>{ if(e.target && e.target.tagName==="IMG" && e.target.parentElement && e.target.parentElement.classList.contains("ph")) e.target.remove(); }, true);
 window.addEventListener("online", ()=>render(true));
 window.addEventListener("offline", ()=>render(true));
 document.addEventListener("keydown", e=>{ if(e.key==="Escape" && S.onboarded) closeSheet(); });

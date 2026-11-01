@@ -1,9 +1,15 @@
-/** The three visual directions from the prototype. Indira picks one; the others are removed before launch. */
-export type BrandId = "fiesta" | "midnight" | "riviera";
+/** Visual directions from the prototype. Afterglow is the current favourite; the others are removed before launch. */
+export type BrandId = "afterglow" | "fiesta" | "midnight" | "riviera";
 export interface Palette { bg: string; surface: string; surface2: string; fg: string; muted: string; line: string; accent: string; accentFg: string; accent2: string; accent3: string; ok: string; warn: string; bad: string; test: string }
 export interface Brand { id: BrandId; name: string; displayFont: string; light: Palette; dark: Palette }
 
 export const BRANDS: Record<BrandId, Brand> = {
+  // Afterglow: Midnight base + concert-poster gradient (coral → fuchsia → violet). Chosen direction after Indira's feedback.
+  afterglow: {
+    id: "afterglow", name: "Afterglow", displayFont: "Unbounded",
+    light: { bg: "#130F2A", surface: "#1C1640", surface2: "#271E52", fg: "#F7F1FF", muted: "#B8AED8", line: "#372C6C", accent: "#FF4D7E", accentFg: "#FFFFFF", accent2: "#FF7A4D", accent3: "#FFC94A", ok: "#4CE29A", warn: "#FFC24A", bad: "#FF6680", test: "#C9A6FF" },
+    dark: { bg: "#130F2A", surface: "#1C1640", surface2: "#271E52", fg: "#F7F1FF", muted: "#B8AED8", line: "#372C6C", accent: "#FF4D7E", accentFg: "#FFFFFF", accent2: "#FF7A4D", accent3: "#FFC94A", ok: "#4CE29A", warn: "#FFC24A", bad: "#FF6680", test: "#C9A6FF" },
+  },
   fiesta: {
     id: "fiesta", name: "Fiesta", displayFont: "BricolageGrotesque",
     light: { bg: "#FFF7F0", surface: "#FFFFFF", surface2: "#FFEDE1", fg: "#2B1A12", muted: "#7A6255", line: "#F1D9CA", accent: "#FF5A4E", accentFg: "#FFFFFF", accent2: "#FFC233", accent3: "#0E9F9A", ok: "#1F8A4C", warn: "#B26A00", bad: "#C62D2D", test: "#7A3DD1" },
@@ -26,3 +32,6 @@ export const CATEGORY_ART: Record<string, [string, string, string]> = {
   rooftops: ["#FF8C42", "#2E5BBA", "SKY"], culture: ["#0E9F9A", "#1D3557", "ART"], activities: ["#19B58C", "#F2C230", "PLAY"],
   sports: ["#1559D6", "#00B3A4", "GAME"], trips: ["#00A6D6", "#F7B32B", "GO"], food: ["#E85D2F", "#8C2F39", "EAT"], private: ["#5B3E96", "#E0447C", "VIP"],
 };
+
+/** Signature gradient for primary buttons in Afterglow (use with expo-linear-gradient). */
+export const AFTERGLOW_GRADIENT = ["#FF6A4D", "#F0367F", "#9B2FD6"] as const;

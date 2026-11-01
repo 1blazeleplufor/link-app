@@ -9,7 +9,7 @@ const Ctx = createContext<ThemeState | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const system = useColorScheme();
-  const [brand, setBrandState] = useState<BrandId>("fiesta");
+  const [brand, setBrandState] = useState<BrandId>("afterglow");
   const [appearance, setAppearanceState] = useState<Appearance>("system");
 
   useEffect(() => {

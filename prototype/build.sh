@@ -15,20 +15,20 @@ QR='<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.mi
   echo '<div class="app"><header class="topbar" id="top"></header><main id="main" tabindex="-1"></main></div>'
   echo '<nav class="tabbar" id="tabs" aria-label="Navigation"></nav>'
   echo "$QR"
-  echo '<script>'; cat src/i18n.js; echo; cat src/data.js; echo; cat src/app.js; echo '</script>'
+  echo '<script>'; cat src/i18n.js; echo; cat src/data.js; echo; cat src/profiles.js; echo; cat src/app.js; echo '</script>'
 } > index.html
 
 mkdir -p ../docs
 {
   echo '<!doctype html><html lang="fr"><head><meta charset="utf-8">'
   echo '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
-  echo '<meta name="theme-color" content="#FF5A4E"><link rel="manifest" href="manifest.webmanifest">'
+  echo '<meta name="theme-color" content="#130F2A"><link rel="manifest" href="manifest.webmanifest">'
   echo '<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>'
   echo '</head><body>'
   cat index.html
   echo '</body></html>'
 } > ../docs/index.html
 cat > ../docs/manifest.webmanifest <<'EOF'
-{"name":"LINK","short_name":"LINK","start_url":"./","display":"standalone","background_color":"#FFF7F0","theme_color":"#FF5A4E","lang":"fr"}
+{"name":"LINK","short_name":"LINK","start_url":"./","display":"standalone","background_color":"#130F2A","theme_color":"#130F2A","lang":"fr"}
 EOF
 echo "Built prototype/index.html ($(wc -c < index.html) bytes) and docs/index.html"
