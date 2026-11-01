@@ -16,6 +16,7 @@ QR='<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.mi
   echo '<nav class="tabbar" id="tabs" aria-label="Navigation"></nav>'
   echo "$QR"
   echo '<script>'; cat src/i18n.js; echo; cat src/data.js; echo; cat src/profiles.js; echo; cat src/app.js; echo '</script>'
+  echo '<script>window.LINK_VERSION="v2"</script>'; cat src/version-switcher.html
 } > index.html
 
 mkdir -p ../docs
@@ -31,4 +32,5 @@ mkdir -p ../docs
 cat > ../docs/manifest.webmanifest <<'EOF'
 {"name":"LINK","short_name":"LINK","start_url":"./","display":"standalone","background_color":"#130F2A","theme_color":"#130F2A","lang":"fr"}
 EOF
+./archive.sh
 echo "Built prototype/index.html ($(wc -c < index.html) bytes) and docs/index.html"

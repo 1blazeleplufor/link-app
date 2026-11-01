@@ -233,10 +233,8 @@ textarea{min-height:84px;resize:vertical}
 .photo-grid label.slot{cursor:pointer}
 :root[data-brand="afterglow"] .tag.match{color:#1C1640}
 /* Afterglow — more gold (Indira liked the yellow touches) */
-:root[data-brand="afterglow"] .chip[aria-pressed="true"]{background:var(--accent-3);color:#1C1640;border-color:var(--accent-3)}
 :root[data-brand="afterglow"] .prompt-card .q{color:var(--accent-3)}
 :root[data-brand="afterglow"] .tab .badge{background:var(--accent-3);color:#1C1640}
 :root[data-brand="afterglow"] .price{color:var(--accent-3)}
 :root[data-brand="afterglow"] .label{color:var(--accent-3)}
 :root[data-brand="afterglow"] .pcard-photo .vbadge{background:var(--accent-3);color:#1C1640}
-:root[data-brand="afterglow"] .logo .dot.b{background:var(--accent-3)}

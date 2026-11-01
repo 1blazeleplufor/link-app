@@ -1,0 +1,1587 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#FF5A4E">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
+</head><body>
+<title>LINK</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="LINK — prototype: find people to share events, outings and trips.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;600;700;800&family=Syne:wght@600;800&family=Unbounded:wght@500;800&display=swap">
+<style>
+/* Layout: one mobile app column (max 440px) centred on desktop, full-bleed on phones; bottom tab bar. */
+:root{
+  --font-display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --font-body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --bg:#FFF7F0; --surface:#FFFFFF; --surface-2:#FFEDE1; --fg:#2B1A12; --muted:#7A6255;
+  --line:#F1D9CA; --accent:#FF5A4E; --accent-fg:#FFFFFF; --accent-2:#FFC233; --accent-3:#0E9F9A;
+  --ok:#1F8A4C; --warn:#B26A00; --bad:#C62D2D; --test:#7A3DD1;
+  --radius:18px; --radius-sm:12px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1C1411; --surface:#271C17; --surface-2:#33251E; --fg:#FBEDE3; --muted:#C2A898;
+    --line:#43322A; --accent:#FF7568; --accent-fg:#1C1411; --accent-2:#FFCF5C; --accent-3:#3CC9C3;
+    --ok:#4CC17C; --warn:#F0A63A; --bad:#FF6B6B; --test:#B48CFF; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1C1411; --surface:#271C17; --surface-2:#33251E; --fg:#FBEDE3; --muted:#C2A898;
+  --line:#43322A; --accent:#FF7568; --accent-fg:#1C1411; --accent-2:#FFCF5C; --accent-3:#3CC9C3;
+  --ok:#4CC17C; --warn:#F0A63A; --bad:#FF6B6B; --test:#B48CFF; color-scheme:dark;
+}
+/* Direction 2 — Midnight Club: committed dark look in every theme */
+:root[data-brand="midnight"]{
+  --font-display:"Unbounded", "Arial Black", system-ui, sans-serif;
+  --bg:#140F2E; --surface:#1E1842; --surface-2:#2A2257; --fg:#F4F0FF; --muted:#B5ABDB;
+  --line:#3A3170; --accent:#FF3DA0; --accent-fg:#140F2E; --accent-2:#3FDFFF; --accent-3:#FFD23F;
+  --ok:#4CE29A; --warn:#FFC24A; --bad:#FF6680; --test:#C9A6FF; color-scheme:dark;
+}
+/* Direction 3 — Riviera: sea blue, lemon, mint */
+:root[data-brand="riviera"]{
+  --font-display:"Syne", "Futura", system-ui, sans-serif;
+  --bg:#F3F8FF; --surface:#FFFFFF; --surface-2:#E3EEFF; --fg:#0D2140; --muted:#56698A;
+  --line:#CFDDF3; --accent:#1559D6; --accent-fg:#FFFFFF; --accent-2:#F2D635; --accent-3:#19B58C;
+  --ok:#14804A; --warn:#A86400; --bad:#C42B3B; --test:#7A3DD1; color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"])[data-brand="riviera"]{
+    --bg:#0B1729; --surface:#13223B; --surface-2:#1B2E4D; --fg:#EAF2FF; --muted:#9FB3D3;
+    --line:#2A3F63; --accent:#5B93FF; --accent-fg:#0B1729; --accent-2:#F5DF5A; --accent-3:#3FD3A8;
+    --ok:#4CC17C; --warn:#F0A63A; --bad:#FF6B7A; --test:#B48CFF; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"][data-brand="riviera"]{
+  --bg:#0B1729; --surface:#13223B; --surface-2:#1B2E4D; --fg:#EAF2FF; --muted:#9FB3D3;
+  --line:#2A3F63; --accent:#5B93FF; --accent-fg:#0B1729; --accent-2:#F5DF5A; --accent-3:#3FD3A8;
+  --ok:#4CC17C; --warn:#F0A63A; --bad:#FF6B7A; --test:#B48CFF; color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent-2);outline-offset:2px;border-radius:8px}
+h1,h2,h3{font-family:var(--font-display);line-height:1.1;margin:0;text-wrap:balance}
+h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
+h2{font-size:21px;font-weight:700}
+h3{font-size:17px;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+
+.app{max-width:440px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;position:relative;background:var(--bg)}
+@media (min-width:520px){.app{border-left:1px solid var(--line);border-right:1px solid var(--line)}}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding-block:12px 8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line)}
+.topbar-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-family:var(--font-display);font-weight:800;font-size:26px;letter-spacing:-.03em;display:flex;align-items:center;gap:2px}
+.logo .dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent);margin-left:2px;transform:translateY(-8px)}
+.logo .dot.b{background:var(--accent-2);margin-left:-3px}
+.demo-pill{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:4px 9px;border-radius:999px;background:var(--surface-2);color:var(--test);border:1px solid var(--line)}
+main{flex:1;padding-block:14px 110px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px;min-width:0}
+
+.tabbar{position:fixed;bottom:0;left:0;right:0;z-index:25;display:flex;justify-content:center;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabbar-inner{max-width:440px;width:100%;display:grid;grid-template-columns:repeat(6,1fr);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.tab{background:none;border:0;padding:8px 2px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;font-weight:600;color:var(--muted);min-height:56px;position:relative}
+.tab svg{width:23px;height:23px}
+.tab[aria-current="page"]{color:var(--accent)}
+.tab.create svg{width:34px;height:34px;color:var(--accent-fg);background:var(--accent);border-radius:12px;padding:6px}
+.tab .badge{position:absolute;top:5px;right:calc(50% - 18px);min-width:17px;height:17px;border-radius:9px;background:var(--accent);color:var(--accent-fg);font-size:10px;display:grid;place-items:center;padding:0 4px}
+
+.seg{display:flex;background:var(--surface-2);border-radius:999px;padding:3px;gap:2px}
+.seg button{flex:1;border:0;background:none;border-radius:999px;padding:8px 6px;font-weight:700;font-size:13px;color:var(--muted);min-height:36px}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 3px rgb(0 0 0 / .12)}
+.chips{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;margin-inline:-2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 13px;font-size:13px;font-weight:600;white-space:nowrap;min-height:36px}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label,.label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+input[type=text],input[type=date],input[type=time],input[type=number],input[type=search],select,textarea{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:11px 12px;min-height:44px}
+textarea{min-height:84px;resize:vertical}
+.btn{border:0;border-radius:999px;padding:12px 18px;font-weight:700;min-height:46px;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--accent);color:var(--accent-fg)}
+.btn.secondary{background:var(--surface-2);color:var(--fg)}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--fg)}
+.btn.danger{background:none;border:1px solid var(--bad);color:var(--bad)}
+.btn.test{background:var(--test);color:#fff}
+.btn.block{width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.iconbtn{border:1px solid var(--line);background:var(--surface);width:42px;height:42px;border-radius:50%;display:grid;place-items:center}
+.iconbtn svg{width:20px;height:20px}
+
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.list{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.card-body{padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.event-card{display:block;text-align:left;width:100%;padding:0;color:inherit;background:none;border:0;font:inherit}
+.event-card.person,.event-card.card-body{display:flex}
+.event-card:hover h3{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
+.visual{position:relative;aspect-ratio:16/8;max-width:100%;display:flex;align-items:flex-end;padding:12px;color:#fff;overflow:hidden}
+.visual .cat{position:relative;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;background:rgb(0 0 0 / .35);padding:4px 9px;border-radius:999px;backdrop-filter:blur(4px)}
+.visual .big{position:absolute;right:-6px;bottom:-26px;font-family:var(--font-display);font-weight:800;font-size:92px;line-height:1;opacity:.28;letter-spacing:-.05em;pointer-events:none;white-space:nowrap}
+.visual .date-tag{position:absolute;top:12px;left:12px;background:#fff;color:#1a1a1a;border-radius:12px;padding:5px 9px;text-align:center;font-weight:800;line-height:1.05;font-size:18px}
+.visual .date-tag small{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+.meta{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:var(--muted)}
+.meta span{display:inline-flex;align-items:center;gap:4px}
+.meta svg{width:14px;height:14px}
+.status{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--surface-2)}
+.status::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.status.ok{color:var(--ok)} .status.warn{color:var(--warn)} .status.bad{color:var(--bad)} .status.test{color:var(--test)} .status.muted{color:var(--muted)}
+.why{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
+.why b{font-weight:700;color:var(--accent-3)}
+.price{font-weight:800;font-variant-numeric:tabular-nums}
+
+.person{display:flex;gap:12px;padding:14px;align-items:flex-start}
+.avatar{flex:none;width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:22px;color:#fff}
+.avatar.lg{width:84px;height:84px;border-radius:26px;font-size:32px}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:12px;padding:3px 9px;border-radius:999px;background:var(--surface-2);font-weight:600}
+.tag.match{background:var(--accent-3);color:#fff}
+
+.banner{border-radius:var(--radius);padding:14px;display:flex;gap:12px;align-items:flex-start;background:var(--surface-2);border:1px solid var(--line)}
+.banner.test{border-color:var(--test)}
+.banner svg{flex:none;width:22px;height:22px;color:var(--test)}
+.lock{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:30px 18px}
+.lock svg{width:46px;height:46px;color:var(--accent)}
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:34px 18px;border:2px dashed var(--line);border-radius:var(--radius)}
+
+.sheet-backdrop{position:fixed;inset:0;z-index:40;background:rgb(10 5 20 / .5);display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:440px;max-height:92%;overflow-y:auto;border-radius:24px 24px 0 0;padding-block:8px calc(22px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
+.sheet .grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:4px auto 2px}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.sheet .visual{border-radius:var(--radius);aspect-ratio:16/9}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;font-size:14px}
+.kv dt{color:var(--muted);font-weight:600}
+.kv dd{margin:0;text-align:right;font-variant-numeric:tabular-nums}
+.ticket-type{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface)}
+.ticket-type[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.stepper{display:flex;align-items:center;gap:12px}
+.stepper button{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:20px;font-weight:700}
+.ticket{background:var(--surface);border:2px dashed var(--test);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;position:relative;overflow:hidden}
+.ticket .watermark{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:64px;color:var(--test);opacity:.09;transform:rotate(-18deg);pointer-events:none}
+.qr{background:#fff;padding:10px;border-radius:12px;width:180px;height:180px;display:grid;place-items:center}
+.qr.revoked{filter:grayscale(1) blur(3px);opacity:.4}
+.msgs{display:flex;flex-direction:column;gap:8px;padding:8px 0}
+.bubble{max-width:80%;padding:9px 13px;border-radius:18px;background:var(--surface);border:1px solid var(--line);align-self:flex-start;overflow-wrap:anywhere}
+.bubble.me{align-self:flex-end;background:var(--accent);color:var(--accent-fg);border-color:transparent}
+.bubble time{display:block;font-size:10.5px;opacity:.7;margin-top:2px}
+.composer{position:sticky;bottom:calc(64px + env(safe-area-inset-bottom,0px));display:flex;gap:8px;background:var(--bg);padding-block:8px}
+.toggle{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.toggle:last-child{border-bottom:0}
+.switch{appearance:none;width:48px;height:28px;border-radius:14px;background:var(--line);position:relative;flex:none;cursor:pointer;transition:background .2s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 2px rgb(0 0 0 / .3)}
+.switch:checked{background:var(--accent)}
+.switch:checked::after{transform:translateX(20px)}
+.brand-opt{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);text-align:left;width:100%}
+.brand-opt[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.swatches{display:flex}
+.swatches i{width:22px;height:44px;display:block}
+.swatches i:first-child{border-radius:10px 0 0 10px}
+.swatches i:last-child{border-radius:0 10px 10px 0}
+.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:var(--fg);color:var(--bg);padding:11px 16px;border-radius:14px;font-weight:600;max-width:calc(100% - 32px);box-shadow:0 6px 20px rgb(0 0 0 / .25)}
+.offline{background:var(--warn);color:#fff;font-size:13px;font-weight:600;padding:8px 12px;border-radius:10px}
+.matrix{width:100%;border-collapse:collapse;font-size:13px}
+.matrix td{padding:7px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.hero{display:flex;flex-direction:column;gap:6px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:360px){.grid2{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<div class="app"><header class="topbar" id="top"></header><main id="main" tabindex="-1"></main></div>
+<nav class="tabbar" id="tabs" aria-label="Navigation"></nav>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* LINK prototype — UI strings. Every UI string lives here; components never concatenate raw text.
+   Placeholders: {x}. Add a language by adding a block with the same keys (missing keys fall back to English). */
+const LANGS = [
+  {code:"fr", name:"Français"}, {code:"en", name:"English"}, {code:"es", name:"Español"},
+  {code:"de", name:"Deutsch"}, {code:"pt", name:"Português"}, {code:"it", name:"Italiano"}
+];
+
+const I18N = {
+en:{
+  tagline:"Never skip an experience for lack of company.",
+  tab_explore:"Explore", tab_people:"People", tab_create:"Create", tab_activity:"Activity", tab_messages:"Messages", tab_profile:"Profile",
+  demo:"Prototype", demo_banner:"Prototype with demo data. No real payment, ID check or notification is made.",
+  mode_local:"Local", mode_international:"International", mode_personal:"For you",
+  mode_local_d:"Around {c}", mode_international_d:"Everywhere, no limit", mode_personal_d:"Based on your interests, dates and trips",
+  search_city:"Search any city…", add_city:"Add “{x}”", other_cities:"Other cities",
+  when_all:"Any date", when_today:"Today", when_weekend:"This weekend", when_week:"Next 7 days",
+  budget_any:"Any budget", budget_free:"Free", budget_30:"Under {p}", budget_60:"Under {p}",
+  cat_all:"All",
+  cat_concerts:"Concerts", cat_festivals:"Festivals", cat_clubs:"Clubs & parties", cat_rooftops:"Rooftops", cat_culture:"Culture",
+  cat_activities:"Activities", cat_sports:"Sports", cat_trips:"Trips & excursions", cat_food:"Food & drinks", cat_private:"Private events",
+  price_unknown:"Price not announced", free:"Free", from:"From {p}",
+  avail_verified:"Availability checked", avail_unknown:"Availability unknown", avail_soldout:"Sold out", avail_community:"Community outing",
+  source:"Source", source_demo:"LINK demo data", organizer:"Organizer", venue:"Venue", area:"Area", date:"Date", age_min:"Minimum age",
+  access:"Accessibility", access_yes:"Step-free access", access_unknown:"Not specified",
+  join:"Join a group", invite:"Invite someone", buy:"Get tickets", no_ticketing:"No ticket sale: free community outing.",
+  ticketing_A:"Sold by LINK", ticketing_B:"Partner organizer — sale authorised", ticketing_C:"Third-party API with resale rights", ticketing_D:"No ticketing",
+  why:"Why you see this", why_interest:"you like {x}", why_trip:"you travel to {x}", why_city:"in your city", why_lang:"speaks {x}", p_trip:"Coming to {x} soon",
+  going:"{n} people from LINK going",
+  no_results:"Nothing here yet", no_results_sub:"No event matches these filters. Widen them, or create the first outing here.",
+  create_first:"Create an outing", reset_filters:"Reset filters",
+  people_sub:"People who want to go out too", people_filter_city:"In {c}", people_all:"All cities",
+  verified_badge:"ID verified (simulation)", not_verified:"Not verified",
+  lock_title:"Verify your identity first", lock_sub:"Invitations and messages open once your identity is verified. It keeps LINK safe for everyone.", verify_now:"Verify my identity",
+  invite_to:"Invite {n}", invite_pick:"Pick an event or outing", invite_note:"Add a short note", send_invite:"Send invitation", invite_sent:"Invitation sent to {n}",
+  invite_limit:"Limit reached: 10 invitations per day during the prototype.",
+  block:"Block", unblock:"Unblock", report:"Report", blocked:"{n} is blocked. You won't see each other.",
+  report_title:"Report {n}", report_r1:"Fake profile", report_r2:"Harassment or threats", report_r3:"Spam or scam", report_r4:"Looks under 18", report_r5:"Other",
+  report_sent:"Report sent to moderation. Thank you.",
+  create_title:"Create an outing", create_sub:"Find people for something you want to do.",
+  type_public:"Public", type_private:"Private", type_org:"Organizer",
+  type_public_d:"Listed in discovery after moderation.", type_private_d:"Only the people you invite can see it.", type_org_d:"Requires a verified organizer account with proof.",
+  org_locked:"Organizer accounts need a separate verification (company, venue or artist proof). Not available in the prototype.",
+  f_title:"Title", f_title_ph:"Sunset picnic by the canal", f_cat:"Category", f_city:"City", f_date:"Date", f_time:"Time",
+  f_place:"Public meeting place", f_place_ph:"In front of the main entrance", f_capacity:"Group size (you included)", f_desc:"Description", f_desc_ph:"What's the plan? Who would enjoy it?",
+  f_rules:"Group rules", f_rules_ph:"Respect, punctuality, no pressure to drink.",
+  publish:"Submit for moderation", save_private:"Create private outing", form_missing:"Fill in title, city, date and time.",
+  created_public:"Outing submitted. It will appear once a moderator approves it.", created_private:"Private outing created. Invite people from the People tab.",
+  pending_mod:"Waiting for moderation", approved:"Approved", rejected:"Rejected", private_label:"Private", members:"{n}/{m} people",
+  act_outings:"My outings", act_invites:"Invitations", act_tickets:"Tickets",
+  received:"Received", sent:"Sent", accept:"Accept", decline:"Decline", cancel_invite:"Cancel",
+  pending:"Pending", accepted:"Accepted", declined:"Declined", cancelled:"Cancelled", expired:"Expired", expires:"Expires {d}",
+  no_outings:"You haven't created any outing yet.", no_invites:"No invitations yet.", no_tickets:"No tickets yet. Your tickets will appear here.",
+  leave:"Leave", delete:"Delete",
+  msg_empty:"No conversations yet", msg_empty_sub:"When someone accepts your invitation, you can talk here.", msg_placeholder:"Write a message…", send:"Send",
+  msg_group:"Group · {t}", msg_safety:"Meet in public places. Never send money. Report anything that feels off.",
+  edit_profile:"Edit profile", name:"First name", bio:"Bio", languages:"Languages spoken", interests:"What you enjoy", music:"Music", city_home:"Home city",
+  trips:"Planned trips", add_trip:"Add a trip", trip_city:"Destination", trip_from:"From", trip_to:"To", trip_visible:"Visible to verified members only",
+  dating:"Dating (optional)", dating_d:"Off by default. Friendship and outings stay the core of LINK.",
+  visibility:"Profile visibility", vis_public:"All members", vis_verified:"Verified members only", vis_hidden:"Hidden",
+  show_age:"Show my age", show_age_d:"Your full date of birth is never shown.",
+  app_lang:"App language", brand:"Visual direction", brand_d:"Three directions to choose from. Indira picks the final one.",
+  theme:"Appearance", theme_system:"System", theme_light:"Light", theme_dark:"Dark",
+  notif:"Notifications", n_invites:"Invitations", n_messages:"Messages", n_events:"Event changes", n_tickets:"Tickets", n_marketing:"News and offers",
+  quiet:"Quiet hours", quiet_d:"No push between {a} and {b}",
+  privacy:"Privacy & data", export:"Export my data", reset:"Reset the demo", reset_done:"Demo reset.", export_d:"Everything this prototype stores about you, as JSON.",
+  about:"What works in this prototype", save:"Save", saved:"Saved",
+  verif_status:"Identity", verif_none:"Not verified", verif_pending:"Checking…", verif_ok:"Verified (simulation)", verif_failed:"Failed",
+  choose_ticket:"Choose tickets", qty:"Quantity", subtotal:"Subtotal", fees:"LINK fee", fees_free:"{p} (free at launch)", taxes:"Taxes", taxes_incl:"Included", total:"Total",
+  hold:"Seats held for {t}", hold_over:"Hold expired. Start again to check availability.",
+  pay_test:"Simulate a successful test payment", pay_fail:"Simulate a declined card",
+  sandbox_note:"Test mode. In production, payment opens the provider's secure form (e.g. Stripe). LINK never sees or stores card numbers.",
+  paid:"Test order confirmed", declined_pay:"Payment declined. Nothing was charged. Try another payment method.",
+  ticket_test:"TEST TICKET — not valid for entry", scan:"Scan at entry (demo)", scanned_ok:"Valid. Entry recorded at {t}.", already:"Already scanned at {t}. Entry refused.",
+  refund:"Request a refund", refunded:"Refunded. QR code revoked.", revoked:"Revoked", order:"Order", ticket_n:"Ticket {i}/{n}", standard:"Standard", vip:"VIP", early:"Early bird",
+  v_title:"Identity verification", v_1:"A certified provider checks an ID document and a selfie. LINK only keeps the result and a reference, never the document itself.",
+  v_2:"Required before sending invitations or messages. Browsing stays open.", v_sim:"Simulate provider check", v_fail:"Simulate a failure", v_pending:"Checking with the provider…",
+  v_ok:"Identity verified (simulation). Invitations and messages are open.", v_failed:"Verification failed. You can try again or ask for a manual review.", v_manual:"Request manual review", v_manual_sent:"Manual review requested. A moderator will reply within 48 h.",
+  ob_title:"Welcome to LINK", ob_sub:"Find people to share concerts, rooftops, trips and nights out.", ob_lang:"Your language", ob_brand:"Pick a look (you can change it later)", ob_age:"I confirm I am 18 or older", ob_start:"Let's go",
+  admin:"Moderation console (preview)", admin_d:"What a LINK moderator sees. In production, this is a separate web console with staff roles.", approve:"Approve", reject:"Reject", queue_empty:"Nothing waiting for review.",
+  offline:"You're offline. Showing data saved on this device.",
+  close:"Close", back:"Back", cancel:"Cancel", years:"{n}", you:"You", today:"Today", tomorrow:"Tomorrow",
+  storage_note:"Your demo data stays in this browser only.",
+  welcome_back:"Hi {n}"
+},
+fr:{
+  tagline:"Ne renonce plus à une sortie faute de compagnie.",
+  tab_explore:"Explorer", tab_people:"Personnes", tab_create:"Créer", tab_activity:"Activités", tab_messages:"Messages", tab_profile:"Profil",
+  demo:"Prototype", demo_banner:"Prototype avec données de démonstration. Aucun paiement, contrôle d'identité ou notification réels.",
+  mode_local:"Local", mode_international:"International", mode_personal:"Pour toi",
+  mode_local_d:"Autour de {c}", mode_international_d:"Partout, sans limite", mode_personal_d:"Selon tes envies, tes dates et tes voyages",
+  search_city:"Chercher une ville…", add_city:"Ajouter « {x} »", other_cities:"Autres villes",
+  when_all:"Toutes dates", when_today:"Aujourd'hui", when_weekend:"Ce week-end", when_week:"7 prochains jours",
+  budget_any:"Tout budget", budget_free:"Gratuit", budget_30:"Moins de {p}", budget_60:"Moins de {p}",
+  cat_all:"Tout",
+  cat_concerts:"Concerts", cat_festivals:"Festivals", cat_clubs:"Clubs & soirées", cat_rooftops:"Rooftops", cat_culture:"Culture",
+  cat_activities:"Activités & loisirs", cat_sports:"Sport", cat_trips:"Voyages & excursions", cat_food:"Restos & sorties", cat_private:"Événements privés",
+  price_unknown:"Prix non communiqué", free:"Gratuit", from:"Dès {p}",
+  avail_verified:"Disponibilité vérifiée", avail_unknown:"Disponibilité inconnue", avail_soldout:"Complet", avail_community:"Sortie communautaire",
+  source:"Source", source_demo:"Données de démo LINK", organizer:"Organisateur", venue:"Lieu", area:"Quartier", date:"Date", age_min:"Âge minimum",
+  access:"Accessibilité", access_yes:"Accès sans marche", access_unknown:"Non précisé",
+  join:"Rejoindre un groupe", invite:"Inviter quelqu'un", buy:"Prendre des billets", no_ticketing:"Pas de billetterie : sortie communautaire gratuite.",
+  ticketing_A:"Vendu par LINK", ticketing_B:"Organisateur partenaire — vente autorisée", ticketing_C:"API tierce avec droit de revente", ticketing_D:"Sans billetterie",
+  why:"Pourquoi tu vois ça", why_interest:"tu aimes {x}", why_trip:"tu pars à {x}", why_city:"dans ta ville", why_lang:"parle {x}", p_trip:"Bientôt à {x}",
+  going:"{n} membres LINK y vont",
+  no_results:"Rien pour l'instant", no_results_sub:"Aucun événement ne correspond à ces filtres. Élargis-les, ou crée la première sortie ici.",
+  create_first:"Créer une sortie", reset_filters:"Réinitialiser les filtres",
+  people_sub:"Des gens qui ont envie de sortir aussi", people_filter_city:"À {c}", people_all:"Toutes les villes",
+  verified_badge:"Identité vérifiée (simulation)", not_verified:"Non vérifié",
+  lock_title:"Vérifie d'abord ton identité", lock_sub:"Les invitations et les messages s'ouvrent une fois ton identité vérifiée. C'est ce qui garde LINK sûr pour tout le monde.", verify_now:"Vérifier mon identité",
+  invite_to:"Inviter {n}", invite_pick:"Choisis un événement ou une sortie", invite_note:"Ajoute un petit mot", send_invite:"Envoyer l'invitation", invite_sent:"Invitation envoyée à {n}",
+  invite_limit:"Limite atteinte : 10 invitations par jour pendant le prototype.",
+  block:"Bloquer", unblock:"Débloquer", report:"Signaler", blocked:"{n} est bloqué·e. Vous ne vous verrez plus.",
+  report_title:"Signaler {n}", report_r1:"Faux profil", report_r2:"Harcèlement ou menaces", report_r3:"Spam ou arnaque", report_r4:"Semble avoir moins de 18 ans", report_r5:"Autre",
+  report_sent:"Signalement transmis à la modération. Merci.",
+  create_title:"Créer une sortie", create_sub:"Trouve du monde pour ce que tu as envie de faire.",
+  type_public:"Publique", type_private:"Privée", type_org:"Organisateur",
+  type_public_d:"Visible dans la découverte après modération.", type_private_d:"Seules les personnes invitées la voient.", type_org_d:"Nécessite un compte organisateur vérifié, avec justificatifs.",
+  org_locked:"Les comptes organisateurs demandent une vérification à part (société, lieu ou artiste). Non disponible dans le prototype.",
+  f_title:"Titre", f_title_ph:"Pique-nique au coucher du soleil sur le canal", f_cat:"Catégorie", f_city:"Ville", f_date:"Date", f_time:"Heure",
+  f_place:"Point de rendez-vous public", f_place_ph:"Devant l'entrée principale", f_capacity:"Taille du groupe (toi compris)", f_desc:"Description", f_desc_ph:"C'est quoi le plan ? Qui va aimer ?",
+  f_rules:"Règles du groupe", f_rules_ph:"Respect, ponctualité, aucune pression pour boire.",
+  publish:"Envoyer en modération", save_private:"Créer la sortie privée", form_missing:"Remplis le titre, la ville, la date et l'heure.",
+  created_public:"Sortie envoyée. Elle apparaîtra dès qu'un modérateur l'aura validée.", created_private:"Sortie privée créée. Invite du monde depuis l'onglet Personnes.",
+  pending_mod:"En attente de modération", approved:"Validée", rejected:"Refusée", private_label:"Privée", members:"{n}/{m} personnes",
+  act_outings:"Mes sorties", act_invites:"Invitations", act_tickets:"Billets",
+  received:"Reçues", sent:"Envoyées", accept:"Accepter", decline:"Refuser", cancel_invite:"Annuler",
+  pending:"En attente", accepted:"Acceptée", declined:"Refusée", cancelled:"Annulée", expired:"Expirée", expires:"Expire {d}",
+  no_outings:"Tu n'as encore créé aucune sortie.", no_invites:"Aucune invitation pour l'instant.", no_tickets:"Aucun billet pour l'instant. Ils apparaîtront ici.",
+  leave:"Quitter", delete:"Supprimer",
+  msg_empty:"Aucune conversation", msg_empty_sub:"Quand quelqu'un accepte ton invitation, vous pouvez discuter ici.", msg_placeholder:"Écris un message…", send:"Envoyer",
+  msg_group:"Groupe · {t}", msg_safety:"Retrouvez-vous dans des lieux publics. N'envoie jamais d'argent. Signale ce qui te semble louche.",
+  edit_profile:"Modifier le profil", name:"Prénom", bio:"Bio", languages:"Langues parlées", interests:"Ce que tu aimes", music:"Musique", city_home:"Ville",
+  trips:"Voyages prévus", add_trip:"Ajouter un voyage", trip_city:"Destination", trip_from:"Du", trip_to:"Au", trip_visible:"Visible uniquement par les membres vérifiés",
+  dating:"Rencontres (facultatif)", dating_d:"Désactivé par défaut. L'amitié et les sorties restent le cœur de LINK.",
+  visibility:"Visibilité du profil", vis_public:"Tous les membres", vis_verified:"Membres vérifiés seulement", vis_hidden:"Masqué",
+  show_age:"Afficher mon âge", show_age_d:"Ta date de naissance complète n'est jamais affichée.",
+  app_lang:"Langue de l'app", brand:"Direction visuelle", brand_d:"Trois directions au choix. C'est Indira qui choisit la version finale.",
+  theme:"Apparence", theme_system:"Système", theme_light:"Clair", theme_dark:"Sombre",
+  notif:"Notifications", n_invites:"Invitations", n_messages:"Messages", n_events:"Changements d'événement", n_tickets:"Billets", n_marketing:"Actus et offres",
+  quiet:"Heures calmes", quiet_d:"Pas de notification entre {a} et {b}",
+  privacy:"Confidentialité & données", export:"Exporter mes données", reset:"Réinitialiser la démo", reset_done:"Démo réinitialisée.", export_d:"Tout ce que ce prototype garde sur toi, au format JSON.",
+  about:"Ce qui marche dans ce prototype", save:"Enregistrer", saved:"Enregistré",
+  verif_status:"Identité", verif_none:"Non vérifiée", verif_pending:"Vérification…", verif_ok:"Vérifiée (simulation)", verif_failed:"Échec",
+  choose_ticket:"Choisis tes billets", qty:"Quantité", subtotal:"Sous-total", fees:"Frais LINK", fees_free:"{p} (gratuit au lancement)", taxes:"Taxes", taxes_incl:"Incluses", total:"Total",
+  hold:"Places réservées pendant {t}", hold_over:"Réservation expirée. Recommence pour revérifier la disponibilité.",
+  pay_test:"Simuler un paiement test réussi", pay_fail:"Simuler une carte refusée",
+  sandbox_note:"Mode test. En production, le paiement ouvre le formulaire sécurisé du prestataire (ex. Stripe). LINK ne voit ni ne stocke jamais les numéros de carte.",
+  paid:"Commande test confirmée", declined_pay:"Paiement refusé. Rien n'a été débité. Essaie un autre moyen de paiement.",
+  ticket_test:"BILLET DE TEST — non valable à l'entrée", scan:"Scanner à l'entrée (démo)", scanned_ok:"Valide. Entrée enregistrée à {t}.", already:"Déjà scanné à {t}. Entrée refusée.",
+  refund:"Demander un remboursement", refunded:"Remboursé. QR code révoqué.", revoked:"Révoqué", order:"Commande", ticket_n:"Billet {i}/{n}", standard:"Standard", vip:"VIP", early:"Prévente",
+  v_title:"Vérification d'identité", v_1:"Un prestataire certifié contrôle une pièce d'identité et un selfie. LINK ne garde que le résultat et une référence, jamais le document.",
+  v_2:"Obligatoire avant d'envoyer des invitations ou des messages. La découverte reste ouverte.", v_sim:"Simuler le contrôle du prestataire", v_fail:"Simuler un échec", v_pending:"Vérification auprès du prestataire…",
+  v_ok:"Identité vérifiée (simulation). Invitations et messages ouverts.", v_failed:"La vérification a échoué. Tu peux réessayer ou demander une revue manuelle.", v_manual:"Demander une revue manuelle", v_manual_sent:"Revue manuelle demandée. Un modérateur répond sous 48 h.",
+  ob_title:"Bienvenue sur LINK", ob_sub:"Trouve avec qui partager concerts, rooftops, voyages et soirées.", ob_lang:"Ta langue", ob_brand:"Choisis un style (modifiable ensuite)", ob_age:"Je confirme avoir 18 ans ou plus", ob_start:"C'est parti",
+  admin:"Console de modération (aperçu)", admin_d:"Ce que voit un modérateur LINK. En production, c'est une console web séparée avec des rôles staff.", approve:"Valider", reject:"Refuser", queue_empty:"Rien à modérer.",
+  offline:"Tu es hors ligne. Affichage des données gardées sur cet appareil.",
+  close:"Fermer", back:"Retour", cancel:"Annuler", years:"{n} ans", you:"Toi", today:"Aujourd'hui", tomorrow:"Demain",
+  storage_note:"Tes données de démo restent uniquement dans ce navigateur.",
+  welcome_back:"Salut {n}"
+},
+es:{
+  tagline:"No renuncies a un plan por no tener compañía.",
+  tab_explore:"Explorar", tab_people:"Personas", tab_create:"Crear", tab_activity:"Actividad", tab_messages:"Mensajes", tab_profile:"Perfil",
+  demo:"Prototipo", demo_banner:"Prototipo con datos de demostración. Sin pagos, verificaciones ni notificaciones reales.",
+  mode_local:"Local", mode_international:"Internacional", mode_personal:"Para ti",
+  mode_local_d:"Cerca de {c}", mode_international_d:"En todas partes, sin límite", mode_personal_d:"Según tus gustos, fechas y viajes",
+  search_city:"Buscar una ciudad…", add_city:"Añadir «{x}»", other_cities:"Otras ciudades",
+  when_all:"Cualquier fecha", when_today:"Hoy", when_weekend:"Este fin de semana", when_week:"Próximos 7 días",
+  budget_any:"Cualquier presupuesto", budget_free:"Gratis", budget_30:"Menos de {p}", budget_60:"Menos de {p}",
+  cat_all:"Todo",
+  cat_concerts:"Conciertos", cat_festivals:"Festivales", cat_clubs:"Clubs y fiestas", cat_rooftops:"Rooftops", cat_culture:"Cultura",
+  cat_activities:"Actividades", cat_sports:"Deporte", cat_trips:"Viajes y excursiones", cat_food:"Comer y salir", cat_private:"Eventos privados",
+  price_unknown:"Precio no anunciado", free:"Gratis", from:"Desde {p}",
+  avail_verified:"Disponibilidad comprobada", avail_unknown:"Disponibilidad desconocida", avail_soldout:"Agotado", avail_community:"Plan comunitario",
+  source:"Fuente", source_demo:"Datos de demo de LINK", organizer:"Organizador", venue:"Lugar", area:"Zona", date:"Fecha", age_min:"Edad mínima",
+  access:"Accesibilidad", access_yes:"Acceso sin escalones", access_unknown:"No indicado",
+  join:"Unirse a un grupo", invite:"Invitar a alguien", buy:"Comprar entradas", no_ticketing:"Sin venta de entradas: plan comunitario gratuito.",
+  ticketing_A:"Vendido por LINK", ticketing_B:"Organizador socio — venta autorizada", ticketing_C:"API externa con derecho de reventa", ticketing_D:"Sin entradas",
+  why:"Por qué ves esto", why_interest:"te gusta {x}", why_trip:"viajas a {x}", why_city:"en tu ciudad", why_lang:"habla {x}", p_trip:"Pronto en {x}",
+  going:"Van {n} miembros de LINK",
+  no_results:"Nada por aquí", no_results_sub:"Ningún evento coincide con estos filtros. Amplíalos o crea el primer plan aquí.",
+  create_first:"Crear un plan", reset_filters:"Restablecer filtros",
+  people_sub:"Gente que también quiere salir", people_filter_city:"En {c}", people_all:"Todas las ciudades",
+  verified_badge:"Identidad verificada (simulación)", not_verified:"No verificado",
+  lock_title:"Primero verifica tu identidad", lock_sub:"Las invitaciones y los mensajes se abren cuando tu identidad está verificada. Así LINK es seguro para todos.", verify_now:"Verificar mi identidad",
+  invite_to:"Invitar a {n}", invite_pick:"Elige un evento o plan", invite_note:"Añade una nota", send_invite:"Enviar invitación", invite_sent:"Invitación enviada a {n}",
+  invite_limit:"Límite alcanzado: 10 invitaciones al día en el prototipo.",
+  block:"Bloquear", unblock:"Desbloquear", report:"Denunciar", blocked:"{n} está bloqueado/a. No os veréis.",
+  report_title:"Denunciar a {n}", report_r1:"Perfil falso", report_r2:"Acoso o amenazas", report_r3:"Spam o estafa", report_r4:"Parece menor de 18", report_r5:"Otro",
+  report_sent:"Denuncia enviada a moderación. Gracias.",
+  create_title:"Crear un plan", create_sub:"Encuentra gente para lo que te apetece hacer.",
+  type_public:"Público", type_private:"Privado", type_org:"Organizador",
+  type_public_d:"Visible en descubrir tras moderación.", type_private_d:"Solo lo ven las personas invitadas.", type_org_d:"Requiere una cuenta de organizador verificada.",
+  org_locked:"Las cuentas de organizador necesitan una verificación aparte (empresa, local o artista). No disponible en el prototipo.",
+  f_title:"Título", f_title_ph:"Picnic al atardecer junto al canal", f_cat:"Categoría", f_city:"Ciudad", f_date:"Fecha", f_time:"Hora",
+  f_place:"Punto de encuentro público", f_place_ph:"Delante de la entrada principal", f_capacity:"Tamaño del grupo (contigo)", f_desc:"Descripción", f_desc_ph:"¿Cuál es el plan? ¿A quién le gustaría?",
+  f_rules:"Normas del grupo", f_rules_ph:"Respeto, puntualidad, sin presión para beber.",
+  publish:"Enviar a moderación", save_private:"Crear plan privado", form_missing:"Completa título, ciudad, fecha y hora.",
+  created_public:"Plan enviado. Aparecerá cuando un moderador lo apruebe.", created_private:"Plan privado creado. Invita gente desde Personas.",
+  pending_mod:"Pendiente de moderación", approved:"Aprobado", rejected:"Rechazado", private_label:"Privado", members:"{n}/{m} personas",
+  act_outings:"Mis planes", act_invites:"Invitaciones", act_tickets:"Entradas",
+  received:"Recibidas", sent:"Enviadas", accept:"Aceptar", decline:"Rechazar", cancel_invite:"Cancelar",
+  pending:"Pendiente", accepted:"Aceptada", declined:"Rechazada", cancelled:"Cancelada", expired:"Caducada", expires:"Caduca {d}",
+  no_outings:"Aún no has creado ningún plan.", no_invites:"Aún no hay invitaciones.", no_tickets:"Aún no hay entradas. Aparecerán aquí.",
+  leave:"Salir", delete:"Eliminar",
+  msg_empty:"Sin conversaciones", msg_empty_sub:"Cuando alguien acepte tu invitación, podréis hablar aquí.", msg_placeholder:"Escribe un mensaje…", send:"Enviar",
+  msg_group:"Grupo · {t}", msg_safety:"Quedad en lugares públicos. Nunca envíes dinero. Denuncia lo que te parezca raro.",
+  edit_profile:"Editar perfil", name:"Nombre", bio:"Bio", languages:"Idiomas", interests:"Lo que te gusta", music:"Música", city_home:"Ciudad",
+  trips:"Viajes previstos", add_trip:"Añadir un viaje", trip_city:"Destino", trip_from:"Desde", trip_to:"Hasta", trip_visible:"Visible solo para miembros verificados",
+  dating:"Citas (opcional)", dating_d:"Desactivado por defecto. La amistad y los planes son lo esencial de LINK.",
+  visibility:"Visibilidad del perfil", vis_public:"Todos los miembros", vis_verified:"Solo miembros verificados", vis_hidden:"Oculto",
+  show_age:"Mostrar mi edad", show_age_d:"Tu fecha de nacimiento completa nunca se muestra.",
+  app_lang:"Idioma de la app", brand:"Dirección visual", brand_d:"Tres direcciones para elegir. Indira elige la final.",
+  theme:"Apariencia", theme_system:"Sistema", theme_light:"Claro", theme_dark:"Oscuro",
+  notif:"Notificaciones", n_invites:"Invitaciones", n_messages:"Mensajes", n_events:"Cambios de evento", n_tickets:"Entradas", n_marketing:"Novedades y ofertas",
+  quiet:"Horas de silencio", quiet_d:"Sin notificaciones entre {a} y {b}",
+  privacy:"Privacidad y datos", export:"Exportar mis datos", reset:"Reiniciar la demo", reset_done:"Demo reiniciada.", export_d:"Todo lo que este prototipo guarda sobre ti, en JSON.",
+  about:"Qué funciona en este prototipo", save:"Guardar", saved:"Guardado",
+  verif_status:"Identidad", verif_none:"No verificada", verif_pending:"Verificando…", verif_ok:"Verificada (simulación)", verif_failed:"Fallida",
+  choose_ticket:"Elige tus entradas", qty:"Cantidad", subtotal:"Subtotal", fees:"Comisión LINK", fees_free:"{p} (gratis en el lanzamiento)", taxes:"Impuestos", taxes_incl:"Incluidos", total:"Total",
+  hold:"Plazas reservadas durante {t}", hold_over:"Reserva caducada. Empieza de nuevo para comprobar la disponibilidad.",
+  pay_test:"Simular un pago de prueba correcto", pay_fail:"Simular una tarjeta rechazada",
+  sandbox_note:"Modo de prueba. En producción, el pago abre el formulario seguro del proveedor (p. ej. Stripe). LINK nunca ve ni guarda números de tarjeta.",
+  paid:"Pedido de prueba confirmado", declined_pay:"Pago rechazado. No se ha cobrado nada. Prueba otro método.",
+  ticket_test:"ENTRADA DE PRUEBA — no válida", scan:"Escanear en la entrada (demo)", scanned_ok:"Válida. Entrada registrada a las {t}.", already:"Ya escaneada a las {t}. Entrada denegada.",
+  refund:"Pedir reembolso", refunded:"Reembolsada. Código QR revocado.", revoked:"Revocada", order:"Pedido", ticket_n:"Entrada {i}/{n}", standard:"Estándar", vip:"VIP", early:"Preventa",
+  v_title:"Verificación de identidad", v_1:"Un proveedor certificado comprueba un documento y un selfie. LINK solo guarda el resultado y una referencia, nunca el documento.",
+  v_2:"Obligatoria antes de enviar invitaciones o mensajes. Explorar sigue abierto.", v_sim:"Simular la comprobación", v_fail:"Simular un fallo", v_pending:"Comprobando con el proveedor…",
+  v_ok:"Identidad verificada (simulación). Invitaciones y mensajes abiertos.", v_failed:"La verificación ha fallado. Puedes reintentarlo o pedir revisión manual.", v_manual:"Pedir revisión manual", v_manual_sent:"Revisión manual solicitada. Un moderador responde en 48 h.",
+  ob_title:"Bienvenido/a a LINK", ob_sub:"Encuentra con quién compartir conciertos, rooftops, viajes y noches.", ob_lang:"Tu idioma", ob_brand:"Elige un estilo (puedes cambiarlo)", ob_age:"Confirmo que tengo 18 años o más", ob_start:"Vamos",
+  admin:"Consola de moderación (vista previa)", admin_d:"Lo que ve un moderador de LINK. En producción es una consola web aparte con roles.", approve:"Aprobar", reject:"Rechazar", queue_empty:"Nada pendiente.",
+  offline:"Sin conexión. Mostrando los datos guardados en este dispositivo.",
+  close:"Cerrar", back:"Volver", cancel:"Cancelar", years:"{n} años", you:"Tú", today:"Hoy", tomorrow:"Mañana",
+  storage_note:"Tus datos de demo se quedan solo en este navegador.",
+  welcome_back:"Hola {n}"
+},
+de:{
+  tagline:"Verpass kein Erlebnis mehr, nur weil dir die Begleitung fehlt.",
+  tab_explore:"Entdecken", tab_people:"Leute", tab_create:"Erstellen", tab_activity:"Aktivität", tab_messages:"Nachrichten", tab_profile:"Profil",
+  demo:"Prototyp", demo_banner:"Prototyp mit Demodaten. Keine echten Zahlungen, Ausweisprüfungen oder Benachrichtigungen.",
+  mode_local:"Lokal", mode_international:"International", mode_personal:"Für dich",
+  mode_local_d:"Rund um {c}", mode_international_d:"Überall, ohne Grenzen", mode_personal_d:"Nach deinen Interessen, Daten und Reisen",
+  search_city:"Stadt suchen…", add_city:"„{x}“ hinzufügen", other_cities:"Weitere Städte",
+  when_all:"Jedes Datum", when_today:"Heute", when_weekend:"Dieses Wochenende", when_week:"Nächste 7 Tage",
+  budget_any:"Jedes Budget", budget_free:"Kostenlos", budget_30:"Unter {p}", budget_60:"Unter {p}",
+  cat_all:"Alle",
+  cat_concerts:"Konzerte", cat_festivals:"Festivals", cat_clubs:"Clubs & Partys", cat_rooftops:"Rooftops", cat_culture:"Kultur",
+  cat_activities:"Aktivitäten", cat_sports:"Sport", cat_trips:"Reisen & Ausflüge", cat_food:"Essen & Ausgehen", cat_private:"Private Events",
+  price_unknown:"Preis nicht bekannt", free:"Kostenlos", from:"Ab {p}",
+  avail_verified:"Verfügbarkeit geprüft", avail_unknown:"Verfügbarkeit unbekannt", avail_soldout:"Ausverkauft", avail_community:"Community-Treffen",
+  source:"Quelle", source_demo:"LINK-Demodaten", organizer:"Veranstalter", venue:"Ort", area:"Viertel", date:"Datum", age_min:"Mindestalter",
+  access:"Barrierefreiheit", access_yes:"Stufenloser Zugang", access_unknown:"Nicht angegeben",
+  join:"Gruppe beitreten", invite:"Jemanden einladen", buy:"Tickets holen", no_ticketing:"Kein Ticketverkauf: kostenloses Community-Treffen.",
+  ticketing_A:"Verkauf durch LINK", ticketing_B:"Partner-Veranstalter — Verkauf erlaubt", ticketing_C:"Drittanbieter-API mit Verkaufsrecht", ticketing_D:"Ohne Tickets",
+  why:"Warum du das siehst", why_interest:"du magst {x}", why_trip:"du reist nach {x}", why_city:"in deiner Stadt", why_lang:"spricht {x}", p_trip:"Bald in {x}",
+  going:"{n} LINK-Mitglieder gehen hin",
+  no_results:"Noch nichts hier", no_results_sub:"Kein Event passt zu diesen Filtern. Erweitere sie oder erstelle hier das erste Treffen.",
+  create_first:"Treffen erstellen", reset_filters:"Filter zurücksetzen",
+  people_sub:"Leute, die auch rauswollen", people_filter_city:"In {c}", people_all:"Alle Städte",
+  verified_badge:"Identität geprüft (Simulation)", not_verified:"Nicht verifiziert",
+  lock_title:"Bestätige zuerst deine Identität", lock_sub:"Einladungen und Nachrichten öffnen sich, sobald deine Identität geprüft ist. So bleibt LINK für alle sicher.", verify_now:"Identität bestätigen",
+  invite_to:"{n} einladen", invite_pick:"Wähle ein Event oder Treffen", invite_note:"Kurze Nachricht hinzufügen", send_invite:"Einladung senden", invite_sent:"Einladung an {n} gesendet",
+  invite_limit:"Limit erreicht: 10 Einladungen pro Tag im Prototyp.",
+  block:"Blockieren", unblock:"Entsperren", report:"Melden", blocked:"{n} ist blockiert. Ihr seht euch nicht mehr.",
+  report_title:"{n} melden", report_r1:"Fake-Profil", report_r2:"Belästigung oder Drohungen", report_r3:"Spam oder Betrug", report_r4:"Wirkt unter 18", report_r5:"Anderes",
+  report_sent:"Meldung an die Moderation gesendet. Danke.",
+  create_title:"Treffen erstellen", create_sub:"Finde Leute für das, worauf du Lust hast.",
+  type_public:"Öffentlich", type_private:"Privat", type_org:"Veranstalter",
+  type_public_d:"Nach Moderation in Entdecken sichtbar.", type_private_d:"Nur eingeladene Personen sehen es.", type_org_d:"Erfordert ein verifiziertes Veranstalterkonto mit Nachweis.",
+  org_locked:"Veranstalterkonten brauchen eine eigene Prüfung (Firma, Ort oder Künstler). Im Prototyp nicht verfügbar.",
+  f_title:"Titel", f_title_ph:"Sonnenuntergangs-Picknick am Kanal", f_cat:"Kategorie", f_city:"Stadt", f_date:"Datum", f_time:"Uhrzeit",
+  f_place:"Öffentlicher Treffpunkt", f_place_ph:"Vor dem Haupteingang", f_capacity:"Gruppengröße (mit dir)", f_desc:"Beschreibung", f_desc_ph:"Was ist der Plan? Wem gefällt das?",
+  f_rules:"Gruppenregeln", f_rules_ph:"Respekt, Pünktlichkeit, kein Trinkzwang.",
+  publish:"Zur Moderation senden", save_private:"Privates Treffen erstellen", form_missing:"Fülle Titel, Stadt, Datum und Uhrzeit aus.",
+  created_public:"Treffen eingereicht. Es erscheint, sobald die Moderation zustimmt.", created_private:"Privates Treffen erstellt. Lade Leute über „Leute“ ein.",
+  pending_mod:"Wartet auf Moderation", approved:"Freigegeben", rejected:"Abgelehnt", private_label:"Privat", members:"{n}/{m} Personen",
+  act_outings:"Meine Treffen", act_invites:"Einladungen", act_tickets:"Tickets",
+  received:"Erhalten", sent:"Gesendet", accept:"Annehmen", decline:"Ablehnen", cancel_invite:"Zurückziehen",
+  pending:"Offen", accepted:"Angenommen", declined:"Abgelehnt", cancelled:"Zurückgezogen", expired:"Abgelaufen", expires:"Läuft ab {d}",
+  no_outings:"Du hast noch kein Treffen erstellt.", no_invites:"Noch keine Einladungen.", no_tickets:"Noch keine Tickets. Sie erscheinen hier.",
+  leave:"Verlassen", delete:"Löschen",
+  msg_empty:"Noch keine Unterhaltungen", msg_empty_sub:"Wenn jemand deine Einladung annimmt, könnt ihr hier schreiben.", msg_placeholder:"Nachricht schreiben…", send:"Senden",
+  msg_group:"Gruppe · {t}", msg_safety:"Trefft euch an öffentlichen Orten. Schick nie Geld. Melde alles, was komisch wirkt.",
+  edit_profile:"Profil bearbeiten", name:"Vorname", bio:"Bio", languages:"Sprachen", interests:"Was du magst", music:"Musik", city_home:"Stadt",
+  trips:"Geplante Reisen", add_trip:"Reise hinzufügen", trip_city:"Ziel", trip_from:"Von", trip_to:"Bis", trip_visible:"Nur für verifizierte Mitglieder sichtbar",
+  dating:"Dating (optional)", dating_d:"Standardmäßig aus. Freundschaft und Unternehmungen stehen bei LINK im Mittelpunkt.",
+  visibility:"Profil-Sichtbarkeit", vis_public:"Alle Mitglieder", vis_verified:"Nur verifizierte Mitglieder", vis_hidden:"Versteckt",
+  show_age:"Mein Alter zeigen", show_age_d:"Dein vollständiges Geburtsdatum wird nie angezeigt.",
+  app_lang:"App-Sprache", brand:"Visuelle Richtung", brand_d:"Drei Richtungen zur Wahl. Indira wählt die finale.",
+  theme:"Darstellung", theme_system:"System", theme_light:"Hell", theme_dark:"Dunkel",
+  notif:"Benachrichtigungen", n_invites:"Einladungen", n_messages:"Nachrichten", n_events:"Event-Änderungen", n_tickets:"Tickets", n_marketing:"News und Angebote",
+  quiet:"Ruhezeiten", quiet_d:"Keine Push-Nachrichten zwischen {a} und {b}",
+  privacy:"Datenschutz & Daten", export:"Meine Daten exportieren", reset:"Demo zurücksetzen", reset_done:"Demo zurückgesetzt.", export_d:"Alles, was dieser Prototyp über dich speichert, als JSON.",
+  about:"Was in diesem Prototyp funktioniert", save:"Speichern", saved:"Gespeichert",
+  verif_status:"Identität", verif_none:"Nicht geprüft", verif_pending:"Wird geprüft…", verif_ok:"Geprüft (Simulation)", verif_failed:"Fehlgeschlagen",
+  choose_ticket:"Tickets wählen", qty:"Anzahl", subtotal:"Zwischensumme", fees:"LINK-Gebühr", fees_free:"{p} (zum Start kostenlos)", taxes:"Steuern", taxes_incl:"Inklusive", total:"Gesamt",
+  hold:"Plätze reserviert für {t}", hold_over:"Reservierung abgelaufen. Starte neu, um die Verfügbarkeit zu prüfen.",
+  pay_test:"Erfolgreiche Testzahlung simulieren", pay_fail:"Abgelehnte Karte simulieren",
+  sandbox_note:"Testmodus. Im Livebetrieb öffnet die Zahlung das sichere Formular des Anbieters (z. B. Stripe). LINK sieht oder speichert nie Kartennummern.",
+  paid:"Testbestellung bestätigt", declined_pay:"Zahlung abgelehnt. Es wurde nichts abgebucht. Versuche eine andere Zahlungsart.",
+  ticket_test:"TESTTICKET — kein gültiger Einlass", scan:"Am Einlass scannen (Demo)", scanned_ok:"Gültig. Einlass um {t} erfasst.", already:"Bereits um {t} gescannt. Einlass verweigert.",
+  refund:"Erstattung anfordern", refunded:"Erstattet. QR-Code widerrufen.", revoked:"Widerrufen", order:"Bestellung", ticket_n:"Ticket {i}/{n}", standard:"Standard", vip:"VIP", early:"Vorverkauf",
+  v_title:"Identitätsprüfung", v_1:"Ein zertifizierter Anbieter prüft einen Ausweis und ein Selfie. LINK speichert nur das Ergebnis und eine Referenz, nie das Dokument.",
+  v_2:"Pflicht, bevor du Einladungen oder Nachrichten sendest. Stöbern bleibt offen.", v_sim:"Anbieterprüfung simulieren", v_fail:"Fehlschlag simulieren", v_pending:"Prüfung beim Anbieter…",
+  v_ok:"Identität geprüft (Simulation). Einladungen und Nachrichten sind offen.", v_failed:"Prüfung fehlgeschlagen. Du kannst es erneut versuchen oder eine manuelle Prüfung anfordern.", v_manual:"Manuelle Prüfung anfordern", v_manual_sent:"Manuelle Prüfung angefordert. Antwort innerhalb von 48 h.",
+  ob_title:"Willkommen bei LINK", ob_sub:"Finde Leute für Konzerte, Rooftops, Reisen und Nächte.", ob_lang:"Deine Sprache", ob_brand:"Wähle einen Look (später änderbar)", ob_age:"Ich bestätige, dass ich mindestens 18 bin", ob_start:"Los geht's",
+  admin:"Moderationskonsole (Vorschau)", admin_d:"Was eine LINK-Moderatorin sieht. Im Livebetrieb eine eigene Web-Konsole mit Rollen.", approve:"Freigeben", reject:"Ablehnen", queue_empty:"Nichts zu prüfen.",
+  offline:"Du bist offline. Angezeigt werden die auf diesem Gerät gespeicherten Daten.",
+  close:"Schließen", back:"Zurück", cancel:"Abbrechen", years:"{n} J.", you:"Du", today:"Heute", tomorrow:"Morgen",
+  storage_note:"Deine Demodaten bleiben nur in diesem Browser.",
+  welcome_back:"Hallo {n}"
+},
+pt:{
+  tagline:"Nunca mais desistas de um programa por falta de companhia.",
+  tab_explore:"Explorar", tab_people:"Pessoas", tab_create:"Criar", tab_activity:"Atividade", tab_messages:"Mensagens", tab_profile:"Perfil",
+  demo:"Protótipo", demo_banner:"Protótipo com dados de demonstração. Sem pagamentos, verificações ou notificações reais.",
+  mode_local:"Local", mode_international:"Internacional", mode_personal:"Para ti",
+  mode_local_d:"Perto de {c}", mode_international_d:"Em todo o lado, sem limite", mode_personal_d:"Segundo os teus gostos, datas e viagens",
+  search_city:"Procurar uma cidade…", add_city:"Adicionar «{x}»", other_cities:"Outras cidades",
+  when_all:"Qualquer data", when_today:"Hoje", when_weekend:"Este fim de semana", when_week:"Próximos 7 dias",
+  budget_any:"Qualquer orçamento", budget_free:"Grátis", budget_30:"Menos de {p}", budget_60:"Menos de {p}",
+  cat_all:"Tudo",
+  cat_concerts:"Concertos", cat_festivals:"Festivais", cat_clubs:"Clubes e festas", cat_rooftops:"Rooftops", cat_culture:"Cultura",
+  cat_activities:"Atividades", cat_sports:"Desporto", cat_trips:"Viagens e passeios", cat_food:"Comer e sair", cat_private:"Eventos privados",
+  price_unknown:"Preço não anunciado", free:"Grátis", from:"Desde {p}",
+  avail_verified:"Disponibilidade confirmada", avail_unknown:"Disponibilidade desconhecida", avail_soldout:"Esgotado", avail_community:"Programa comunitário",
+  source:"Fonte", source_demo:"Dados de demo LINK", organizer:"Organizador", venue:"Local", area:"Zona", date:"Data", age_min:"Idade mínima",
+  access:"Acessibilidade", access_yes:"Acesso sem degraus", access_unknown:"Não indicado",
+  join:"Entrar num grupo", invite:"Convidar alguém", buy:"Comprar bilhetes", no_ticketing:"Sem venda de bilhetes: programa comunitário gratuito.",
+  ticketing_A:"Vendido pela LINK", ticketing_B:"Organizador parceiro — venda autorizada", ticketing_C:"API externa com direito de revenda", ticketing_D:"Sem bilhética",
+  why:"Porque vês isto", why_interest:"gostas de {x}", why_trip:"vais a {x}", why_city:"na tua cidade", why_lang:"fala {x}", p_trip:"Em breve em {x}",
+  going:"{n} membros LINK vão",
+  no_results:"Ainda nada aqui", no_results_sub:"Nenhum evento corresponde a estes filtros. Alarga-os ou cria o primeiro programa aqui.",
+  create_first:"Criar um programa", reset_filters:"Repor filtros",
+  people_sub:"Pessoas que também querem sair", people_filter_city:"Em {c}", people_all:"Todas as cidades",
+  verified_badge:"Identidade verificada (simulação)", not_verified:"Não verificado",
+  lock_title:"Verifica primeiro a tua identidade", lock_sub:"Convites e mensagens abrem quando a tua identidade estiver verificada. É o que mantém a LINK segura para todos.", verify_now:"Verificar a minha identidade",
+  invite_to:"Convidar {n}", invite_pick:"Escolhe um evento ou programa", invite_note:"Adiciona uma nota", send_invite:"Enviar convite", invite_sent:"Convite enviado a {n}",
+  invite_limit:"Limite atingido: 10 convites por dia no protótipo.",
+  block:"Bloquear", unblock:"Desbloquear", report:"Denunciar", blocked:"{n} foi bloqueado/a. Deixam de se ver.",
+  report_title:"Denunciar {n}", report_r1:"Perfil falso", report_r2:"Assédio ou ameaças", report_r3:"Spam ou burla", report_r4:"Parece ter menos de 18", report_r5:"Outro",
+  report_sent:"Denúncia enviada à moderação. Obrigado.",
+  create_title:"Criar um programa", create_sub:"Encontra pessoas para aquilo que te apetece fazer.",
+  type_public:"Público", type_private:"Privado", type_org:"Organizador",
+  type_public_d:"Visível em explorar após moderação.", type_private_d:"Só as pessoas convidadas o veem.", type_org_d:"Requer uma conta de organizador verificada.",
+  org_locked:"As contas de organizador precisam de uma verificação própria (empresa, espaço ou artista). Indisponível no protótipo.",
+  f_title:"Título", f_title_ph:"Piquenique ao pôr do sol junto ao rio", f_cat:"Categoria", f_city:"Cidade", f_date:"Data", f_time:"Hora",
+  f_place:"Ponto de encontro público", f_place_ph:"Em frente à entrada principal", f_capacity:"Tamanho do grupo (contigo)", f_desc:"Descrição", f_desc_ph:"Qual é o plano? A quem vai agradar?",
+  f_rules:"Regras do grupo", f_rules_ph:"Respeito, pontualidade, sem pressão para beber.",
+  publish:"Enviar para moderação", save_private:"Criar programa privado", form_missing:"Preenche título, cidade, data e hora.",
+  created_public:"Programa enviado. Aparece quando um moderador o aprovar.", created_private:"Programa privado criado. Convida pessoas no separador Pessoas.",
+  pending_mod:"À espera de moderação", approved:"Aprovado", rejected:"Recusado", private_label:"Privado", members:"{n}/{m} pessoas",
+  act_outings:"Os meus programas", act_invites:"Convites", act_tickets:"Bilhetes",
+  received:"Recebidos", sent:"Enviados", accept:"Aceitar", decline:"Recusar", cancel_invite:"Cancelar",
+  pending:"Pendente", accepted:"Aceite", declined:"Recusado", cancelled:"Cancelado", expired:"Expirado", expires:"Expira {d}",
+  no_outings:"Ainda não criaste nenhum programa.", no_invites:"Ainda sem convites.", no_tickets:"Ainda sem bilhetes. Vão aparecer aqui.",
+  leave:"Sair", delete:"Apagar",
+  msg_empty:"Sem conversas", msg_empty_sub:"Quando alguém aceitar o teu convite, podem falar aqui.", msg_placeholder:"Escreve uma mensagem…", send:"Enviar",
+  msg_group:"Grupo · {t}", msg_safety:"Encontrem-se em locais públicos. Nunca envies dinheiro. Denuncia o que parecer estranho.",
+  edit_profile:"Editar perfil", name:"Nome", bio:"Bio", languages:"Línguas", interests:"O que gostas", music:"Música", city_home:"Cidade",
+  trips:"Viagens previstas", add_trip:"Adicionar viagem", trip_city:"Destino", trip_from:"De", trip_to:"Até", trip_visible:"Visível só para membros verificados",
+  dating:"Encontros (opcional)", dating_d:"Desligado por defeito. Amizade e programas são o centro da LINK.",
+  visibility:"Visibilidade do perfil", vis_public:"Todos os membros", vis_verified:"Só membros verificados", vis_hidden:"Oculto",
+  show_age:"Mostrar a minha idade", show_age_d:"A tua data de nascimento completa nunca é mostrada.",
+  app_lang:"Idioma da app", brand:"Direção visual", brand_d:"Três direções à escolha. A Indira escolhe a final.",
+  theme:"Aparência", theme_system:"Sistema", theme_light:"Claro", theme_dark:"Escuro",
+  notif:"Notificações", n_invites:"Convites", n_messages:"Mensagens", n_events:"Alterações de eventos", n_tickets:"Bilhetes", n_marketing:"Novidades e ofertas",
+  quiet:"Horas de silêncio", quiet_d:"Sem notificações entre {a} e {b}",
+  privacy:"Privacidade e dados", export:"Exportar os meus dados", reset:"Reiniciar a demo", reset_done:"Demo reiniciada.", export_d:"Tudo o que este protótipo guarda sobre ti, em JSON.",
+  about:"O que funciona neste protótipo", save:"Guardar", saved:"Guardado",
+  verif_status:"Identidade", verif_none:"Não verificada", verif_pending:"A verificar…", verif_ok:"Verificada (simulação)", verif_failed:"Falhou",
+  choose_ticket:"Escolhe os bilhetes", qty:"Quantidade", subtotal:"Subtotal", fees:"Taxa LINK", fees_free:"{p} (grátis no lançamento)", taxes:"Impostos", taxes_incl:"Incluídos", total:"Total",
+  hold:"Lugares reservados durante {t}", hold_over:"Reserva expirada. Recomeça para confirmar a disponibilidade.",
+  pay_test:"Simular um pagamento de teste bem-sucedido", pay_fail:"Simular um cartão recusado",
+  sandbox_note:"Modo de teste. Em produção, o pagamento abre o formulário seguro do fornecedor (ex. Stripe). A LINK nunca vê nem guarda números de cartão.",
+  paid:"Encomenda de teste confirmada", declined_pay:"Pagamento recusado. Nada foi cobrado. Experimenta outro método.",
+  ticket_test:"BILHETE DE TESTE — não válido", scan:"Ler à entrada (demo)", scanned_ok:"Válido. Entrada registada às {t}.", already:"Já lido às {t}. Entrada recusada.",
+  refund:"Pedir reembolso", refunded:"Reembolsado. Código QR revogado.", revoked:"Revogado", order:"Encomenda", ticket_n:"Bilhete {i}/{n}", standard:"Normal", vip:"VIP", early:"Pré-venda",
+  v_title:"Verificação de identidade", v_1:"Um fornecedor certificado verifica um documento e uma selfie. A LINK só guarda o resultado e uma referência, nunca o documento.",
+  v_2:"Obrigatória antes de enviar convites ou mensagens. Explorar continua aberto.", v_sim:"Simular a verificação", v_fail:"Simular uma falha", v_pending:"A verificar com o fornecedor…",
+  v_ok:"Identidade verificada (simulação). Convites e mensagens abertos.", v_failed:"A verificação falhou. Podes tentar de novo ou pedir revisão manual.", v_manual:"Pedir revisão manual", v_manual_sent:"Revisão manual pedida. Um moderador responde em 48 h.",
+  ob_title:"Bem-vindo/a à LINK", ob_sub:"Encontra com quem partilhar concertos, rooftops, viagens e noites.", ob_lang:"O teu idioma", ob_brand:"Escolhe um estilo (podes mudar depois)", ob_age:"Confirmo que tenho 18 anos ou mais", ob_start:"Vamos",
+  admin:"Consola de moderação (pré-visualização)", admin_d:"O que um moderador LINK vê. Em produção é uma consola web separada com funções.", approve:"Aprovar", reject:"Recusar", queue_empty:"Nada para rever.",
+  offline:"Estás offline. A mostrar os dados guardados neste dispositivo.",
+  close:"Fechar", back:"Voltar", cancel:"Cancelar", years:"{n} anos", you:"Tu", today:"Hoje", tomorrow:"Amanhã",
+  storage_note:"Os teus dados de demo ficam só neste navegador.",
+  welcome_back:"Olá {n}"
+},
+it:{
+  tagline:"Non rinunciare più a un'esperienza per mancanza di compagnia.",
+  tab_explore:"Esplora", tab_people:"Persone", tab_create:"Crea", tab_activity:"Attività", tab_messages:"Messaggi", tab_profile:"Profilo",
+  demo:"Prototipo", demo_banner:"Prototipo con dati dimostrativi. Nessun pagamento, verifica d'identità o notifica reale.",
+  mode_local:"Locale", mode_international:"Internazionale", mode_personal:"Per te",
+  mode_local_d:"Intorno a {c}", mode_international_d:"Ovunque, senza limiti", mode_personal_d:"In base a gusti, date e viaggi",
+  search_city:"Cerca una città…", add_city:"Aggiungi «{x}»", other_cities:"Altre città",
+  when_all:"Qualsiasi data", when_today:"Oggi", when_weekend:"Questo weekend", when_week:"Prossimi 7 giorni",
+  budget_any:"Qualsiasi budget", budget_free:"Gratis", budget_30:"Sotto {p}", budget_60:"Sotto {p}",
+  cat_all:"Tutto",
+  cat_concerts:"Concerti", cat_festivals:"Festival", cat_clubs:"Club e feste", cat_rooftops:"Rooftop", cat_culture:"Cultura",
+  cat_activities:"Attività", cat_sports:"Sport", cat_trips:"Viaggi ed escursioni", cat_food:"Cibo e uscite", cat_private:"Eventi privati",
+  price_unknown:"Prezzo non comunicato", free:"Gratis", from:"Da {p}",
+  avail_verified:"Disponibilità verificata", avail_unknown:"Disponibilità sconosciuta", avail_soldout:"Esaurito", avail_community:"Uscita della community",
+  source:"Fonte", source_demo:"Dati demo LINK", organizer:"Organizzatore", venue:"Luogo", area:"Zona", date:"Data", age_min:"Età minima",
+  access:"Accessibilità", access_yes:"Accesso senza gradini", access_unknown:"Non indicato",
+  join:"Unisciti a un gruppo", invite:"Invita qualcuno", buy:"Prendi i biglietti", no_ticketing:"Nessuna vendita: uscita della community gratuita.",
+  ticketing_A:"Venduto da LINK", ticketing_B:"Organizzatore partner — vendita autorizzata", ticketing_C:"API esterna con diritto di rivendita", ticketing_D:"Senza biglietteria",
+  why:"Perché lo vedi", why_interest:"ti piace {x}", why_trip:"vai a {x}", why_city:"nella tua città", why_lang:"parla {x}", p_trip:"Presto a {x}",
+  going:"Ci vanno {n} membri LINK",
+  no_results:"Ancora niente qui", no_results_sub:"Nessun evento corrisponde ai filtri. Allargali o crea qui la prima uscita.",
+  create_first:"Crea un'uscita", reset_filters:"Azzera filtri",
+  people_sub:"Persone che hanno voglia di uscire anche loro", people_filter_city:"A {c}", people_all:"Tutte le città",
+  verified_badge:"Identità verificata (simulazione)", not_verified:"Non verificato",
+  lock_title:"Prima verifica la tua identità", lock_sub:"Inviti e messaggi si aprono quando la tua identità è verificata. Così LINK resta sicura per tutti.", verify_now:"Verifica la mia identità",
+  invite_to:"Invita {n}", invite_pick:"Scegli un evento o un'uscita", invite_note:"Aggiungi un messaggio", send_invite:"Invia invito", invite_sent:"Invito inviato a {n}",
+  invite_limit:"Limite raggiunto: 10 inviti al giorno nel prototipo.",
+  block:"Blocca", unblock:"Sblocca", report:"Segnala", blocked:"{n} è bloccato/a. Non vi vedrete più.",
+  report_title:"Segnala {n}", report_r1:"Profilo falso", report_r2:"Molestie o minacce", report_r3:"Spam o truffa", report_r4:"Sembra minorenne", report_r5:"Altro",
+  report_sent:"Segnalazione inviata alla moderazione. Grazie.",
+  create_title:"Crea un'uscita", create_sub:"Trova persone per quello che hai voglia di fare.",
+  type_public:"Pubblica", type_private:"Privata", type_org:"Organizzatore",
+  type_public_d:"Visibile in Esplora dopo la moderazione.", type_private_d:"La vedono solo le persone invitate.", type_org_d:"Richiede un account organizzatore verificato.",
+  org_locked:"Gli account organizzatore richiedono una verifica separata (azienda, locale o artista). Non disponibile nel prototipo.",
+  f_title:"Titolo", f_title_ph:"Picnic al tramonto sul canale", f_cat:"Categoria", f_city:"Città", f_date:"Data", f_time:"Ora",
+  f_place:"Punto d'incontro pubblico", f_place_ph:"Davanti all'ingresso principale", f_capacity:"Dimensione del gruppo (te compreso)", f_desc:"Descrizione", f_desc_ph:"Qual è il piano? A chi piacerà?",
+  f_rules:"Regole del gruppo", f_rules_ph:"Rispetto, puntualità, nessuna pressione a bere.",
+  publish:"Invia in moderazione", save_private:"Crea uscita privata", form_missing:"Compila titolo, città, data e ora.",
+  created_public:"Uscita inviata. Apparirà appena un moderatore la approva.", created_private:"Uscita privata creata. Invita persone dalla scheda Persone.",
+  pending_mod:"In attesa di moderazione", approved:"Approvata", rejected:"Rifiutata", private_label:"Privata", members:"{n}/{m} persone",
+  act_outings:"Le mie uscite", act_invites:"Inviti", act_tickets:"Biglietti",
+  received:"Ricevuti", sent:"Inviati", accept:"Accetta", decline:"Rifiuta", cancel_invite:"Annulla",
+  pending:"In attesa", accepted:"Accettato", declined:"Rifiutato", cancelled:"Annullato", expired:"Scaduto", expires:"Scade {d}",
+  no_outings:"Non hai ancora creato uscite.", no_invites:"Ancora nessun invito.", no_tickets:"Ancora nessun biglietto. Appariranno qui.",
+  leave:"Esci", delete:"Elimina",
+  msg_empty:"Nessuna conversazione", msg_empty_sub:"Quando qualcuno accetta il tuo invito, potete scrivervi qui.", msg_placeholder:"Scrivi un messaggio…", send:"Invia",
+  msg_group:"Gruppo · {t}", msg_safety:"Incontratevi in luoghi pubblici. Non inviare mai denaro. Segnala ciò che ti sembra strano.",
+  edit_profile:"Modifica profilo", name:"Nome", bio:"Bio", languages:"Lingue parlate", interests:"Cosa ti piace", music:"Musica", city_home:"Città",
+  trips:"Viaggi previsti", add_trip:"Aggiungi un viaggio", trip_city:"Destinazione", trip_from:"Dal", trip_to:"Al", trip_visible:"Visibile solo ai membri verificati",
+  dating:"Incontri (facoltativo)", dating_d:"Disattivato di default. Amicizia e uscite restano il cuore di LINK.",
+  visibility:"Visibilità del profilo", vis_public:"Tutti i membri", vis_verified:"Solo membri verificati", vis_hidden:"Nascosto",
+  show_age:"Mostra la mia età", show_age_d:"La data di nascita completa non viene mai mostrata.",
+  app_lang:"Lingua dell'app", brand:"Direzione visiva", brand_d:"Tre direzioni tra cui scegliere. Indira sceglie quella finale.",
+  theme:"Aspetto", theme_system:"Sistema", theme_light:"Chiaro", theme_dark:"Scuro",
+  notif:"Notifiche", n_invites:"Inviti", n_messages:"Messaggi", n_events:"Modifiche agli eventi", n_tickets:"Biglietti", n_marketing:"Novità e offerte",
+  quiet:"Ore di silenzio", quiet_d:"Nessuna notifica tra le {a} e le {b}",
+  privacy:"Privacy e dati", export:"Esporta i miei dati", reset:"Reimposta la demo", reset_done:"Demo reimpostata.", export_d:"Tutto ciò che questo prototipo salva su di te, in JSON.",
+  about:"Cosa funziona in questo prototipo", save:"Salva", saved:"Salvato",
+  verif_status:"Identità", verif_none:"Non verificata", verif_pending:"Verifica in corso…", verif_ok:"Verificata (simulazione)", verif_failed:"Non riuscita",
+  choose_ticket:"Scegli i biglietti", qty:"Quantità", subtotal:"Subtotale", fees:"Commissione LINK", fees_free:"{p} (gratis al lancio)", taxes:"Tasse", taxes_incl:"Incluse", total:"Totale",
+  hold:"Posti bloccati per {t}", hold_over:"Prenotazione scaduta. Ricomincia per verificare la disponibilità.",
+  pay_test:"Simula un pagamento di prova riuscito", pay_fail:"Simula una carta rifiutata",
+  sandbox_note:"Modalità test. In produzione il pagamento apre il modulo sicuro del fornitore (es. Stripe). LINK non vede né salva mai i numeri di carta.",
+  paid:"Ordine di prova confermato", declined_pay:"Pagamento rifiutato. Non è stato addebitato nulla. Prova un altro metodo.",
+  ticket_test:"BIGLIETTO DI PROVA — non valido", scan:"Scansiona all'ingresso (demo)", scanned_ok:"Valido. Ingresso registrato alle {t}.", already:"Già scansionato alle {t}. Ingresso rifiutato.",
+  refund:"Chiedi un rimborso", refunded:"Rimborsato. Codice QR revocato.", revoked:"Revocato", order:"Ordine", ticket_n:"Biglietto {i}/{n}", standard:"Standard", vip:"VIP", early:"Prevendita",
+  v_title:"Verifica dell'identità", v_1:"Un fornitore certificato controlla un documento e un selfie. LINK conserva solo l'esito e un riferimento, mai il documento.",
+  v_2:"Obbligatoria prima di inviare inviti o messaggi. Esplorare resta libero.", v_sim:"Simula il controllo", v_fail:"Simula un errore", v_pending:"Verifica con il fornitore…",
+  v_ok:"Identità verificata (simulazione). Inviti e messaggi aperti.", v_failed:"Verifica non riuscita. Puoi riprovare o chiedere una revisione manuale.", v_manual:"Chiedi revisione manuale", v_manual_sent:"Revisione manuale richiesta. Un moderatore risponde entro 48 h.",
+  ob_title:"Benvenuto/a su LINK", ob_sub:"Trova con chi condividere concerti, rooftop, viaggi e serate.", ob_lang:"La tua lingua", ob_brand:"Scegli uno stile (puoi cambiarlo)", ob_age:"Confermo di avere almeno 18 anni", ob_start:"Andiamo",
+  admin:"Console di moderazione (anteprima)", admin_d:"Ciò che vede un moderatore LINK. In produzione è una console web separata con ruoli.", approve:"Approva", reject:"Rifiuta", queue_empty:"Niente da moderare.",
+  offline:"Sei offline. Mostro i dati salvati su questo dispositivo.",
+  close:"Chiudi", back:"Indietro", cancel:"Annulla", years:"{n} anni", you:"Tu", today:"Oggi", tomorrow:"Domani",
+  storage_note:"I tuoi dati demo restano solo in questo browser.",
+  welcome_back:"Ciao {n}"
+}
+};
+
+/* Long-form "what works" panel, per language (fallback en). */
+const ABOUT = {
+  fr:[["ok","Navigation, 6 langues, 3 directions visuelles, mode clair/sombre"],["ok","13 villes prioritaires + n'importe quelle autre ville (liste extensible)"],["ok","Découverte locale, internationale et personnalisée, avec la raison de chaque recommandation"],["ok","Création de sorties publiques (modération) et privées, gardées sur ton appareil"],["ok","Invitations et messages bloqués tant que l'identité n'est pas vérifiée"],["ok","Blocage, signalement, export des données, visibilité, heures calmes"],["test","Vérification d'identité : simulée (prestataire KYC à contracter)"],["test","Billetterie : parcours complet en mode test, aucun vrai paiement ni vrai billet"],["test","Événements et profils : fictifs, marqués comme démo"],["bad","Comptes, base de données serveur, notifications push, stores : à brancher (voir le dossier)"]],
+  en:[["ok","Navigation, 6 languages, 3 visual directions, light/dark mode"],["ok","13 priority cities + any other city (extensible list)"],["ok","Local, international and personalised discovery, with the reason for each pick"],["ok","Public (moderated) and private outings, saved on your device"],["ok","Invitations and messages locked until identity is verified"],["ok","Block, report, data export, visibility, quiet hours"],["test","ID verification: simulated (KYC provider to contract)"],["test","Ticketing: full flow in test mode, no real payment or ticket"],["test","Events and profiles: fictional, marked as demo"],["bad","Accounts, server database, push notifications, app stores: to connect (see the brief)"]]
+};
+
+/* LINK prototype — DEMO DATA ONLY. Every event, venue and person below is fictional.
+   In production, cities come from the admin-managed `cities` table and events from authorised sources. */
+const CITIES = [
+  {id:"paris", name:"Paris", country:"FR", tz:"Europe/Paris", cur:"EUR", priority:1},
+  {id:"london", name:"London", country:"GB", tz:"Europe/London", cur:"GBP", priority:2},
+  {id:"amsterdam", name:"Amsterdam", country:"NL", tz:"Europe/Amsterdam", cur:"EUR", priority:3},
+  {id:"ibiza", name:"Ibiza", country:"ES", tz:"Europe/Madrid", cur:"EUR", priority:4},
+  {id:"barcelona", name:"Barcelona", country:"ES", tz:"Europe/Madrid", cur:"EUR", priority:5},
+  {id:"berlin", name:"Berlin", country:"DE", tz:"Europe/Berlin", cur:"EUR", priority:6},
+  {id:"madrid", name:"Madrid", country:"ES", tz:"Europe/Madrid", cur:"EUR", priority:7},
+  {id:"milan", name:"Milan", country:"IT", tz:"Europe/Rome", cur:"EUR", priority:8},
+  {id:"rome", name:"Rome", country:"IT", tz:"Europe/Rome", cur:"EUR", priority:9},
+  {id:"brussels", name:"Brussels", country:"BE", tz:"Europe/Brussels", cur:"EUR", priority:10},
+  {id:"lisbon", name:"Lisbon", country:"PT", tz:"Europe/Lisbon", cur:"EUR", priority:11},
+  {id:"mykonos", name:"Mykonos", country:"GR", tz:"Europe/Athens", cur:"EUR", priority:12},
+  {id:"newyork", name:"New York", country:"US", tz:"America/New_York", cur:"USD", priority:13}
+];
+
+const CATEGORIES = ["concerts","festivals","clubs","rooftops","culture","activities","sports","trips","food","private"];
+const CAT_ART = {
+  concerts:["#FF5A4E","#7A1FA2","LIVE"], festivals:["#FFB020","#E8436B","FEST"], clubs:["#3A1C71","#D76D77","NIGHT"],
+  rooftops:["#FF8C42","#2E5BBA","SKY"], culture:["#0E9F9A","#1D3557","ART"], activities:["#19B58C","#F2C230","PLAY"],
+  sports:["#1559D6","#00B3A4","GAME"], trips:["#00A6D6","#F7B32B","GO"], food:["#E85D2F","#8C2F39","EAT"], private:["#5B3E96","#E0447C","VIP"]
+};
+const INTERESTS = ["concerts","festivals","clubs","rooftops","culture","activities","sports","trips","food"];
+const MUSIC = ["House","Techno","Pop","Hip-hop","R&B","Afrobeats","Rock","Jazz","Latin","Reggaeton","Classical","Indie"];
+const LANG_NAMES = {fr:"Français",en:"English",es:"Español",de:"Deutsch",pt:"Português",it:"Italiano",nl:"Nederlands",el:"Ελληνικά",ar:"العربية"};
+
+/* d = day offset from today, t = local time in the city. price = lowest price in local currency, null = unknown.
+   tk = ticketing case: A LINK-operated, B partner, C third-party API with rights, D community (no sale). */
+const EVENTS = [
+  {id:"e1", city:"paris", cat:"concerts", title:"Seine Sunset Sessions", venue:"Péniche Lumière", area:"Bercy", d:2, t:"20:00", price:22, avail:"verified", tk:"B", age:18, acc:true, going:14, org:"Lumière Live (fictif)",
+   desc:{en:"Acoustic soul on a moored barge as the sun drops behind the bridges.", fr:"Soul acoustique sur une péniche amarrée, pendant que le soleil passe derrière les ponts."}},
+  {id:"e2", city:"paris", cat:"rooftops", title:"Toits & Spritz", venue:"Terrasse du 9e", area:"Pigalle", d:0, t:"18:30", price:null, avail:"unknown", tk:"D", age:18, acc:null, going:6, org:"Communauté LINK",
+   desc:{en:"After-work on a rooftop with a view over Montmartre. Drinks paid on site.", fr:"Afterwork sur un toit avec vue sur Montmartre. Consos payées sur place."}},
+  {id:"e3", city:"paris", cat:"culture", title:"Nocturne au musée imaginaire", venue:"Galerie Quinze", area:"Le Marais", d:5, t:"19:00", price:0, avail:"verified", tk:"A", age:18, acc:true, going:21, org:"LINK Events",
+   desc:{en:"Late opening, guided tour in small groups, then drinks in the courtyard.", fr:"Ouverture tardive, visite guidée en petits groupes, puis verre dans la cour."}},
+  {id:"e4", city:"london", cat:"clubs", title:"Basement Frequencies", venue:"The Vault 9", area:"Shoreditch", d:3, t:"23:00", price:18, avail:"verified", tk:"C", age:18, acc:false, going:30, org:"Vault Nights (fictional)",
+   desc:{en:"Deep house until 5am in a converted railway arch.", fr:"Deep house jusqu'à 5 h sous une ancienne arche ferroviaire."}},
+  {id:"e5", city:"london", cat:"food", title:"Borough Street Food Crawl", venue:"Meeting point: market gate", area:"Southwark", d:1, t:"12:30", price:0, avail:"unknown", tk:"D", age:18, acc:true, going:9, org:"LINK community",
+   desc:{en:"Six stalls, small bites, one big group. Pay for what you eat.", fr:"Six stands, petites bouchées, un grand groupe. Chacun paie ce qu'il mange."}},
+  {id:"e6", city:"amsterdam", cat:"activities", title:"Canal Kayak at Dusk", venue:"Kayak Dock West", area:"Jordaan", d:4, t:"17:30", price:35, avail:"verified", tk:"B", age:18, acc:false, going:8, org:"Grachten Paddle (fictief)",
+   desc:{en:"Two hours paddling through quiet canals. Beginners welcome.", fr:"Deux heures de pagaie sur les canaux calmes. Débutants bienvenus."}},
+  {id:"e7", city:"amsterdam", cat:"festivals", title:"Noord Open Air", venue:"Werf Terrein", area:"Noord", d:9, t:"14:00", price:59, avail:"verified", tk:"C", age:18, acc:true, going:47, org:"Werf Collective (fictief)",
+   desc:{en:"Day festival on the old shipyard: three stages, electronic and disco.", fr:"Festival de jour sur l'ancien chantier naval : trois scènes, électro et disco."}},
+  {id:"e8", city:"ibiza", cat:"clubs", title:"Sunrise Terrace", venue:"Cala Blanca Club", area:"Sant Antoni", d:6, t:"23:30", price:65, avail:"soldout", tk:"C", age:18, acc:false, going:52, org:"Blanca Group (ficticio)",
+   desc:{en:"Open-air terrace party that ends with the sunrise over the bay.", fr:"Soirée en terrasse qui se termine avec le lever du soleil sur la baie."}},
+  {id:"e9", city:"ibiza", cat:"trips", title:"Boat Day to Formentera", venue:"Port d'Eivissa", area:"Marina", d:7, t:"10:00", price:89, avail:"verified", tk:"B", age:18, acc:false, going:16, org:"Mar Azul Charters (ficticio)",
+   desc:{en:"Full day at sea, snorkelling stop and lunch on the beach.", fr:"Journée en mer, arrêt snorkeling et déjeuner sur la plage."}},
+  {id:"e10", city:"barcelona", cat:"sports", title:"Beach Volley Sunday", venue:"Platja de la Barceloneta", area:"Barceloneta", d:5, t:"11:00", price:0, avail:"unknown", tk:"D", age:18, acc:true, going:12, org:"LINK community",
+   desc:{en:"Mixed teams, all levels. Bring water and sunscreen.", fr:"Équipes mixtes, tous niveaux. Prends de l'eau et de la crème solaire."}},
+  {id:"e11", city:"barcelona", cat:"concerts", title:"Rumba al Patio", venue:"Patio del Raval", area:"El Raval", d:2, t:"21:30", price:15, avail:"verified", tk:"A", age:18, acc:true, going:19, org:"LINK Events",
+   desc:{en:"Catalan rumba band in a hidden courtyard. Dancing strongly encouraged.", fr:"Groupe de rumba catalane dans une cour cachée. Danse vivement conseillée."}},
+  {id:"e12", city:"berlin", cat:"clubs", title:"Kraftwerk Halle 4", venue:"Halle 4", area:"Friedrichshain", d:4, t:"23:59", price:20, avail:"unknown", tk:"C", age:18, acc:false, going:38, org:"Halle Kollektiv (fiktiv)",
+   desc:{en:"Industrial techno, no photos on the dancefloor.", fr:"Techno industrielle, pas de photos sur le dancefloor."}},
+  {id:"e13", city:"berlin", cat:"culture", title:"Open Studios Kreuzberg", venue:"Hinterhof Ateliers", area:"Kreuzberg", d:1, t:"16:00", price:0, avail:"verified", tk:"D", age:18, acc:true, going:11, org:"LINK community",
+   desc:{en:"Twelve artists open their studios. Walk it as a group.", fr:"Douze artistes ouvrent leurs ateliers. On fait le tour en groupe."}},
+  {id:"e14", city:"madrid", cat:"food", title:"Tapas por La Latina", venue:"Plaza de la Cebada", area:"La Latina", d:3, t:"20:30", price:25, avail:"verified", tk:"B", age:18, acc:true, going:13, org:"Ruta Sabor (ficticio)",
+   desc:{en:"Four bars, four tapas and a vermouth, with a local host.", fr:"Quatre bars, quatre tapas et un vermouth, avec un hôte du quartier."}},
+  {id:"e15", city:"madrid", cat:"sports", title:"Derby Night Watch Party", venue:"Bar Estadio (ficticio)", area:"Chamberí", d:8, t:"21:00", price:null, avail:"unknown", tk:"D", age:18, acc:null, going:24, org:"LINK community",
+   desc:{en:"Watch the big match together on a giant screen.", fr:"On regarde le grand match ensemble sur écran géant."}},
+  {id:"e16", city:"milan", cat:"rooftops", title:"Aperitivo sul Tetto", venue:"Terrazza Navigli", area:"Navigli", d:2, t:"19:00", price:18, avail:"verified", tk:"B", age:18, acc:true, going:17, org:"Terrazza Milano (fittizio)",
+   desc:{en:"Spritz and buffet with a view over the canals.", fr:"Spritz et buffet avec vue sur les canaux."}},
+  {id:"e17", city:"milan", cat:"culture", title:"Design Week Night Walk", venue:"Start: Brera", area:"Brera", d:10, t:"18:00", price:0, avail:"unknown", tk:"D", age:18, acc:true, going:28, org:"LINK community",
+   desc:{en:"Evening walk through showrooms and installations.", fr:"Balade du soir entre showrooms et installations."}},
+  {id:"e18", city:"rome", cat:"food", title:"Cooking Carbonara Class", venue:"Cucina Trastevere", area:"Trastevere", d:4, t:"18:30", price:45, avail:"verified", tk:"A", age:18, acc:false, going:10, org:"LINK Events",
+   desc:{en:"Learn the real thing, then eat it together.", fr:"Apprends la vraie recette, puis on mange ensemble."}},
+  {id:"e19", city:"rome", cat:"concerts", title:"Jazz sotto le Stelle", venue:"Chiostro Antico", area:"Monti", d:6, t:"21:00", price:28, avail:"unknown", tk:"C", age:18, acc:true, going:9, org:"Chiostro Musica (fittizio)",
+   desc:{en:"Quartet in a 16th-century cloister.", fr:"Quartet de jazz dans un cloître du XVIe siècle."}},
+  {id:"e20", city:"brussels", cat:"food", title:"Beer & Frites Tour", venue:"Grand-Place (rdv)", area:"Centre", d:1, t:"19:30", price:30, avail:"verified", tk:"B", age:18, acc:true, going:15, org:"Brussels Tasting (fictif)",
+   desc:{en:"Three craft-beer bars and the city's best fries.", fr:"Trois bars à bières artisanales et les meilleures frites de la ville."}},
+  {id:"e21", city:"brussels", cat:"concerts", title:"Midi Jazz Club", venue:"Cave Saint-Gilles", area:"Saint-Gilles", d:5, t:"21:00", price:null, avail:"unknown", tk:"D", age:18, acc:null, going:7, org:"LINK community",
+   desc:{en:"Jam session in a cellar bar. Musicians can bring instruments.", fr:"Jam session dans une cave. Les musiciens peuvent venir avec leur instrument."}},
+  {id:"e22", city:"lisbon", cat:"rooftops", title:"Miradouro Sunset", venue:"Miradouro da Graça", area:"Graça", d:0, t:"18:00", price:0, avail:"unknown", tk:"D", age:18, acc:false, going:20, org:"LINK community",
+   desc:{en:"Meet at the viewpoint, then fado in a tasca nearby.", fr:"Rendez-vous au belvédère, puis fado dans une tasca à côté."}},
+  {id:"e23", city:"lisbon", cat:"trips", title:"Sintra Day Trip", venue:"Rossio Station", area:"Baixa", d:7, t:"09:00", price:39, avail:"verified", tk:"B", age:18, acc:false, going:12, org:"Serra Tours (fictício)",
+   desc:{en:"Palaces, forest and pastries. Train and guide included.", fr:"Palais, forêt et pâtisseries. Train et guide inclus."}},
+  {id:"e24", city:"mykonos", cat:"festivals", title:"Aegean Beach Festival", venue:"Paradise Bay", area:"South coast", d:12, t:"16:00", price:75, avail:"verified", tk:"C", age:18, acc:false, going:61, org:"Aegean Sound (fictional)",
+   desc:{en:"Two days of house music by the sea.", fr:"Deux jours de house au bord de la mer."}},
+  {id:"e25", city:"mykonos", cat:"private", title:"Villa Dinner Club", venue:"Address shared after approval", area:"Ano Mera", d:8, t:"20:30", price:120, avail:"verified", tk:"B", age:21, acc:false, going:8, org:"Ano Mera Hosts (fictional)",
+   desc:{en:"Long-table dinner for 20, private chef. Host approval required.", fr:"Dîner en longue table pour 20, chef privé. Validation de l'hôte requise."}},
+  {id:"e26", city:"newyork", cat:"concerts", title:"Brooklyn Rooftop Live", venue:"Pier Roof 7", area:"Williamsburg", d:3, t:"20:00", price:35, avail:"verified", tk:"C", age:21, acc:true, going:33, org:"Pier Roof (fictional)",
+   desc:{en:"Indie bands with the Manhattan skyline behind the stage.", fr:"Groupes indé avec la skyline de Manhattan derrière la scène."}},
+  {id:"e27", city:"newyork", cat:"activities", title:"Central Park Run Club", venue:"Bethesda Fountain", area:"Central Park", d:1, t:"07:30", price:0, avail:"unknown", tk:"D", age:18, acc:true, going:18, org:"LINK community",
+   desc:{en:"5 km easy pace, then coffee. Every level.", fr:"5 km à allure tranquille, puis café. Tous niveaux."}}
+];
+
+/* Fictional members. Photos are replaced by initials; verified = demo flag. */
+const PEOPLE = [
+  {id:"p1", name:"Léa", age:27, city:"paris", langs:["fr","en"], interests:["concerts","rooftops","culture"], music:["Indie","Jazz"], verified:true, color:"#FF5A4E",
+   bio:{en:"Gig addict, always one ticket short of a friend.", fr:"Accro aux concerts, toujours un billet de trop."}, trips:[{city:"lisbon", d:20}]},
+  {id:"p2", name:"Malik", age:31, city:"paris", langs:["fr","en","ar"], interests:["clubs","festivals","food"], music:["House","Afrobeats"], verified:true, color:"#7A3DD1",
+   bio:{en:"New to Paris. Looking for a crew for festivals.", fr:"Nouveau à Paris. Je cherche une team pour les festivals."}, trips:[{city:"ibiza", d:6}]},
+  {id:"p3", name:"Chloé", age:24, city:"paris", langs:["fr","es"], interests:["activities","sports","food"], music:["Pop","Latin"], verified:false, color:"#0E9F9A",
+   bio:{en:"Weekend climber, weekday foodie.", fr:"Grimpeuse le week-end, gourmande la semaine."}, trips:[]},
+  {id:"p4", name:"James", age:34, city:"london", langs:["en"], interests:["clubs","concerts","sports"], music:["Techno","Rock"], verified:true, color:"#1559D6",
+   bio:{en:"Will dance to anything after midnight.", fr:"Je danse sur n'importe quoi après minuit."}, trips:[{city:"berlin", d:4}]},
+  {id:"p5", name:"Sofia", age:29, city:"barcelona", langs:["es","en","it"], interests:["rooftops","food","culture"], music:["R&B","Latin"], verified:true, color:"#E8436B",
+   bio:{en:"Architect. I know every hidden terrace in town.", fr:"Architecte. Je connais toutes les terrasses cachées."}, trips:[{city:"milan", d:10}]},
+  {id:"p6", name:"Jonas", age:38, city:"berlin", langs:["de","en"], interests:["clubs","culture","trips"], music:["Techno","Classical"], verified:true, color:"#3A1C71",
+   bio:{en:"Museum by day, Halle by night.", fr:"Musée le jour, club la nuit."}, trips:[]},
+  {id:"p7", name:"Inês", age:26, city:"lisbon", langs:["pt","en","fr"], interests:["rooftops","concerts","trips"], music:["Indie","Afrobeats"], verified:true, color:"#19B58C",
+   bio:{en:"Sunset hunter. Show me your favourite miradouro.", fr:"Chasseuse de couchers de soleil."}, trips:[{city:"paris", d:15}]},
+  {id:"p8", name:"Marco", age:42, city:"rome", langs:["it","en"], interests:["food","culture","concerts"], music:["Jazz","Classical"], verified:true, color:"#E85D2F",
+   bio:{en:"Home cook and jazz fan. Always up for a long dinner.", fr:"Cuisinier amateur et fan de jazz."}, trips:[]},
+  {id:"p9", name:"Emma", age:30, city:"amsterdam", langs:["en","de"], interests:["activities","festivals","sports"], music:["House","Pop"], verified:false, color:"#FFB020",
+   bio:{en:"Kayak, bikes, open air. In that order.", fr:"Kayak, vélo, plein air. Dans cet ordre."}, trips:[{city:"barcelona", d:12}]},
+  {id:"p10", name:"Alexis", age:33, city:"mykonos", langs:["el","en","fr"], interests:["festivals","trips","food"], music:["House","Reggaeton"], verified:true, color:"#00A6D6",
+   bio:{en:"Islander. I can tell you which beach for which mood.", fr:"Insulaire. Je te dis quelle plage pour quelle humeur."}, trips:[]},
+  {id:"p11", name:"Nia", age:28, city:"newyork", langs:["en","es"], interests:["concerts","rooftops","activities"], music:["Hip-hop","R&B"], verified:true, color:"#D76D77",
+   bio:{en:"Run club at 7, rooftop at 7 too.", fr:"Run club à 7 h, rooftop à 19 h."}, trips:[{city:"london", d:18}]},
+  {id:"p12", name:"Hugo", age:36, city:"brussels", langs:["fr","nl","en"], interests:["food","concerts","culture"], music:["Jazz","Indie"], verified:true, color:"#8C2F39",
+   bio:{en:"Beer nerd, jam session regular.", fr:"Passionné de bière, habitué des jams."}, trips:[]},
+  {id:"p13", name:"Lucía", age:25, city:"madrid", langs:["es","en"], interests:["food","sports","clubs"], music:["Reggaeton","Pop"], verified:true, color:"#F25F5C",
+   bio:{en:"Tapas route expert. Real Madrid or nothing.", fr:"Experte des routes à tapas."}, trips:[{city:"paris", d:9}]},
+  {id:"p14", name:"Giulia", age:32, city:"milan", langs:["it","en","fr"], interests:["rooftops","culture","festivals"], music:["House","Indie"], verified:false, color:"#5B3E96",
+   bio:{en:"Design week every week.", fr:"La design week, toute l'année."}, trips:[]}
+];
+
+/* Seeded received invitations so the Activity tab shows the flow. */
+const SEED_INVITES = [
+  {id:"i1", dir:"in", from:"p1", event:"e1", note:{en:"I have a spare ticket, want to come?", fr:"J'ai une place en plus, tu viens ?"}, status:"pending", d:2},
+  {id:"i2", dir:"in", from:"p7", event:"e22", note:{en:"Sunset at Graça this week?", fr:"Coucher de soleil à Graça cette semaine ?"}, status:"pending", d:1}
+];
+
+/* LINK prototype — application logic (vanilla JS, no build step).
+   State lives in memory and is mirrored to localStorage on this device only. */
+(function(){
+"use strict";
+
+/* ---------- state ---------- */
+const STORE_KEY = "link-proto-v1";
+const DEFAULT_STATE = () => ({
+  v:1, onboarded:false, lang:guessLang(), brand:"fiesta", theme:"system",
+  tab:"explore", city:"paris", mode:"local", cat:"all", when:"all", budget:"any",
+  customCities:[], peopleAll:false, actTab:"invites", inviteDir:"in",
+  profile:{name:"", bio:"", city:"paris", langs:["fr"], interests:["concerts","rooftops"], music:["House"], trips:[], dating:false, showAge:true, visibility:"public"},
+  verif:"none", outings:[], invites:SEED_INVITES.map(i=>({...i})), convos:[], tickets:[], blocked:[], reports:[], joined:[],
+  notif:{invites:true, messages:true, events:true, tickets:true, marketing:false, quietFrom:"23:00", quietTo:"08:00"}
+});
+function guessLang(){
+  try{ const l=(navigator.language||"fr").slice(0,2); return I18N[l]?l:"fr"; }catch(e){ return "fr"; }
+}
+let S = load();
+function load(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(raw){ const s = JSON.parse(raw); if(s && s.v===1) return Object.assign(DEFAULT_STATE(), s); }
+  }catch(e){}
+  return DEFAULT_STATE();
+}
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }catch(e){} }
+
+/* ---------- i18n & formatting ---------- */
+function t(key, vars){
+  let s = (I18N[S.lang] && I18N[S.lang][key]) ?? I18N.en[key] ?? key;
+  if(vars) for(const k in vars) s = s.split("{"+k+"}").join(vars[k]);
+  return s;
+}
+function loc(obj){ return obj ? (obj[S.lang] || obj.en || obj.fr || "") : ""; }
+const LOCALE = {fr:"fr-FR", en:"en-GB", es:"es-ES", de:"de-DE", pt:"pt-PT", it:"it-IT"};
+function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function money(n, cur){
+  try{ return new Intl.NumberFormat(LOCALE[S.lang], {style:"currency", currency:cur||"EUR", maximumFractionDigits: n%1?2:0}).format(n); }
+  catch(e){ return n+" "+cur; }
+}
+function cityById(id){
+  const c = CITIES.find(c=>c.id===id);
+  if(c) return c;
+  if(id && id.startsWith("c:")) return {id, name:id.slice(2), cur:"EUR", custom:true};
+  return {id, name:id||"?", cur:"EUR"};
+}
+function today0(){ const d=new Date(); d.setHours(12,0,0,0); return d; }
+function evDate(ev){ if(ev.date) return new Date(ev.date+"T12:00:00"); const d=today0(); d.setDate(d.getDate()+(ev.d||0)); return d; }
+function dayOffset(ev){ return Math.round((evDate(ev)-today0())/864e5); }
+function fmtDay(date){
+  const off = Math.round((date-today0())/864e5);
+  if(off===0) return t("today");
+  if(off===1) return t("tomorrow");
+  return new Intl.DateTimeFormat(LOCALE[S.lang], {weekday:"short", day:"numeric", month:"short"}).format(date);
+}
+function dateTag(date){
+  const f = new Intl.DateTimeFormat(LOCALE[S.lang], {month:"short"}).format(date).replace(".","");
+  return `<div class="date-tag" aria-hidden="true">${date.getDate()}<small>${esc(f)}</small></div>`;
+}
+function priceLabel(ev){
+  const cur = cityById(ev.city).cur;
+  if(ev.price===null || ev.price===undefined) return t("price_unknown");
+  if(ev.price===0) return t("free");
+  return t("from",{p:money(ev.price,cur)});
+}
+function availStatus(ev){
+  if(ev.member) return `<span class="status muted">${t("avail_community")}</span>`;
+  if(ev.avail==="verified") return `<span class="status ok">${t("avail_verified")}</span>`;
+  if(ev.avail==="soldout") return `<span class="status bad">${t("avail_soldout")}</span>`;
+  return `<span class="status muted">${t("avail_unknown")}</span>`;
+}
+function now(){ return new Intl.DateTimeFormat(LOCALE[S.lang],{hour:"2-digit",minute:"2-digit"}).format(new Date()); }
+function uid(p){ const a=new Uint32Array(2); crypto.getRandomValues(a); return p+a[0].toString(36)+a[1].toString(36); }
+function token(){ const a=new Uint8Array(16); crypto.getRandomValues(a); return [...a].map(b=>b.toString(16).padStart(2,"0")).join(""); }
+
+/* ---------- icons ---------- */
+const I = {
+  explore:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>',
+  people:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.4 0 4 1.6 4.5 4"/></svg>',
+  create:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  activity:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v3a2.5 2.5 0 0 0 0 5v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3a2.5 2.5 0 0 0 0-5z"/><path d="M14 5v14" stroke-dasharray="2 2.5"/></svg>',
+  messages:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+  profile:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4 4-6.5 8-6.5s7.2 2.5 8 6.5"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v6c0 4.5 3.2 7.8 7.5 9 4.3-1.2 7.5-4.5 7.5-9V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>',
+  flask:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3"/><path d="M7.5 14h9"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  globe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5"/></svg>',
+  chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>'
+};
+
+/* ---------- derived data ---------- */
+function allEvents(){
+  const member = S.outings.filter(o=>o.type==="public" && o.status==="approved").map(o=>({
+    id:o.id, city:o.city, cat:o.cat, title:o.title, venue:o.place||"—", area:"", date:o.date, t:o.time, price:0, avail:"unknown", tk:"D",
+    age:18, acc:null, going:1, org:S.profile.name||t("you"), member:true, desc:{en:o.desc, fr:o.desc}
+  }));
+  return EVENTS.concat(member);
+}
+function scoreEvent(ev){
+  const reasons=[]; let s=0;
+  if(S.profile.interests.includes(ev.cat)){ s+=3; reasons.push(t("why_interest",{x:t("cat_"+ev.cat).toLowerCase()})); }
+  const trip = S.profile.trips.find(tr=>tr.city===ev.city);
+  if(trip){ s+=3; reasons.push(t("why_trip",{x:cityById(ev.city).name})); }
+  if(ev.city===S.profile.city){ s+=2; reasons.push(t("why_city")); }
+  if(ev.going>20) s+=0.5;
+  return {s, reasons};
+}
+function filteredEvents(){
+  let list = allEvents();
+  if(S.mode==="local") list = list.filter(e=>e.city===S.city);
+  if(S.cat!=="all") list = list.filter(e=>e.cat===S.cat);
+  if(S.when!=="all") list = list.filter(e=>{
+    const off=dayOffset(e); if(off<0) return false;
+    if(S.when==="today") return off===0;
+    if(S.when==="week") return off<=7;
+    if(S.when==="weekend"){ const wd=evDate(e).getDay(); return off<=7 && (wd===0||wd===6||(wd===5)); }
+    return true;
+  });
+  if(S.budget==="free") list = list.filter(e=>e.price===0);
+  if(S.budget==="30") list = list.filter(e=>e.price!==null && e.price<=30);
+  if(S.budget==="60") list = list.filter(e=>e.price!==null && e.price<=60);
+  if(S.mode==="personal"){
+    list = list.map(e=>({e, sc:scoreEvent(e)})).filter(x=>x.sc.s>0).sort((a,b)=>b.sc.s-a.sc.s).map(x=>Object.assign({}, x.e, {_why:x.sc.reasons}));
+  } else {
+    list.sort((a,b)=>dayOffset(a)-dayOffset(b));
+  }
+  return list;
+}
+function person(id){ return PEOPLE.find(p=>p.id===id); }
+function visiblePeople(){
+  let list = PEOPLE.filter(p=>!S.blocked.includes(p.id));
+  if(!S.peopleAll) list = list.filter(p=>p.city===S.city || p.trips.some(tr=>tr.city===S.city));
+  return list.map(p=>({p, shared:p.interests.filter(i=>S.profile.interests.includes(i))})).sort((a,b)=>b.shared.length-a.shared.length);
+}
+const verified = () => S.verif==="ok";
+
+/* ---------- rendering ---------- */
+const $ = sel => document.querySelector(sel);
+function applyLook(){
+  const r = document.documentElement;
+  r.dataset.brand = S.brand;
+  if(S.theme==="system") delete r.dataset.theme; else r.dataset.theme = S.theme;
+  r.lang = S.lang;
+}
+function visual(ev, big){
+  const [a,b,word] = CAT_ART[ev.cat] || CAT_ART.activities;
+  const seed = [...ev.id].reduce((n,c)=>n+c.charCodeAt(0),0);
+  const x = 20+(seed*37)%60, y = 10+(seed*53)%60;
+  return `<div class="visual" style="background:radial-gradient(circle at ${x}% ${y}%, ${b} 0 18%, transparent 46%), linear-gradient(135deg, ${a}, ${b})">
+    ${dateTag(evDate(ev))}<span class="big">${word}</span><span class="cat">${esc(t("cat_"+ev.cat))}</span></div>`;
+}
+function eventCard(ev){
+  const city = cityById(ev.city);
+  const why = ev._why && ev._why.length ? `<div class="why"><span>${t("why")} :</span>${ev._why.map(r=>`<b>${esc(r)}</b>`).join(" · ")}</div>` : "";
+  return `<article class="card"><button class="event-card" data-action="event" data-id="${ev.id}" aria-label="${esc(ev.title)}">
+    ${visual(ev)}
+    <div class="card-body">
+      <h3>${esc(ev.title)}</h3>
+      <div class="meta"><span>${I.clock}${esc(fmtDay(evDate(ev)))} · ${esc(ev.t)}</span><span>${I.pin}${esc(ev.venue)}${S.mode!=="local"?", "+esc(city.name):""}</span></div>
+      <div class="row" style="justify-content:space-between"><span class="price">${esc(priceLabel(ev))}</span>${availStatus(ev)}</div>
+      <div class="meta"><span>${I.users}${t("going",{n:ev.going})}</span><span>${esc(ev.member?t("organizer")+" : "+ev.org:ev.org)}</span></div>
+      ${why}
+    </div></button></article>`;
+}
+function chip(group, val, label, pressed){ return `<button class="chip" data-action="set" data-k="${group}" data-v="${val}" aria-pressed="${pressed}">${esc(label)}</button>`; }
+
+function renderTop(){
+  const city = cityById(S.city);
+  const modeDesc = S.mode==="local" ? t("mode_local_d",{c:city.name}) : S.mode==="international" ? t("mode_international_d") : t("mode_personal_d");
+  const showFilters = S.tab==="explore";
+  $("#top").innerHTML = `
+    <div class="topbar-row">
+      <div class="logo" aria-label="LINK">LINK<span class="dot" aria-hidden="true"></span><span class="dot b" aria-hidden="true"></span></div>
+      <div class="row" style="gap:8px">
+        <button class="chip" data-action="city" aria-label="${esc(city.name)}" style="display:flex;align-items:center;gap:4px">${I.pin.replace('<svg','<svg width="15" height="15"')}${esc(city.name)}${I.chev.replace('<svg','<svg width="14" height="14"')}</button>
+        <button class="demo-pill" data-action="about">${t("demo")}</button>
+      </div>
+    </div>
+    ${showFilters?`<div class="seg" role="group" aria-label="mode">
+      ${["local","international","personal"].map(m=>`<button data-action="set" data-k="mode" data-v="${m}" aria-pressed="${S.mode===m}">${t("mode_"+m)}</button>`).join("")}
+    </div><p class="small muted">${esc(modeDesc)}</p>`:""}
+    ${navigator.onLine===false?`<div class="offline">${t("offline")}</div>`:""}`;
+}
+
+function renderExplore(){
+  const cur = cityById(S.city).cur;
+  const list = filteredEvents();
+  const greeting = S.profile.name ? `<p class="muted">${esc(t("welcome_back",{n:S.profile.name}))}</p>` : "";
+  return `
+  <div class="hero">${greeting}<h1>${esc(t("tagline"))}</h1></div>
+  <div class="chips" role="group" aria-label="${t("f_cat")}">${chip("cat","all",t("cat_all"),S.cat==="all")}${CATEGORIES.map(c=>chip("cat",c,t("cat_"+c),S.cat===c)).join("")}</div>
+  <div class="chips" role="group" aria-label="${t("date")}">${["all","today","weekend","week"].map(w=>chip("when",w,t("when_"+w),S.when===w)).join("")}
+    <span style="width:1px;background:var(--line);flex:none"></span>
+    ${chip("budget","any",t("budget_any"),S.budget==="any")}${chip("budget","free",t("budget_free"),S.budget==="free")}${chip("budget","30",t("budget_30",{p:money(30,cur)}),S.budget==="30")}${chip("budget","60",t("budget_60",{p:money(60,cur)}),S.budget==="60")}</div>
+  <div class="list">${list.length? list.map(eventCard).join("") : `
+    <div class="empty"><h3>${t("no_results")}</h3><p class="muted">${t("no_results_sub")}</p>
+    <div class="row" style="justify-content:center"><button class="btn" data-action="tab" data-v="create">${t("create_first")}</button><button class="btn ghost" data-action="resetFilters">${t("reset_filters")}</button></div></div>`}</div>`;
+}
+
+function avatar(p, lg){ return `<div class="avatar${lg?" lg":""}" style="background:linear-gradient(135deg, ${p.color}, ${p.color}aa)" aria-hidden="true">${esc(p.name[0])}</div>`; }
+function renderPeople(){
+  const list = visiblePeople();
+  const city = cityById(S.city);
+  return `
+  <div class="section-head"><h1>${t("tab_people")}</h1></div>
+  <p class="muted">${t("people_sub")}</p>
+  <div class="seg" role="group"><button data-action="peopleAll" data-v="0" aria-pressed="${!S.peopleAll}">${esc(t("people_filter_city",{c:city.name}))}</button><button data-action="peopleAll" data-v="1" aria-pressed="${S.peopleAll}">${t("people_all")}</button></div>
+  ${verified()?"":lockBanner()}
+  <div class="list">${list.length? list.map(({p,shared})=>`
+    <article class="card"><button class="event-card person" data-action="person" data-id="${p.id}">
+      ${avatar(p)}
+      <div style="display:flex;flex-direction:column;gap:6px;min-width:0;flex:1">
+        <div class="row" style="justify-content:space-between"><h3>${esc(p.name)}, ${esc(t("years",{n:p.age}))}</h3>${p.verified?`<span class="status ok" title="${t("verified_badge")}">${I.shield.replace('<svg','<svg width="13" height="13"')}</span>`:""}</div>
+        <p class="small muted">${esc(cityById(p.city).name)} · ${p.langs.map(l=>LANG_NAMES[l]||l).join(", ")}</p>
+        <p class="small">${esc(loc(p.bio))}</p>
+        <div class="tags">${p.interests.map(i=>`<span class="tag${shared.includes(i)?" match":""}">${esc(t("cat_"+i))}</span>`).join("")}</div>
+        ${p.trips.filter(tr=>tr.city===S.city && p.city!==S.city).map(tr=>`<p class="small" style="color:var(--accent-3);font-weight:700">${esc(t("p_trip",{x:cityById(tr.city).name}))}</p>`).join("")}
+      </div></button></article>`).join("") : `<div class="empty"><h3>${t("no_results")}</h3><button class="btn ghost" data-action="peopleAll" data-v="1">${t("people_all")}</button></div>`}</div>`;
+}
+function lockBanner(){
+  return `<div class="banner">${I.lock.replace('<svg','<svg style="color:var(--accent)"')}<div style="display:flex;flex-direction:column;gap:8px"><b>${t("lock_title")}</b><p class="small muted">${t("lock_sub")}</p><button class="btn" data-action="verify" style="align-self:flex-start">${t("verify_now")}</button></div></div>`;
+}
+
+let createType = "public";
+function cityOptions(sel){
+  const opts = CITIES.map(c=>`<option value="${c.id}"${c.id===sel?" selected":""}>${esc(c.name)}</option>`).join("")
+    + S.customCities.map(n=>`<option value="c:${esc(n)}"${("c:"+n)===sel?" selected":""}>${esc(n)}</option>`).join("");
+  return opts;
+}
+function renderCreate(){
+  const d = new Date(); d.setDate(d.getDate()+3);
+  const iso = d.toISOString().slice(0,10);
+  return `
+  <div class="hero"><h1>${t("create_title")}</h1><p class="muted">${t("create_sub")}</p></div>
+  <div class="seg" role="group">${["public","private","org"].map(k=>`<button data-action="ctype" data-v="${k}" aria-pressed="${createType===k}">${t("type_"+k)}</button>`).join("")}</div>
+  <p class="small muted">${t("type_"+createType+"_d")}</p>
+  ${createType==="org" ? `<div class="banner">${I.lock}<p>${t("org_locked")}</p></div>` : `
+  <form id="createForm" class="list" novalidate>
+    <div class="field"><label for="c_title">${t("f_title")}</label><input id="c_title" type="text" maxlength="80" placeholder="${esc(t("f_title_ph"))}"></div>
+    <div class="grid2">
+      <div class="field"><label for="c_cat">${t("f_cat")}</label><select id="c_cat">${CATEGORIES.map(c=>`<option value="${c}">${esc(t("cat_"+c))}</option>`).join("")}</select></div>
+      <div class="field"><label for="c_city">${t("f_city")}</label><select id="c_city">${cityOptions(S.city)}</select></div>
+      <div class="field"><label for="c_date">${t("f_date")}</label><input id="c_date" type="date" value="${iso}"></div>
+      <div class="field"><label for="c_time">${t("f_time")}</label><input id="c_time" type="time" value="19:00"></div>
+    </div>
+    <div class="field"><label for="c_place">${t("f_place")}</label><input id="c_place" type="text" maxlength="100" placeholder="${esc(t("f_place_ph"))}"></div>
+    <div class="field"><label for="c_cap">${t("f_capacity")}</label><input id="c_cap" type="number" min="2" max="200" value="6"></div>
+    <div class="field"><label for="c_desc">${t("f_desc")}</label><textarea id="c_desc" maxlength="600" placeholder="${esc(t("f_desc_ph"))}"></textarea></div>
+    <div class="field"><label for="c_rules">${t("f_rules")}</label><input id="c_rules" type="text" maxlength="160" placeholder="${esc(t("f_rules_ph"))}"></div>
+    <button class="btn block" type="submit">${createType==="public"?t("publish"):t("save_private")}</button>
+  </form>`}`;
+}
+
+function inviteRow(inv){
+  const p = person(inv.dir==="in"?inv.from:inv.to);
+  const ev = allEvents().find(e=>e.id===inv.event) || S.outings.find(o=>o.id===inv.event);
+  if(!p) return "";
+  const st = {pending:["warn","pending"],accepted:["ok","accepted"],declined:["bad","declined"],cancelled:["muted","cancelled"]}[inv.status]||["muted",inv.status];
+  const exp = new Date(); exp.setDate(exp.getDate()+(inv.d||3));
+  return `<article class="card"><div class="person">${avatar(p)}<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+    <div class="row" style="justify-content:space-between"><h3>${esc(p.name)}</h3><span class="status ${st[0]}">${t(st[1])}</span></div>
+    <p class="small"><b>${esc(ev?ev.title:"—")}</b>${ev?` · ${esc(fmtDay(evDate(ev)))} · ${esc(cityById(ev.city).name)}`:""}</p>
+    ${inv.note?`<p class="small muted">« ${esc(typeof inv.note==="string"?inv.note:loc(inv.note))} »</p>`:""}
+    ${inv.status==="pending"?`<p class="small muted">${t("expires",{d:fmtDay(exp)})}</p>`:""}
+    ${inv.status==="pending" && inv.dir==="in" ? `<div class="row"><button class="btn" data-action="inviteAccept" data-id="${inv.id}">${t("accept")}</button><button class="btn ghost" data-action="inviteDecline" data-id="${inv.id}">${t("decline")}</button></div>`:""}
+    ${inv.status==="pending" && inv.dir==="out" ? `<div class="row"><button class="btn ghost" data-action="inviteCancel" data-id="${inv.id}">${t("cancel_invite")}</button></div>`:""}
+  </div></div></article>`;
+}
+function renderActivity(){
+  const pendingIn = S.invites.filter(i=>i.dir==="in"&&i.status==="pending").length;
+  let body="";
+  if(S.actTab==="invites"){
+    const list = S.invites.filter(i=>i.dir===S.inviteDir && !S.blocked.includes(i.from||i.to));
+    body = `<div class="seg" role="group"><button data-action="invDir" data-v="in" aria-pressed="${S.inviteDir==="in"}">${t("received")}${pendingIn?` (${pendingIn})`:""}</button><button data-action="invDir" data-v="out" aria-pressed="${S.inviteDir==="out"}">${t("sent")}</button></div>
+      ${!verified() && S.inviteDir==="in" && pendingIn ? lockBanner() : ""}
+      <div class="list">${list.length?list.map(inviteRow).join(""):`<div class="empty"><p class="muted">${t("no_invites")}</p></div>`}</div>`;
+  } else if(S.actTab==="outings"){
+    body = `<div class="list">${S.outings.length?S.outings.map(o=>{
+      const st = o.type==="private"?["muted","private_label"]:o.status==="approved"?["ok","approved"]:o.status==="rejected"?["bad","rejected"]:["warn","pending_mod"];
+      return `<article class="card"><div class="card-body">
+        <div class="row" style="justify-content:space-between"><h3>${esc(o.title)}</h3><span class="status ${st[0]}">${t(st[1])}</span></div>
+        <div class="meta"><span>${I.clock}${esc(fmtDay(evDate(o)))} · ${esc(o.time)}</span><span>${I.pin}${esc(o.place||"—")}, ${esc(cityById(o.city).name)}</span><span>${I.users}${t("members",{n:1,m:o.cap})}</span></div>
+        ${o.desc?`<p class="small">${esc(o.desc)}</p>`:""}
+        <div class="row"><button class="btn danger" data-action="outingDelete" data-id="${o.id}">${t("delete")}</button></div>
+      </div></article>`;}).join(""):`<div class="empty"><p class="muted">${t("no_outings")}</p><button class="btn" data-action="tab" data-v="create">${t("create_first")}</button></div>`}</div>`;
+  } else {
+    body = `<div class="list">${S.tickets.length?S.tickets.map(tk=>{
+      const ev = allEvents().find(e=>e.id===tk.eventId);
+      const st = tk.status==="valid"?["test","ticket_test"]:tk.status==="scanned"?["muted","already"]:["bad","revoked"];
+      return `<article class="card"><button class="event-card card-body" data-action="ticket" data-id="${tk.id}">
+        <div class="row" style="justify-content:space-between"><h3>${esc(ev?ev.title:"—")}</h3><span class="status ${st[0]}">${tk.status==="scanned"?esc(t("already",{t:tk.scannedAt})).split(".")[0]:t(st[1]).split("—")[0]}</span></div>
+        <div class="meta"><span>${I.clock}${ev?esc(fmtDay(evDate(ev)))+" · "+esc(ev.t):""}</span><span>${esc(t(tk.type))} · ${esc(t("ticket_n",{i:tk.idx,n:tk.n}))}</span><span>${t("order")} ${esc(tk.orderId)}</span></div>
+      </button></article>`;}).join(""):`<div class="empty"><p class="muted">${t("no_tickets")}</p></div>`}</div>`;
+  }
+  return `<div class="section-head"><h1>${t("tab_activity")}</h1></div>
+    <div class="chips" role="group">${["invites","outings","tickets"].map(k=>`<button class="chip" data-action="actTab" data-v="${k}" aria-pressed="${S.actTab===k}">${t("act_"+k)}</button>`).join("")}</div>${body}`;
+}
+
+let openConvoId = null;
+function renderMessages(){
+  if(!verified()) return `<div class="section-head"><h1>${t("tab_messages")}</h1></div><div class="lock card">${I.lock}<h2>${t("lock_title")}</h2><p class="muted">${t("lock_sub")}</p><button class="btn" data-action="verify">${t("verify_now")}</button></div>`;
+  if(openConvoId){
+    const c = S.convos.find(c=>c.id===openConvoId);
+    if(c){
+      const p = c.with?person(c.with):null;
+      return `<div class="row"><button class="iconbtn" data-action="convoBack" aria-label="${t("back")}">${I.chev.replace('<svg','<svg style="transform:rotate(90deg)"')}</button>${p?avatar(p):""}<div style="flex:1;min-width:0"><h2>${esc(c.title)}</h2>${p?`<p class="small muted">${p.verified?t("verified_badge"):t("not_verified")}</p>`:""}</div></div>
+        <div class="banner small">${I.shield.replace('<svg','<svg style="color:var(--ok)"')}<p>${t("msg_safety")}</p></div>
+        <div class="msgs" id="msgs">${c.msgs.map(m=>`<div class="bubble${m.me?" me":""}">${esc(m.text)}<time>${esc(m.me?t("you"):(p?p.name:""))} · ${esc(m.at)}</time></div>`).join("")}</div>
+        <form class="composer" id="composer"><label class="sr" for="msgInput">${t("msg_placeholder")}</label><input id="msgInput" type="text" maxlength="1000" autocomplete="off" placeholder="${esc(t("msg_placeholder"))}"><button class="btn" type="submit">${t("send")}</button></form>`;
+    }
+    openConvoId=null;
+  }
+  return `<div class="section-head"><h1>${t("tab_messages")}</h1></div>
+    <div class="list">${S.convos.length?S.convos.filter(c=>!c.with||!S.blocked.includes(c.with)).map(c=>{
+      const p=c.with?person(c.with):null; const last=c.msgs[c.msgs.length-1];
+      return `<article class="card"><button class="event-card person" data-action="convo" data-id="${c.id}">${p?avatar(p):`<div class="avatar" style="background:var(--accent-3)">${I.users.replace('<svg','<svg width="26" height="26"')}</div>`}
+        <div style="flex:1;min-width:0"><h3>${esc(c.title)}</h3><p class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last?esc(last.text):""}</p></div></button></article>`;}).join(""):`<div class="empty"><h3>${t("msg_empty")}</h3><p class="muted">${t("msg_empty_sub")}</p></div>`}</div>`;
+}
+
+function toggleRow(id, label, desc, checked){
+  return `<div class="toggle"><label for="${id}" style="display:flex;flex-direction:column;gap:2px;flex:1"><b>${label}</b>${desc?`<span class="small muted">${desc}</span>`:""}</label><input class="switch" type="checkbox" id="${id}" data-action="toggle" ${checked?"checked":""}></div>`;
+}
+function brandOptions(){
+  const B = [
+    ["fiesta","Fiesta","#FF5A4E","#FFC233","#0E9F9A","Bricolage Grotesque"],
+    ["midnight","Midnight Club","#140F2E","#FF3DA0","#3FDFFF","Unbounded"],
+    ["riviera","Riviera","#1559D6","#F2D635","#19B58C","Syne"]
+  ];
+  return B.map(([id,name,a,b,c,font])=>`<button class="brand-opt" data-action="brand" data-v="${id}" aria-pressed="${S.brand===id}">
+    <span class="swatches" aria-hidden="true"><i style="background:${a}"></i><i style="background:${b}"></i><i style="background:${c}"></i></span>
+    <span style="display:flex;flex-direction:column;gap:2px"><b style="font-family:'${font}',sans-serif;font-size:18px">${name}</b><span class="small muted">${font}</span></span></button>`).join("");
+}
+function renderProfile(){
+  const P = S.profile;
+  const vs = {none:["muted","verif_none"],pending:["warn","verif_pending"],ok:["ok","verif_ok"],failed:["bad","verif_failed"],manual:["warn","v_manual"]}[S.verif];
+  const me = {name:P.name||"?", color:"#FF5A4E"};
+  const pendingMod = S.outings.filter(o=>o.type==="public"&&o.status==="pending");
+  return `
+  <div class="row" style="gap:14px">${avatar(me,true)}<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"><h1>${esc(P.name||t("tab_profile"))}</h1><span class="status ${vs[0]}">${t("verif_status")} : ${t(vs[1])}</span></div></div>
+  ${S.verif!=="ok"?`<button class="btn block" data-action="verify">${I.shield.replace('<svg','<svg width="20" height="20"')}${t("verify_now")}</button>`:""}
+
+  <section class="card"><div class="card-body">
+    <h2>${t("edit_profile")}</h2>
+    <div class="field"><label for="p_name">${t("name")}</label><input id="p_name" type="text" maxlength="40" value="${esc(P.name)}"></div>
+    <div class="field"><label for="p_bio">${t("bio")}</label><textarea id="p_bio" maxlength="300">${esc(P.bio)}</textarea></div>
+    <div class="field"><label for="p_city">${t("city_home")}</label><select id="p_city">${cityOptions(P.city)}</select></div>
+    <div class="field"><span class="label">${t("languages")}</span><div class="tags">${Object.keys(LANG_NAMES).map(l=>`<button class="chip" data-action="pLang" data-v="${l}" aria-pressed="${P.langs.includes(l)}">${LANG_NAMES[l]}</button>`).join("")}</div></div>
+    <div class="field"><span class="label">${t("interests")}</span><div class="tags">${INTERESTS.map(i=>`<button class="chip" data-action="pInt" data-v="${i}" aria-pressed="${P.interests.includes(i)}">${esc(t("cat_"+i))}</button>`).join("")}</div></div>
+    <div class="field"><span class="label">${t("music")}</span><div class="tags">${MUSIC.map(m=>`<button class="chip" data-action="pMusic" data-v="${m}" aria-pressed="${P.music.includes(m)}">${m}</button>`).join("")}</div></div>
+    <button class="btn" data-action="saveProfile" style="align-self:flex-start">${t("save")}</button>
+  </div></section>
+
+  <section class="card"><div class="card-body">
+    <h2>${t("trips")}</h2><p class="small muted">${t("trip_visible")}</p>
+    ${P.trips.map((tr,i)=>`<div class="row" style="justify-content:space-between"><span><b>${esc(cityById(tr.city).name)}</b> <span class="muted small">${esc(tr.from||"")} → ${esc(tr.to||"")}</span></span><button class="iconbtn" data-action="tripDel" data-v="${i}" aria-label="${t("delete")}">${I.x}</button></div>`).join("")}
+    <div class="grid2"><div class="field"><label for="tr_city">${t("trip_city")}</label><select id="tr_city">${cityOptions("lisbon")}</select></div>
+    <div class="field"><label for="tr_from">${t("trip_from")}</label><input id="tr_from" type="date"></div></div>
+    <div class="grid2"><div class="field"><label for="tr_to">${t("trip_to")}</label><input id="tr_to" type="date"></div><button class="btn secondary" data-action="tripAdd" style="align-self:flex-end">${t("add_trip")}</button></div>
+  </div></section>
+
+  <section class="card"><div class="card-body">
+    <h2>${t("visibility")}</h2>
+    <div class="seg">${["public","verified","hidden"].map(v=>`<button data-action="vis" data-v="${v}" aria-pressed="${P.visibility===v}">${t("vis_"+v)}</button>`).join("")}</div>
+    ${toggleRow("tg_age", t("show_age"), t("show_age_d"), P.showAge)}
+    ${toggleRow("tg_dating", t("dating"), t("dating_d"), P.dating)}
+  </div></section>
+
+  <section class="card"><div class="card-body">
+    <h2>${t("brand")}</h2><p class="small muted">${t("brand_d")}</p>
+    <div class="list">${brandOptions()}</div>
+    <span class="label">${t("theme")}</span>
+    <div class="seg">${["system","light","dark"].map(v=>`<button data-action="theme" data-v="${v}" aria-pressed="${S.theme===v}">${t("theme_"+v)}</button>`).join("")}</div>
+    <div class="field"><label for="p_lang">${t("app_lang")}</label><select id="p_lang" data-action="lang">${LANGS.map(l=>`<option value="${l.code}"${S.lang===l.code?" selected":""}>${l.name}</option>`).join("")}</select></div>
+  </div></section>
+
+  <section class="card"><div class="card-body">
+    <h2>${t("notif")}</h2>
+    ${toggleRow("tg_n_invites", t("n_invites"), "", S.notif.invites)}
+    ${toggleRow("tg_n_messages", t("n_messages"), "", S.notif.messages)}
+    ${toggleRow("tg_n_events", t("n_events"), "", S.notif.events)}
+    ${toggleRow("tg_n_tickets", t("n_tickets"), "", S.notif.tickets)}
+    ${toggleRow("tg_n_marketing", t("n_marketing"), "", S.notif.marketing)}
+    <div class="grid2"><div class="field"><label for="q_from">${t("quiet")}</label><input id="q_from" type="time" value="${esc(S.notif.quietFrom)}"></div><div class="field"><label for="q_to">&nbsp;</label><input id="q_to" type="time" value="${esc(S.notif.quietTo)}"></div></div>
+    <p class="small muted">${t("quiet_d",{a:S.notif.quietFrom,b:S.notif.quietTo})}</p>
+  </div></section>
+
+  <section class="card"><div class="card-body">
+    <h2>${t("admin")}</h2><p class="small muted">${t("admin_d")}</p>
+    ${pendingMod.length?pendingMod.map(o=>`<div class="row" style="justify-content:space-between;border-top:1px solid var(--line);padding-top:10px"><span style="min-width:0"><b>${esc(o.title)}</b><br><span class="small muted">${esc(cityById(o.city).name)} · ${esc(t("cat_"+o.cat))}</span></span><span class="row"><button class="btn" data-action="modApprove" data-id="${o.id}">${t("approve")}</button><button class="btn ghost" data-action="modReject" data-id="${o.id}">${t("reject")}</button></span></div>`).join(""):`<p class="small muted">${t("queue_empty")}</p>`}
+    ${S.reports.length?`<p class="small"><b>${t("report")}</b> : ${S.reports.map(r=>esc((person(r.pid)||{}).name)+" — "+esc(t(r.reason))).join(" · ")}</p>`:""}
+  </div></section>
+
+  <section class="card"><div class="card-body">
+    <h2>${t("privacy")}</h2><p class="small muted">${t("storage_note")}</p>
+    ${S.blocked.map(id=>{const p=person(id);return p?`<div class="row" style="justify-content:space-between"><span>${esc(p.name)}</span><button class="btn ghost" data-action="unblock" data-id="${id}">${t("unblock")}</button></div>`:"";}).join("")}
+    <div class="row"><button class="btn secondary" data-action="export">${t("export")}</button><button class="btn secondary" data-action="about">${t("about")}</button><button class="btn danger" data-action="resetAsk">${t("reset")}</button></div>
+  </div></section>`;
+}
+
+function renderTabs(){
+  const pendingIn = S.invites.filter(i=>i.dir==="in"&&i.status==="pending").length;
+  $("#tabs").innerHTML = `<div class="tabbar-inner" role="tablist">${["explore","people","create","activity","messages","profile"].map(k=>
+    `<button class="tab${k==="create"?" create":""}" role="tab" data-action="tab" data-v="${k}" ${S.tab===k?'aria-current="page" aria-selected="true"':'aria-selected="false"'}>${I[k]}<span>${t("tab_"+k)}</span>${k==="activity"&&pendingIn?`<span class="badge">${pendingIn}</span>`:""}</button>`).join("")}</div>`;
+}
+function render(keepScroll){
+  applyLook();
+  renderTop(); renderTabs();
+  const fn = {explore:renderExplore, people:renderPeople, create:renderCreate, activity:renderActivity, messages:renderMessages, profile:renderProfile}[S.tab];
+  const y = window.scrollY;
+  $("#main").innerHTML = `<div class="banner test small">${I.flask}<p>${t("demo_banner")}</p></div>` + fn();
+  if(keepScroll) window.scrollTo(0,y);
+  const m = document.getElementById("msgs"); if(m) m.lastElementChild && m.lastElementChild.scrollIntoView({block:"end"});
+  if(!S.onboarded) openOnboarding();
+}
+
+/* ---------- sheets ---------- */
+let sheetCleanup = null;
+function openSheet(html, onClose){
+  closeSheet();
+  const wrap = document.createElement("div");
+  wrap.className = "sheet-backdrop"; wrap.id="sheetWrap";
+  wrap.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="grab" aria-hidden="true"></div>${html}</div>`;
+  wrap.addEventListener("click", e=>{ if(e.target===wrap && S.onboarded) closeSheet(); });
+  document.body.appendChild(wrap);
+  document.body.style.overflow="hidden";
+  sheetCleanup = onClose||null;
+  const f = wrap.querySelector("button, input, select"); if(f) f.focus({preventScroll:true});
+}
+function closeSheet(){
+  const w = document.getElementById("sheetWrap");
+  if(w){ w.remove(); document.body.style.overflow=""; }
+  if(sheetCleanup){ const c=sheetCleanup; sheetCleanup=null; c(); }
+}
+function sheetHead(title){ return `<div class="sheet-head"><h2>${esc(title)}</h2><button class="iconbtn" data-action="close" aria-label="${t("close")}">${I.x}</button></div>`; }
+
+function openOnboarding(){
+  if(document.getElementById("sheetWrap")) return;
+  openSheet(`
+    <div class="logo" style="font-size:44px">LINK<span class="dot"></span><span class="dot b"></span></div>
+    <h1>${t("ob_title")}</h1><p class="muted">${t("ob_sub")}</p>
+    <div class="field"><label for="ob_lang">${t("ob_lang")}</label><select id="ob_lang" data-action="lang">${LANGS.map(l=>`<option value="${l.code}"${S.lang===l.code?" selected":""}>${l.name}</option>`).join("")}</select></div>
+    <div class="field"><label for="ob_name">${t("name")}</label><input id="ob_name" type="text" maxlength="40" value="${esc(S.profile.name)}"></div>
+    <span class="label">${t("ob_brand")}</span><div class="list">${brandOptions()}</div>
+    <label class="toggle" for="ob_age"><b>${t("ob_age")}</b><input class="switch" type="checkbox" id="ob_age"></label>
+    <div class="banner test small">${I.flask}<p>${t("demo_banner")}</p></div>
+    <button class="btn block" data-action="obStart" id="obStart" disabled>${t("ob_start")}</button>`);
+  document.getElementById("ob_age").addEventListener("change", e=>{ document.getElementById("obStart").disabled = !e.target.checked; });
+}
+
+function openCity(){
+  openSheet(`${sheetHead(t("f_city"))}
+    <div class="field"><label class="sr" for="citySearch">${t("search_city")}</label><input id="citySearch" type="search" placeholder="${esc(t("search_city"))}" autocomplete="off"></div>
+    <div class="list" id="cityList"></div>`);
+  const inp = document.getElementById("citySearch");
+  const draw = ()=>{
+    const q = inp.value.trim().toLowerCase();
+    const base = CITIES.map(c=>({id:c.id,name:c.name,sub:c.country})).concat(S.customCities.map(n=>({id:"c:"+n,name:n,sub:t("other_cities")})));
+    const list = base.filter(c=>!q||c.name.toLowerCase().includes(q));
+    const exact = base.some(c=>c.name.toLowerCase()===q);
+    document.getElementById("cityList").innerHTML = list.map(c=>`<button class="ticket-type" data-action="pickCity" data-v="${esc(c.id)}" aria-pressed="${S.city===c.id}"><b>${esc(c.name)}</b><span class="small muted">${esc(c.sub)}</span></button>`).join("")
+      + (q && !exact ? `<button class="btn secondary" data-action="addCity" data-v="${esc(inp.value.trim())}">${esc(t("add_city",{x:inp.value.trim()}))}</button>`:"");
+  };
+  inp.addEventListener("input", draw); draw();
+}
+
+function openEvent(id){
+  const ev = allEvents().find(e=>e.id===id); if(!ev) return;
+  const city = cityById(ev.city);
+  const canBuy = ev.tk!=="D" && ev.avail!=="soldout";
+  openSheet(`${sheetHead(ev.title)}${visual(ev)}
+    <div class="row">${availStatus(ev)}<span class="status test">${esc(t("ticketing_"+ev.tk))}</span></div>
+    <p>${esc(loc(ev.desc))}</p>
+    <dl class="kv">
+      <dt>${t("date")}</dt><dd>${esc(fmtDay(evDate(ev)))} · ${esc(ev.t)} (${esc(city.name)})</dd>
+      <dt>${t("venue")}</dt><dd>${esc(ev.venue)}${ev.area?", "+esc(ev.area):""}</dd>
+      <dt>${t("f_cat")}</dt><dd>${esc(t("cat_"+ev.cat))}</dd>
+      <dt>${t("from").replace("{p}","").trim()||"€"}</dt><dd class="price">${esc(priceLabel(ev))}</dd>
+      <dt>${t("age_min")}</dt><dd>${ev.age}+</dd>
+      <dt>${t("access")}</dt><dd>${ev.acc===true?t("access_yes"):t("access_unknown")}</dd>
+      <dt>${t("organizer")}</dt><dd>${esc(ev.org)}</dd>
+      <dt>${t("source")}</dt><dd>${ev.member?esc(t("type_public")):t("source_demo")}</dd>
+    </dl>
+    <p class="small muted">${t("going",{n:ev.going})}</p>
+    ${canBuy?`<button class="btn block" data-action="buy" data-id="${ev.id}">${t("buy")} · ${esc(priceLabel(ev))}</button>`:ev.tk==="D"?`<p class="small muted">${t("no_ticketing")}</p>`:""}
+    <div class="grid2"><button class="btn secondary" data-action="join" data-id="${ev.id}">${t("join")}</button><button class="btn secondary" data-action="inviteFromEvent" data-id="${ev.id}">${t("invite")}</button></div>`);
+}
+
+function openPerson(id){
+  const p = person(id); if(!p) return;
+  const shared = p.interests.filter(i=>S.profile.interests.includes(i));
+  openSheet(`${sheetHead(p.name)}
+    <div class="row" style="gap:14px">${avatar(p,true)}<div style="display:flex;flex-direction:column;gap:4px"><h2>${esc(p.name)}, ${esc(t("years",{n:p.age}))}</h2><p class="muted">${esc(cityById(p.city).name)}</p>${p.verified?`<span class="status ok">${t("verified_badge")}</span>`:`<span class="status muted">${t("not_verified")}</span>`}</div></div>
+    <p>${esc(loc(p.bio))}</p>
+    <div class="field"><span class="label">${t("interests")}</span><div class="tags">${p.interests.map(i=>`<span class="tag${shared.includes(i)?" match":""}">${esc(t("cat_"+i))}</span>`).join("")}</div></div>
+    <div class="field"><span class="label">${t("music")}</span><div class="tags">${p.music.map(m=>`<span class="tag">${esc(m)}</span>`).join("")}</div></div>
+    <div class="field"><span class="label">${t("languages")}</span><p>${p.langs.map(l=>LANG_NAMES[l]||l).join(", ")}</p></div>
+    ${p.trips.length?`<div class="field"><span class="label">${t("trips")}</span><p>${p.trips.map(tr=>esc(cityById(tr.city).name)).join(", ")}</p></div>`:""}
+    <button class="btn block" data-action="invitePerson" data-id="${p.id}">${verified()?"":I.lock.replace('<svg','<svg width="18" height="18"')}${esc(t("invite_to",{n:p.name}))}</button>
+    <div class="grid2"><button class="btn ghost" data-action="block" data-id="${p.id}">${t("block")}</button><button class="btn danger" data-action="report" data-id="${p.id}">${t("report")}</button></div>`);
+}
+
+function requireVerified(){ if(verified()) return true; openVerify(); return false; }
+function openInvite(pid, presetEvent){
+  if(!requireVerified()) return;
+  const p = person(pid);
+  const events = allEvents().filter(e=>dayOffset(e)>=0).sort((a,b)=>(a.city===p.city?-1:1)-(b.city===p.city?-1:1));
+  const priv = S.outings.filter(o=>o.type==="private");
+  openSheet(`${sheetHead(t("invite_to",{n:p.name}))}
+    <div class="field"><label for="inv_ev">${t("invite_pick")}</label><select id="inv_ev">
+      ${priv.map(o=>`<option value="${o.id}">🔒 ${esc(o.title)} · ${esc(cityById(o.city).name)}</option>`).join("")}
+      ${events.map(e=>`<option value="${e.id}"${e.id===presetEvent?" selected":""}>${esc(e.title)} · ${esc(cityById(e.city).name)} · ${esc(fmtDay(evDate(e)))}</option>`).join("")}</select></div>
+    <div class="field"><label for="inv_note">${t("invite_note")}</label><textarea id="inv_note" maxlength="200"></textarea></div>
+    <button class="btn block" data-action="sendInvite" data-id="${pid}">${t("send_invite")}</button>`);
+}
+function openPickPerson(evId){
+  if(!requireVerified()) return;
+  const ev = allEvents().find(e=>e.id===evId);
+  const list = PEOPLE.filter(p=>!S.blocked.includes(p.id)).sort((a,b)=>(a.city===ev.city?-1:1)-(b.city===ev.city?-1:1));
+  openSheet(`${sheetHead(t("invite"))}<p class="muted">${esc(ev.title)}</p><div class="list">${list.map(p=>`<button class="ticket-type" data-action="invitePersonEv" data-id="${p.id}" data-ev="${evId}"><span class="row">${avatar(p)}<span><b>${esc(p.name)}</b><br><span class="small muted">${esc(cityById(p.city).name)}</span></span></span></button>`).join("")}</div>`);
+}
+
+function openReport(pid){
+  const p = person(pid);
+  openSheet(`${sheetHead(t("report_title",{n:p.name}))}<div class="list">${["report_r1","report_r2","report_r3","report_r4","report_r5"].map(r=>`<button class="ticket-type" data-action="reportSend" data-id="${pid}" data-v="${r}">${t(r)}</button>`).join("")}</div>`);
+}
+
+function openVerify(){
+  const step = S.verif;
+  let body;
+  if(step==="pending") body = `<div class="lock">${I.shield}<h3>${t("v_pending")}</h3></div>`;
+  else if(step==="ok") body = `<div class="lock">${I.shield.replace('<svg','<svg style="color:var(--ok)"')}<h3>${t("v_ok")}</h3><button class="btn" data-action="close">${t("close")}</button></div>`;
+  else if(step==="failed") body = `<div class="banner">${I.x.replace('<svg','<svg style="color:var(--bad)"')}<p>${t("v_failed")}</p></div><button class="btn block test" data-action="vSim">${t("v_sim")}</button><button class="btn block ghost" data-action="vManual">${t("v_manual")}</button>`;
+  else if(step==="manual") body = `<div class="banner">${I.clock}<p>${t("v_manual_sent")}</p></div><button class="btn block test" data-action="vSim">${t("v_sim")}</button>`;
+  else body = `<button class="btn block test" data-action="vSim">${I.flask.replace('<svg','<svg width="18" height="18"')}${t("v_sim")}</button><button class="btn block ghost" data-action="vFail">${t("v_fail")}</button>`;
+  openSheet(`${sheetHead(t("v_title"))}<p>${t("v_1")}</p><p class="small muted">${t("v_2")}</p>${body}`);
+}
+
+/* Ticketing: select → hold & pay (test) → confirmed / declined. */
+let TK = null, tkTimer = null;
+function ticketTypes(ev){
+  const types = [{k:"standard", p:ev.price}];
+  if(ev.avail==="verified") types.unshift({k:"early", p:Math.round(ev.price*0.8)});
+  if(ev.price>=20) types.push({k:"vip", p:Math.round(ev.price*2.2)});
+  return types;
+}
+function openTicketing(evId){
+  const ev = allEvents().find(e=>e.id===evId);
+  TK = {evId, type:ticketTypes(ev)[0].k, qty:1, step:"select", holdUntil:0};
+  drawTicketing();
+}
+function drawTicketing(){
+  const ev = allEvents().find(e=>e.id===TK.evId); const cur = cityById(ev.city).cur;
+  const types = ticketTypes(ev); const tt = types.find(x=>x.k===TK.type);
+  const sub = tt.p*TK.qty;
+  let body="";
+  if(TK.step==="select"){
+    body = `<span class="label">${t("choose_ticket")}</span>
+      <div class="list">${types.map(x=>`<button class="ticket-type" data-action="tkType" data-v="${x.k}" aria-pressed="${TK.type===x.k}"><b>${t(x.k)}</b><span class="price">${money(x.p,cur)}</span></button>`).join("")}</div>
+      <div class="row" style="justify-content:space-between"><span class="label">${t("qty")}</span><div class="stepper"><button data-action="tkQty" data-v="-1" aria-label="-">−</button><b aria-live="polite">${TK.qty}</b><button data-action="tkQty" data-v="1" aria-label="+">+</button></div></div>`;
+  }
+  const summary = `<dl class="kv"><dt>${t("subtotal")}</dt><dd>${money(sub,cur)}</dd><dt>${t("fees")}</dt><dd>${esc(t("fees_free",{p:money(0,cur)}))}</dd><dt>${t("taxes")}</dt><dd>${t("taxes_incl")}</dd><dt><b>${t("total")}</b></dt><dd class="price">${money(sub,cur)}</dd></dl>`;
+  if(TK.step==="select") body += summary + `<button class="btn block" data-action="tkNext">${t("buy")} · ${money(sub,cur)}</button>`;
+  if(TK.step==="pay") body = `<p><b>${TK.qty} × ${t(TK.type)}</b></p>${summary}<p class="status warn" id="holdLabel">${t("hold",{t:"10:00"})}</p>
+      <div class="banner test small">${I.flask}<p>${t("sandbox_note")}</p></div>
+      <button class="btn block test" data-action="tkPay">${t("pay_test")}</button><button class="btn block ghost" data-action="tkDecline">${t("pay_fail")}</button>`;
+  if(TK.step==="declined") body = `<div class="banner">${I.x.replace('<svg','<svg style="color:var(--bad)"')}<p>${t("declined_pay")}</p></div><button class="btn block" data-action="tkRetry">${t("back")}</button>`;
+  if(TK.step==="expired") body = `<div class="banner">${I.clock}<p>${t("hold_over")}</p></div><button class="btn block" data-action="tkRetry">${t("back")}</button>`;
+  if(TK.step==="done") body = `<div class="lock">${I.shield.replace('<svg','<svg style="color:var(--ok)"')}<h3>${t("paid")}</h3><p class="small muted">${t("order")} ${esc(TK.orderId)}</p></div><button class="btn block" data-action="tkWallet">${t("act_tickets")}</button>`;
+  openSheet(`${sheetHead(ev.title)}${body}`, ()=>{ clearInterval(tkTimer); tkTimer=null; });
+}
+function startHold(){
+  TK.holdUntil = Date.now()+10*60*1000;
+  clearInterval(tkTimer);
+  tkTimer = setInterval(()=>{
+    const left = TK.holdUntil-Date.now();
+    const el = document.getElementById("holdLabel");
+    if(left<=0){ clearInterval(tkTimer); TK.step="expired"; drawTicketing(); return; }
+    if(el){ const m=Math.floor(left/60000), s=Math.floor(left/1000)%60; el.textContent = t("hold",{t:`${m}:${String(s).padStart(2,"0")}`}); }
+  }, 1000);
+}
+function openTicket(id){
+  const tk = S.tickets.find(x=>x.id===id); if(!tk) return;
+  const ev = allEvents().find(e=>e.id===tk.eventId);
+  const status = tk.status==="refunded" ? `<span class="status bad">${t("refunded")}</span>` : tk.status==="scanned" ? `<span class="status muted">${esc(t("already",{t:tk.scannedAt}))}</span>` : `<span class="status test">${t("ticket_test")}</span>`;
+  openSheet(`${sheetHead(ev?ev.title:"")}
+    <div class="ticket"><span class="watermark" aria-hidden="true">TEST</span>
+      <b>${esc(t("ticket_n",{i:tk.idx,n:tk.n}))} · ${esc(t(tk.type))}</b>
+      <div class="qr${tk.status==="refunded"?" revoked":""}" id="qrBox" aria-label="QR"></div>
+      <code class="small" style="overflow-wrap:anywhere">${esc(tk.token.slice(0,8))}…${esc(tk.token.slice(-4))}</code>
+      ${status}
+      <p class="small muted">${ev?esc(fmtDay(evDate(ev)))+" · "+esc(ev.t)+" · "+esc(ev.venue):""}</p>
+      <p class="small muted">${t("order")} ${esc(tk.orderId)}</p>
+    </div>
+    <p id="scanResult" class="small" aria-live="polite"></p>
+    ${tk.status!=="refunded"?`<button class="btn block test" data-action="scan" data-id="${tk.id}">${t("scan")}</button>`:""}
+    ${tk.status==="valid"?`<button class="btn block danger" data-action="refund" data-id="${tk.id}">${t("refund")}</button>`:""}`);
+  const box = document.getElementById("qrBox");
+  try{ if(window.QRCode){ new QRCode(box,{text:"LINK-TEST:"+tk.token, width:160, height:160, correctLevel:QRCode.CorrectLevel.M}); } else box.textContent="QR"; }catch(e){ box.textContent="QR"; }
+}
+
+function openAbout(){
+  const rows = ABOUT[S.lang] || ABOUT.en;
+  const cls = {ok:"ok", test:"test", bad:"bad"};
+  openSheet(`${sheetHead(t("about"))}<table class="matrix"><tbody>${rows.map(([k,txt])=>`<tr><td><span class="status ${cls[k]}"></span></td><td>${esc(txt)}</td></tr>`).join("")}</tbody></table><p class="small muted">${t("storage_note")}</p>`);
+}
+function openExport(){
+  const data = JSON.stringify({profile:S.profile, verification_status:S.verif, outings:S.outings, invitations:S.invites, conversations:S.convos, tickets:S.tickets.map(x=>({...x, token:"(hidden)"})), blocked:S.blocked, reports:S.reports, notifications:S.notif, exported_at:new Date().toISOString()}, null, 2);
+  openSheet(`${sheetHead(t("export"))}<p class="small muted">${t("export_d")}</p><label class="sr" for="exportBox">JSON</label><textarea id="exportBox" readonly style="min-height:260px;font-family:ui-monospace,monospace;font-size:12px">${esc(data)}</textarea><button class="btn block" data-action="copyExport">Copy</button>`);
+}
+function openResetConfirm(){
+  openSheet(`${sheetHead(t("reset"))}<p>${t("storage_note")}</p><div class="grid2"><button class="btn danger" data-action="resetDo">${t("reset")}</button><button class="btn ghost" data-action="close">${t("cancel")}</button></div>`);
+}
+
+/* ---------- toast ---------- */
+let toastT=null;
+function toast(msg){
+  let el = document.getElementById("toast");
+  if(!el){ el=document.createElement("div"); el.id="toast"; el.className="toast"; el.setAttribute("role","status"); document.body.appendChild(el); }
+  el.textContent = msg; el.hidden=false;
+  clearTimeout(toastT); toastT=setTimeout(()=>{ el.hidden=true; }, 3200);
+}
+
+/* ---------- actions ---------- */
+function ensureConvo(pid, title, eventId){
+  let c = S.convos.find(c=>pid ? c.with===pid : c.eventId===eventId);
+  if(!c){ c = {id:uid("c"), with:pid||null, title, eventId:eventId||null, msgs:[]}; S.convos.unshift(c); }
+  return c;
+}
+const A = {
+  tab(el){ S.tab=el.dataset.v; openConvoId=null; save(); render(); window.scrollTo(0,0); },
+  set(el){ S[el.dataset.k]=el.dataset.v; save(); render(true); },
+  resetFilters(){ S.cat="all"; S.when="all"; S.budget="any"; S.mode="international"; save(); render(); },
+  city(){ openCity(); },
+  pickCity(el){ S.city=el.dataset.v; if(S.mode==="international") S.mode="local"; save(); closeSheet(); render(); },
+  addCity(el){ const n=el.dataset.v.slice(0,60); if(!S.customCities.includes(n)) S.customCities.push(n); S.city="c:"+n; S.mode="local"; save(); closeSheet(); render(); },
+  about(){ openAbout(); },
+  event(el){ openEvent(el.dataset.id); },
+  person(el){ openPerson(el.dataset.id); },
+  peopleAll(el){ S.peopleAll = el.dataset.v==="1"; save(); render(true); },
+  close(){ closeSheet(); render(true); },
+  verify(){ openVerify(); },
+  vSim(){ S.verif="pending"; save(); openVerify(); setTimeout(()=>{ S.verif="ok"; save(); openVerify(); render(true); toast(t("v_ok")); }, 1800); },
+  vFail(){ S.verif="pending"; save(); openVerify(); setTimeout(()=>{ S.verif="failed"; save(); openVerify(); render(true); }, 1500); },
+  vManual(){ S.verif="manual"; save(); openVerify(); render(true); },
+  buy(el){ openTicketing(el.dataset.id); },
+  tkType(el){ TK.type=el.dataset.v; drawTicketing(); },
+  tkQty(el){ TK.qty=Math.max(1,Math.min(8,TK.qty+Number(el.dataset.v))); drawTicketing(); },
+  tkNext(){ TK.step="pay"; drawTicketing(); startHold(); },
+  tkDecline(){ clearInterval(tkTimer); TK.step="declined"; drawTicketing(); },
+  tkRetry(){ TK.step="select"; drawTicketing(); },
+  tkPay(){
+    clearInterval(tkTimer);
+    const ev = allEvents().find(e=>e.id===TK.evId); const tt = ticketTypes(ev).find(x=>x.k===TK.type);
+    const orderId = "LNK-TEST-"+token().slice(0,6).toUpperCase();
+    for(let i=1;i<=TK.qty;i++) S.tickets.unshift({id:uid("t"), orderId, eventId:ev.id, type:TK.type, idx:i, n:TK.qty, token:token(), status:"valid", scannedAt:null, price:tt.p, cur:cityById(ev.city).cur, created:new Date().toISOString()});
+    TK.step="done"; TK.orderId=orderId; save(); drawTicketing();
+  },
+  tkWallet(){ closeSheet(); S.tab="activity"; S.actTab="tickets"; save(); render(); },
+  ticket(el){ openTicket(el.dataset.id); },
+  scan(el){
+    const tk=S.tickets.find(x=>x.id===el.dataset.id); const out=document.getElementById("scanResult");
+    if(tk.status==="valid"){ tk.status="scanned"; tk.scannedAt=now(); save(); openTicket(tk.id); document.getElementById("scanResult").innerHTML=`<span class="status ok">${esc(t("scanned_ok",{t:tk.scannedAt}))}</span>`; }
+    else if(out){ out.innerHTML=`<span class="status bad">${esc(t("already",{t:tk.scannedAt}))}</span>`; }
+    render(true);
+  },
+  refund(el){ const tk=S.tickets.find(x=>x.id===el.dataset.id); tk.status="refunded"; save(); openTicket(tk.id); render(true); toast(t("refunded")); },
+  join(el){
+    if(!requireVerified()) return;
+    const ev = allEvents().find(e=>e.id===el.dataset.id);
+    if(!S.joined.includes(ev.id)) S.joined.push(ev.id);
+    ensureConvo(null, t("msg_group",{t:ev.title}), ev.id);
+    save(); closeSheet(); S.tab="messages"; openConvoId = S.convos.find(c=>c.eventId===ev.id).id; render();
+  },
+  inviteFromEvent(el){ openPickPerson(el.dataset.id); },
+  invitePersonEv(el){ openInvite(el.dataset.id, el.dataset.ev); },
+  invitePerson(el){ openInvite(el.dataset.id); },
+  sendInvite(el){
+    const today = new Date().toDateString();
+    const sentToday = S.invites.filter(i=>i.dir==="out" && new Date(i.created).toDateString()===today).length;
+    if(sentToday>=10){ toast(t("invite_limit")); return; }
+    const pid=el.dataset.id;
+    S.invites.unshift({id:uid("i"), dir:"out", to:pid, event:document.getElementById("inv_ev").value, note:document.getElementById("inv_note").value.trim(), status:"pending", d:3, created:new Date().toISOString()});
+    save(); closeSheet(); render(true); toast(t("invite_sent",{n:person(pid).name}));
+  },
+  inviteAccept(el){
+    if(!requireVerified()) return;
+    const inv=S.invites.find(i=>i.id===el.dataset.id); inv.status="accepted";
+    const p=person(inv.from); const c=ensureConvo(p.id, p.name);
+    if(!c.msgs.length) c.msgs.push({me:false, text:loc(inv.note), at:now()});
+    save(); render(true); toast(t("accepted"));
+  },
+  inviteDecline(el){ S.invites.find(i=>i.id===el.dataset.id).status="declined"; save(); render(true); },
+  inviteCancel(el){ S.invites.find(i=>i.id===el.dataset.id).status="cancelled"; save(); render(true); },
+  invDir(el){ S.inviteDir=el.dataset.v; save(); render(true); },
+  actTab(el){ S.actTab=el.dataset.v; save(); render(true); },
+  convo(el){ openConvoId=el.dataset.id; render(); },
+  convoBack(){ openConvoId=null; render(); },
+  block(el){ const p=person(el.dataset.id); if(!S.blocked.includes(p.id)) S.blocked.push(p.id); save(); closeSheet(); render(true); toast(t("blocked",{n:p.name})); },
+  unblock(el){ S.blocked=S.blocked.filter(x=>x!==el.dataset.id); save(); render(true); },
+  report(el){ openReport(el.dataset.id); },
+  reportSend(el){ S.reports.push({pid:el.dataset.id, reason:el.dataset.v, at:new Date().toISOString()}); save(); closeSheet(); render(true); toast(t("report_sent")); },
+  ctype(el){ createType=el.dataset.v; render(true); },
+  outingDelete(el){ S.outings=S.outings.filter(o=>o.id!==el.dataset.id); save(); render(true); },
+  modApprove(el){ S.outings.find(o=>o.id===el.dataset.id).status="approved"; save(); render(true); toast(t("approved")); },
+  modReject(el){ S.outings.find(o=>o.id===el.dataset.id).status="rejected"; save(); render(true); },
+  pLang(el){ toggleIn(S.profile.langs, el.dataset.v); save(); render(true); },
+  pInt(el){ toggleIn(S.profile.interests, el.dataset.v); save(); render(true); },
+  pMusic(el){ toggleIn(S.profile.music, el.dataset.v); save(); render(true); },
+  saveProfile(){ S.profile.name=document.getElementById("p_name").value.trim().slice(0,40); S.profile.bio=document.getElementById("p_bio").value.trim(); S.profile.city=document.getElementById("p_city").value; save(); render(true); toast(t("saved")); },
+  tripAdd(){ S.profile.trips.push({city:document.getElementById("tr_city").value, from:document.getElementById("tr_from").value, to:document.getElementById("tr_to").value}); save(); render(true); toast(t("saved")); },
+  tripDel(el){ S.profile.trips.splice(Number(el.dataset.v),1); save(); render(true); },
+  vis(el){ S.profile.visibility=el.dataset.v; save(); render(true); },
+  brand(el){ S.brand=el.dataset.v; save(); applyLook(); document.querySelectorAll('[data-action="brand"]').forEach(b=>b.setAttribute("aria-pressed", b.dataset.v===S.brand)); if(S.onboarded) render(true); },
+  theme(el){ S.theme=el.dataset.v; save(); render(true); },
+  export(){ openExport(); },
+  copyExport(){ const ta=document.getElementById("exportBox"); navigator.clipboard.writeText(ta.value).then(()=>toast("✓")).catch(()=>{ ta.select(); }); },
+  resetAsk(){ openResetConfirm(); },
+  resetDo(){ const keep={lang:S.lang, brand:S.brand}; S=Object.assign(DEFAULT_STATE(), keep, {onboarded:true}); save(); closeSheet(); render(); toast(t("reset_done")); },
+  obStart(){ S.profile.name=document.getElementById("ob_name").value.trim().slice(0,40); S.onboarded=true; save(); closeSheet(); render(); }
+};
+function toggleIn(arr, v){ const i=arr.indexOf(v); if(i>=0) arr.splice(i,1); else arr.push(v); }
+
+document.addEventListener("click", e=>{
+  const el = e.target.closest("[data-action]");
+  if(!el || el.tagName==="SELECT" || (el.tagName==="INPUT" && el.type==="checkbox")) return;
+  const fn = A[el.dataset.action]; if(fn){ e.preventDefault(); fn(el); }
+});
+document.addEventListener("change", e=>{
+  const el = e.target;
+  if(el.dataset.action==="lang"){ S.lang=el.value; save(); const ob=!S.onboarded; if(ob){ closeSheet(); } render(true); if(ob) openOnboarding(); return; }
+  if(el.dataset.action==="toggle"){
+    const map = {tg_age:()=>S.profile.showAge=el.checked, tg_dating:()=>S.profile.dating=el.checked,
+      tg_n_invites:()=>S.notif.invites=el.checked, tg_n_messages:()=>S.notif.messages=el.checked, tg_n_events:()=>S.notif.events=el.checked,
+      tg_n_tickets:()=>S.notif.tickets=el.checked, tg_n_marketing:()=>S.notif.marketing=el.checked};
+    if(map[el.id]){ map[el.id](); save(); }
+  }
+  if(el.id==="q_from"||el.id==="q_to"){ S.notif[el.id==="q_from"?"quietFrom":"quietTo"]=el.value; save(); render(true); }
+});
+document.addEventListener("submit", e=>{
+  e.preventDefault();
+  if(e.target.id==="createForm"){
+    const g = id=>document.getElementById(id).value.trim();
+    const o = {id:uid("o"), type:createType, title:g("c_title"), cat:g("c_cat"), city:g("c_city"), date:g("c_date"), time:g("c_time"), place:g("c_place"), cap:Math.max(2,Number(g("c_cap"))||6), desc:g("c_desc"), rules:g("c_rules"), status:createType==="public"?"pending":"private", created:new Date().toISOString()};
+    if(!o.title||!o.city||!o.date||!o.time){ toast(t("form_missing")); return; }
+    S.outings.unshift(o); save(); S.tab="activity"; S.actTab="outings"; render(); window.scrollTo(0,0);
+    toast(createType==="public"?t("created_public"):t("created_private"));
+  }
+  if(e.target.id==="composer"){
+    const inp=document.getElementById("msgInput"); const txt=inp.value.trim(); if(!txt) return;
+    const c=S.convos.find(c=>c.id===openConvoId); c.msgs.push({me:true, text:txt, at:now()}); save(); render(); document.getElementById("msgInput").focus();
+  }
+});
+window.addEventListener("online", ()=>render(true));
+window.addEventListener("offline", ()=>render(true));
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && S.onboarded) closeSheet(); });
+
+render();
+})();
+</script>
+<script>window.LINK_VERSION="v0"</script><!-- LINK version switcher: identical in every published version (v0, v1, v2). Self-contained, neutral colours. -->
+<style>
+#lnkv{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(82px + env(safe-area-inset-bottom,0px));z-index:35;font:600 13px/1.3 system-ui,-apple-system,"Segoe UI",sans-serif}
+#lnkv>button{border:1px solid rgb(255 255 255 / .25);background:rgb(20 16 40 / .88);color:#fff;border-radius:999px;padding:8px 13px;min-height:38px;backdrop-filter:blur(6px);box-shadow:0 6px 18px rgb(0 0 0 / .3);cursor:pointer}
+#lnkv-menu{position:absolute;right:0;bottom:46px;width:250px;background:#1A1538;color:#fff;border:1px solid rgb(255 255 255 / .15);border-radius:16px;padding:6px;box-shadow:0 12px 30px rgb(0 0 0 / .4)}
+#lnkv-menu a{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:12px;color:#fff;text-decoration:none}
+#lnkv-menu a:hover,#lnkv-menu a:focus-visible{background:rgb(255 255 255 / .08)}
+#lnkv-menu a[aria-current="page"]{background:rgb(255 255 255 / .12)}
+#lnkv-menu small{color:#C8BFE6;font-weight:400}
+#lnkv-menu b{font-weight:700}
+</style>
+<div id="lnkv">
+  <div id="lnkv-menu" hidden role="menu" aria-label="Versions">
+    <a role="menuitem" data-v="v0" href="https://1blazeleplufor.github.io/link-app/v0/"><b>v0 · Première version</b><small>3 thèmes, profils simples</small></a>
+    <a role="menuitem" data-v="v1" href="https://1blazeleplufor.github.io/link-app/v1/"><b>v1 · Afterglow + profils</b><small>Couleurs de l'affiche, profils façon Hinge</small></a>
+    <a role="menuitem" data-v="v2" href="https://1blazeleplufor.github.io/link-app/"><b>v2 · Actuelle</b><small>Profil de Noë, touches dorées, filtres sans jaune</small></a>
+  </div>
+  <button type="button" aria-expanded="false" aria-controls="lnkv-menu">Versions · <span id="lnkv-cur"></span></button>
+</div>
+<script>
+(function(){
+  var cur = window.LINK_VERSION || "v2";
+  var root = document.getElementById("lnkv"), btn = root.querySelector("button"), menu = document.getElementById("lnkv-menu");
+  document.getElementById("lnkv-cur").textContent = cur;
+  menu.querySelectorAll("a").forEach(function(a){ if(a.dataset.v===cur) a.setAttribute("aria-current","page"); a.target="_top"; });
+  btn.addEventListener("click", function(e){ e.stopPropagation(); menu.hidden = !menu.hidden; btn.setAttribute("aria-expanded", String(!menu.hidden)); });
+  document.addEventListener("click", function(e){ if(!root.contains(e.target)){ menu.hidden = true; btn.setAttribute("aria-expanded","false"); } });
+})();
+</script><style>:root[data-brand="afterglow"]{--font-display:"Unbounded","Arial Black",system-ui,sans-serif;--bg:#140F2E;--surface:#1E1842;--surface-2:#2A2257;--fg:#F4F0FF;--muted:#B5ABDB;--line:#3A3170;--accent:#FF3DA0;--accent-fg:#140F2E;--accent-2:#3FDFFF;--accent-3:#FFD23F;--ok:#4CE29A;--warn:#FFC24A;--bad:#FF6680;--test:#C9A6FF;color-scheme:dark}</style></body></html>
