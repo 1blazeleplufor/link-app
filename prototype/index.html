@@ -1860,6 +1860,7 @@ render();
     <a role="menuitem" data-v="v0" href="https://1blazeleplufor.github.io/link-app/v0/"><b>v0 · Première version</b><small>3 thèmes, profils simples</small></a>
     <a role="menuitem" data-v="v1" href="https://1blazeleplufor.github.io/link-app/v1/"><b>v1 · Afterglow + profils</b><small>Couleurs de l'affiche, profils façon Hinge</small></a>
     <a role="menuitem" data-v="v2" href="https://1blazeleplufor.github.io/link-app/"><b>v2 · Actuelle</b><small>Profil de Noë, touches dorées, filtres sans jaune</small></a>
+    <a role="menuitem" data-v="feedback" href="https://claude.ai/artifact/L5uNNEW4BNeqrVw7YnMTKg" style="border-top:1px solid rgb(255 255 255 / .12);margin-top:4px"><b>✎ Envoyer un retour</b><small>Consignes, remarques et photos pour Claude</small></a>
   </div>
   <button type="button" aria-expanded="false" aria-controls="lnkv-menu">Versions · <span id="lnkv-cur"></span></button>
 </div>
@@ -1868,7 +1869,7 @@ render();
   var cur = window.LINK_VERSION || "v2";
   var root = document.getElementById("lnkv"), btn = root.querySelector("button"), menu = document.getElementById("lnkv-menu");
   document.getElementById("lnkv-cur").textContent = cur;
-  menu.querySelectorAll("a").forEach(function(a){ if(a.dataset.v===cur) a.setAttribute("aria-current","page"); a.target="_top"; });
+  menu.querySelectorAll("a").forEach(function(a){ if(a.dataset.v===cur) a.setAttribute("aria-current","page"); a.target = a.dataset.v==="feedback" ? "_blank" : "_top"; if(a.dataset.v==="feedback") a.rel="noopener"; });
   btn.addEventListener("click", function(e){ e.stopPropagation(); menu.hidden = !menu.hidden; btn.setAttribute("aria-expanded", String(!menu.hidden)); });
   document.addEventListener("click", function(e){ if(!root.contains(e.target)){ menu.hidden = true; btn.setAttribute("aria-expanded","false"); } });
 })();

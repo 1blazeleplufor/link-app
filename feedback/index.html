@@ -1,0 +1,200 @@
+<title>Retours LINK</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Figtree:wght@400;600;700&display=swap">
+<style>
+/* Layout: single column (max 620px), composer card on top, list of sent remarks below. Afterglow look (Indira's pick), committed dark. */
+:root{
+  --bg:#130F2A; --surface:#1C1640; --surface-2:#271E52; --fg:#F7F1FF; --muted:#B8AED8; --line:#372C6C;
+  --accent:#FF4D7E; --gold:#FFC94A; --ok:#4CE29A; --bad:#FF6680;
+  --grad:linear-gradient(120deg,#FF6A4D 0%,#F0367F 45%,#9B2FD6 100%);
+  --display:"Unbounded","Arial Black",system-ui,sans-serif; --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 60px}
+.wrap{max-width:620px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+h1,h2{font-family:var(--display);margin:0;line-height:1.1;text-wrap:balance}
+h1{font-size:clamp(28px,7vw,40px);font-weight:800}
+h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:18px}
+p{margin:0}
+.muted{color:var(--muted)} .small{font-size:13px}
+.logo{font-family:var(--display);font-weight:800;font-size:22px;display:flex;align-items:center;gap:3px}
+.logo i{display:inline-block;width:9px;height:9px;border-radius:50%;background:#FF6A4D;transform:translateY(-7px)} .logo i+i{background:#C03BE0;margin-left:-3px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+label,.label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gold)}
+textarea{width:100%;min-height:130px;resize:vertical;background:var(--surface-2);color:var(--fg);border:1px solid var(--line);border-radius:14px;padding:12px;font:inherit}
+select{width:100%;background:var(--surface-2);color:var(--fg);border:1px solid var(--line);border-radius:12px;padding:10px;font:inherit;min-height:44px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:1px solid var(--line);background:var(--surface-2);color:var(--fg);border-radius:999px;padding:7px 13px;font:600 14px var(--body);min-height:38px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn{border:0;border-radius:999px;padding:12px 20px;min-height:48px;font:700 15px var(--body);background:var(--grad);color:#fff;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost{background:none;border:1px solid var(--line)}
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.thumb{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--surface-2);max-width:100%}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb button{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgb(0 0 0 / .6);color:#fff;cursor:pointer;font-size:15px;line-height:1}
+.add{display:grid;place-items:center;aspect-ratio:1;border:2px dashed var(--line);border-radius:12px;color:var(--muted);font-size:28px;cursor:pointer}
+.add:focus-within{outline:3px solid var(--gold)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.note{border-radius:14px;padding:12px 14px;font-size:14px;background:var(--surface-2);border:1px solid var(--line)}
+.note.bad{border-color:var(--bad)} .note.ok{border-color:var(--ok)}
+.item{display:flex;flex-direction:column;gap:8px}
+.item .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
+.pill{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--surface-2);display:inline-flex;gap:5px;align-items:center}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill.new{color:var(--gold)} .pill.seen{color:#7FC8FF} .pill.done{color:var(--ok)}
+.reply{border-left:3px solid var(--accent);padding:8px 12px;background:var(--surface-2);border-radius:0 12px 12px 0;font-size:14px}
+.item p.text{white-space:pre-wrap;overflow-wrap:anywhere}
+.empty{text-align:center;padding:26px;border:2px dashed var(--line);border-radius:20px;color:var(--muted)}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+a{color:#FF8FB0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <div class="row" style="justify-content:space-between"><div class="logo" aria-label="LINK">LINK<i></i><i></i></div><a class="small" href="https://1blazeleplufor.github.io/link-app/" target="_blank" rel="noopener">Ouvrir le prototype ↗</a></div>
+  <h1>Tes retours sur <span>LINK</span></h1>
+  <p class="muted">Écris ici tes consignes et remarques, ajoute des captures ou des photos d'inspiration. Claude les lit et fait les changements dans le prototype ; tu verras ici quand c'est pris en compte.</p>
+
+  <div id="status" class="note" hidden role="status"></div>
+
+  <form id="form" class="card" novalidate>
+    <h2>Nouvelle remarque</h2>
+    <div class="row" style="flex-direction:column;align-items:stretch;gap:6px">
+      <span class="label" id="catLabel">C'est à propos de</span>
+      <div class="chips" role="group" aria-labelledby="catLabel" id="cats"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <label for="version">Version concernée</label>
+      <select id="version">
+        <option value="v2">v2 · Actuelle</option><option value="v1">v1 · Afterglow + profils</option>
+        <option value="v0">v0 · Première version</option><option value="all">Toutes / général</option>
+      </select>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <label for="text">Ta consigne ou remarque</label>
+      <textarea id="text" maxlength="4000" placeholder="Ex. : sur la page Explorer, je voudrais les filtres en rose, et une photo sur chaque événement."></textarea>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span class="label">Photos ou captures (8 max)</span>
+      <div class="thumbs" id="thumbs"></div>
+      <p class="small muted" id="photoHint">Les images sont réduites avant l'envoi.</p>
+    </div>
+    <div class="row"><button class="btn" type="submit" id="send">Envoyer à Claude</button><span class="small muted" id="sendInfo" aria-live="polite"></span></div>
+  </form>
+
+  <section style="display:flex;flex-direction:column;gap:12px" aria-labelledby="histTitle">
+    <h2 id="histTitle">Remarques envoyées</h2>
+    <div id="list"><div class="empty">Chargement…</div></div>
+  </section>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const CATS = [["design","Design / couleurs"],["profils","Profils"],["explorer","Explorer / événements"],["messages","Messages / invitations"],["fonction","Nouvelle fonction"],["bug","Quelque chose ne marche pas"],["autre","Autre"]];
+  const STATUS = {new:["new","Envoyée"], seen:["seen","Lue par Claude"], done:["done","Fait ✓"]};
+  const $ = id => document.getElementById(id);
+  let db = null, assets = null, cat = "design", pending = []; // pending: [{blob, url}]
+
+  function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+  function showStatus(msg, tone){ const el=$("status"); el.textContent=msg; el.className="note"+(tone?" "+tone:""); el.hidden=!msg; }
+
+  // Category chips
+  $("cats").innerHTML = CATS.map(([k,l]) => `<button type="button" class="chip" data-k="${k}" aria-pressed="${k===cat}">${l}</button>`).join("");
+  $("cats").addEventListener("click", e => { const b=e.target.closest("[data-k]"); if(!b) return; cat=b.dataset.k; $("cats").querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", String(c.dataset.k===cat))); });
+
+  // Photo picking (resize to max 1600px JPEG so uploads stay small)
+  function drawThumbs(){
+    $("thumbs").innerHTML = pending.map((p,i)=>`<div class="thumb"><img src="${p.url}" alt="Photo ${i+1}"><button type="button" data-rm="${i}" aria-label="Retirer la photo ${i+1}">×</button></div>`).join("")
+      + (pending.length<8 && assets ? `<label class="add" for="pick" aria-label="Ajouter des photos">+<input id="pick" class="sr" type="file" accept="image/*" multiple></label>` : "");
+  }
+  $("thumbs").addEventListener("click", e => { const b=e.target.closest("[data-rm]"); if(!b) return; const i=+b.dataset.rm; URL.revokeObjectURL(pending[i].url); pending.splice(i,1); drawThumbs(); });
+  $("thumbs").addEventListener("change", async e => {
+    if(e.target.id!=="pick") return;
+    for(const f of [...e.target.files].slice(0, 8-pending.length)){
+      if(!f.type.startsWith("image/")) continue;
+      try{ const blob = await shrink(f); pending.push({blob, url:URL.createObjectURL(blob)}); }catch(err){ showStatus("Une image n'a pas pu être lue. Essaie une capture d'écran ou une photo JPEG/PNG.", "bad"); }
+    }
+    drawThumbs();
+  });
+  function shrink(file){
+    return new Promise((resolve, reject) => {
+      const img = new Image(); const url = URL.createObjectURL(file);
+      img.onload = () => {
+        const k = Math.min(1, 1600/Math.max(img.width, img.height));
+        const c = document.createElement("canvas"); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+        c.getContext("2d").drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url);
+        c.toBlob(b => b ? resolve(b) : reject(new Error("encode")), "image/jpeg", 0.85);
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("decode")); };
+      img.src = url;
+    });
+  }
+
+  // History list (live)
+  function fmt(iso){ try{ return new Intl.DateTimeFormat("fr-FR",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(iso)); }catch(e){ return ""; } }
+  function render(docs){
+    if(!docs.length){ $("list").innerHTML = `<div class="empty">Aucune remarque pour l'instant. Ta première apparaîtra ici.</div>`; return; }
+    $("list").innerHTML = docs.map(d => {
+      const x = d.data(); const st = STATUS[x.status] || STATUS.new; const catLabel = (CATS.find(c=>c[0]===x.category)||[,""])[1];
+      const photos = (x.photos||[]).map(id => `<div class="thumb"><img src="/_blob/${esc(id)}" alt="Photo jointe" loading="lazy"></div>`).join("");
+      return `<article class="card item">
+        <div class="meta"><span class="pill ${st[0]}">${st[1]}</span><span>${esc(catLabel)}</span><span>· ${esc(x.version==="all"?"général":x.version)}</span><span>· ${esc(fmt(x.createdAt))}</span></div>
+        <p class="text">${esc(x.text)}</p>
+        ${photos?`<div class="thumbs">${photos}</div>`:""}
+        ${x.reply?`<div class="reply"><b>Claude :</b> ${esc(x.reply)}</div>`:""}
+      </article>`;
+    }).join("");
+  }
+
+  // Submit
+  $("form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const text = $("text").value.trim();
+    if(!text && !pending.length){ showStatus("Écris une remarque ou ajoute au moins une photo.", "bad"); return; }
+    if(!db){ showStatus("L'envoi n'est pas disponible sur cet affichage. Demande à Noë de te donner l'accès « Modification » à cette page, puis recharge-la.", "bad"); return; }
+    $("send").disabled = true; showStatus("");
+    try{
+      const ids = [];
+      for(let i=0;i<pending.length;i++){
+        $("sendInfo").textContent = `Envoi des photos ${i+1}/${pending.length}…`;
+        const r = await assets.upload(pending[i].blob, {type:"image/jpeg"}); ids.push(r.id);
+      }
+      $("sendInfo").textContent = "Envoi…";
+      await db.collection("feedback").add({ text, category:cat, version:$("version").value, photos:ids, status:"new", reply:"", createdAt:new Date().toISOString() });
+      pending.forEach(p=>URL.revokeObjectURL(p.url)); pending=[]; $("text").value=""; drawThumbs();
+      $("sendInfo").textContent = ""; showStatus("Envoyé. Noë et Claude le verront à la prochaine session.", "ok");
+    }catch(err){
+      const code = err && err.code;
+      const msg = code==="too_large" ? "Une photo est trop lourde (20 Mo max)."
+        : code==="quota_or_state" || code==="quota_exceeded" ? "L'espace de stockage de cette page est plein."
+        : code==="invalid_argument" || code==="not_granted" ? "Tu n'as pas encore le droit d'écrire ici. Demande à Noë l'accès « Modification »."
+        : code==="rate_limited" || code==="resource_exhausted" ? "Trop d'envois d'un coup. Réessaie dans une minute."
+        : "L'envoi a échoué. Vérifie ta connexion et réessaie.";
+      showStatus(msg, "bad"); $("sendInfo").textContent = "";
+    }finally{ $("send").disabled = false; }
+  });
+
+  // Capabilities
+  drawThumbs();
+  (async () => {
+    const C = window.claude;
+    if(!C || !C.use){ $("list").innerHTML = `<div class="empty">Ouvre cette page depuis son lien claude.ai pour envoyer et voir les remarques.</div>`; showStatus("Cette page doit être ouverte depuis claude.ai (connectée à ton compte).", "bad"); return; }
+    const [d, a] = await Promise.all([C.use("db"), C.use("assets")]);
+    db = d; assets = a; drawThumbs();
+    if(!assets) $("photoHint").textContent = "L'ajout de photos demande l'accès « Modification » à cette page.";
+    if(!db){ $("list").innerHTML = `<div class="empty">Connecte-toi à claude.ai pour voir et envoyer des remarques.</div>`; showStatus("Connecte-toi à claude.ai avec l'adresse à laquelle Noë a partagé la page.", "bad"); return; }
+    let loaded = false;
+    const timer = setTimeout(() => { if(!loaded) $("list").innerHTML = `<div class="empty">Les remarques ne répondent pas encore. Vérifie ta connexion.</div>`; }, 10000);
+    db.collection("feedback").orderBy("createdAt","desc").onSnapshot(snap => {
+      if(!snap.metadata.fromCache){ loaded = true; clearTimeout(timer); }
+      render(snap.docs);
+    }, err => { clearTimeout(timer); $("list").innerHTML = `<div class="empty">Impossible de charger les remarques (${esc(err.code)}).</div>`; });
+  })();
+})();
+</script>
