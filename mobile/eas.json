@@ -1,0 +1,9 @@
+{
+  "cli": { "version": ">= 13.0.0", "appVersionSource": "remote" },
+  "build": {
+    "development": { "developmentClient": true, "distribution": "internal", "env": { "EXPO_PUBLIC_TICKETING_MODE": "test" } },
+    "preview": { "distribution": "internal", "env": { "EXPO_PUBLIC_TICKETING_MODE": "test" } },
+    "production": { "autoIncrement": true, "env": { "EXPO_PUBLIC_TICKETING_MODE": "disabled" } }
+  },
+  "submit": { "production": {} }
+}

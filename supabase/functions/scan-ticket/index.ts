@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
   if (!secret) return fail(req, "qr_not_configured", 503);
 
   const check = await verifyQrPayload(payload, secret);
-  if (!check.ok) return json(req, { result: check.reason });
+  if (check.ok === false) return json(req, { result: check.reason });
   const { data, error } = await admin().rpc("validate_ticket_by_id", { p_ticket: check.ticketId, p_event: eventId, p_scanner: user.id });
   if (error) return fail(req, error.code === "42501" ? "forbidden" : "scan_failed", error.code === "42501" ? 403 : 500);
   return json(req, { result: data });
