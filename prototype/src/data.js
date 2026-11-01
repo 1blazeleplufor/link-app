@@ -87,6 +87,8 @@ const EVENTS = [
 
 /* Fictional members. Photos are replaced by initials; verified = demo flag. */
 const PEOPLE = [
+  {id:"p0", name:"Noë", age:24, city:"paris", langs:["fr","en"], interests:["concerts","rooftops","clubs","food","trips"], music:["House","Afrobeats","R&B"], verified:true, color:"#FF4D7E",
+   bio:{en:"Always the one who finds the rooftop. Electrical engineer by day, night owl by vocation.", fr:"Toujours celui qui trouve le rooftop. Ingé en génie électrique le jour, oiseau de nuit par vocation."}, trips:[{city:"lisbon", d:25}]},
   {id:"p1", name:"Léa", age:27, city:"paris", langs:["fr","en"], interests:["concerts","rooftops","culture"], music:["Indie","Jazz"], verified:true, color:"#FF5A4E",
    bio:{en:"Gig addict, always one ticket short of a friend.", fr:"Accro aux concerts, toujours un billet de trop."}, trips:[{city:"lisbon", d:20}]},
   {id:"p2", name:"Malik", age:31, city:"paris", langs:["fr","en","ar"], interests:["clubs","festivals","food"], music:["House","Afrobeats"], verified:true, color:"#7A3DD1",
@@ -119,6 +121,7 @@ const PEOPLE = [
 
 /* Seeded received invitations so the Activity tab shows the flow. */
 const SEED_INVITES = [
+  {id:"i0", dir:"in", from:"p0", event:"e1", note:{en:"Indira! Soul on a barge at sunset, Wednesday 8pm. Come out with me one evening? First drink's on me.", fr:"Indira ! Soul sur une péniche au coucher du soleil, mercredi 20 h. On sort un soir ensemble ? Le premier verre est pour moi."}, status:"pending", d:3},
   {id:"i1", dir:"in", from:"p1", event:"e1", note:{en:"I have a spare ticket, want to come?", fr:"J'ai une place en plus, tu viens ?"}, status:"pending", d:2},
   {id:"i2", dir:"in", from:"p7", event:"e22", note:{en:"Sunset at Graça this week?", fr:"Coucher de soleil à Graça cette semaine ?"}, status:"pending", d:1}
 ];

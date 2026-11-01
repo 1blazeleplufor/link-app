@@ -291,5 +291,6 @@
  "prompt_answer": "Tu respuesta",
  "preview": "Ver mi perfil",
  "my_photo_hint": "Hasta 6 fotos, guardadas solo en este dispositivo.",
- "remove": "Quitar"
+ "remove": "Quitar",
+ "invite_from": "{n} te ha enviado una invitación"
 }

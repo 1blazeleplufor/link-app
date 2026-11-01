@@ -16,6 +16,10 @@ const LIFESTYLE = {
 const PROMPT_KEYS = ["pr_ideal_night","pr_never_no","pr_best_concert","pr_hidden_spot","pr_looking_crew","pr_next_trip","pr_green_flag","pr_sunday"];
 
 const PROFILE_EXTRA = {
+  p0:{portrait:"1472099645785-5658abf4ff4e", job:{en:"Electrical engineer (smart buildings)",fr:"Ingé génie électrique (smart building)"}, lf:["friends","outings","travel"], av:"weeknights",
+    prompts:[["pr_ideal_night",{en:"Sunset concert on the Seine, a rooftop after, and the last metro we definitely miss.",fr:"Concert au coucher du soleil sur la Seine, un rooftop après, et le dernier métro qu'on rate forcément."}],
+             ["pr_never_no",{en:"Going out on a Tuesday. Or a Wednesday. Basically yes.",fr:"Sortir un mardi. Ou un mercredi. En gros, oui."}],
+             ["pr_green_flag",{en:"Dances first, asks questions later.",fr:"Danse d'abord, pose des questions après."}]]},
   p1:{portrait:"1494790108377-be9c29b29330", job:{en:"Graphic designer",fr:"Graphiste"}, lf:["friends","outings"], av:"weeknights",
     prompts:[["pr_best_concert",{en:"A tiny jazz club in Montmartre, 40 people, the band played until 2am.",fr:"Un mini club de jazz à Montmartre, 40 personnes, le groupe a joué jusqu'à 2 h."}],
              ["pr_looking_crew",{en:"go to gigs on a Tuesday without overthinking it.",fr:"aller à des concerts un mardi sans se prendre la tête."}],

@@ -6,7 +6,7 @@
 /* ---------- state ---------- */
 const STORE_KEY = "link-proto-v1";
 const DEFAULT_STATE = () => ({
-  v:1, onboarded:false, lang:guessLang(), brand:"afterglow", afterglowSeen:true, theme:"system",
+  v:1, onboarded:false, lang:guessLang(), brand:"afterglow", afterglowSeen:true, noeSeeded:true, theme:"system",
   tab:"explore", city:"paris", mode:"local", cat:"all", when:"all", budget:"any",
   customCities:[], peopleAll:false, actTab:"invites", inviteDir:"in",
   profile:{name:"", bio:"", city:"paris", langs:["fr"], interests:["concerts","rooftops"], music:["House"], trips:[], dating:false, showAge:true, visibility:"public",
@@ -28,6 +28,7 @@ function load(){
         const d = DEFAULT_STATE(); const m = Object.assign(d, s);
         m.profile = Object.assign(DEFAULT_STATE().profile, s.profile||{});
         if(!s.afterglowSeen){ m.brand = "afterglow"; m.afterglowSeen = true; }   // new default look after Indira's feedback
+        if(!s.noeSeeded){ m.invites = SEED_INVITES.filter(i=>i.id==="i0").map(i=>({...i})).concat(m.invites||[]); m.noeSeeded = true; }
         return m;
       }
     }
@@ -145,7 +146,7 @@ function person(id){ return PEOPLE.find(p=>p.id===id); }
 function visiblePeople(){
   let list = PEOPLE.filter(p=>!S.blocked.includes(p.id));
   if(!S.peopleAll) list = list.filter(p=>p.city===S.city || p.trips.some(tr=>tr.city===S.city));
-  return list.map(p=>({p, shared:p.interests.filter(i=>S.profile.interests.includes(i))})).sort((a,b)=>b.shared.length-a.shared.length);
+  return list.map(p=>({p, shared:p.interests.filter(i=>S.profile.interests.includes(i))})).sort((a,b)=>(b.p.id==="p0")-(a.p.id==="p0") || b.shared.length-a.shared.length);
 }
 const verified = () => S.verif==="ok";
 
@@ -464,6 +465,7 @@ function render(keepScroll){
   if(keepScroll) window.scrollTo(0,y);
   const m = document.getElementById("msgs"); if(m) m.lastElementChild && m.lastElementChild.scrollIntoView({block:"end"});
   if(!S.onboarded) openOnboarding();
+  else if(!S.noeToast && S.invites.some(i=>i.id==="i0" && i.status==="pending")){ S.noeToast=true; save(); setTimeout(()=>toast(t("invite_from",{n:"Noë"})), 600); }
 }
 
 /* ---------- sheets ---------- */
