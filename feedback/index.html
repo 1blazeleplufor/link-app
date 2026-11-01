@@ -46,7 +46,7 @@ select{width:100%;background:var(--surface-2);color:var(--fg);border:1px solid v
 .item .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
 .pill{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--surface-2);display:inline-flex;gap:5px;align-items:center}
 .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
-.pill.new{color:var(--gold)} .pill.seen{color:#7FC8FF} .pill.done{color:var(--ok)}
+.pill.new{color:var(--gold)} .pill.seen{color:#7FC8FF} .pill.done{color:var(--ok)} .pill.needs{color:#FF9DB8}
 .reply{border-left:3px solid var(--accent);padding:8px 12px;background:var(--surface-2);border-radius:0 12px 12px 0;font-size:14px}
 .item p.text{white-space:pre-wrap;overflow-wrap:anywhere}
 .empty{text-align:center;padding:26px;border:2px dashed var(--line);border-radius:20px;color:var(--muted)}
@@ -58,7 +58,7 @@ a{color:#FF8FB0}
 <div class="wrap">
   <div class="row" style="justify-content:space-between"><div class="logo" aria-label="LINK">LINK<i></i><i></i></div><a class="small" href="https://1blazeleplufor.github.io/link-app/" target="_blank" rel="noopener">Ouvrir le prototype ↗</a></div>
   <h1>Tes retours sur <span>LINK</span></h1>
-  <p class="muted">Écris ici tes consignes et remarques, ajoute des captures ou des photos d'inspiration. Claude les lit et fait les changements dans le prototype ; tu verras ici quand c'est pris en compte.</p>
+  <p class="muted">Écris ici tes consignes et remarques, ajoute des captures ou des photos d'inspiration. Claude passe toutes les heures, fait les changements dans le prototype et te répond ici. Recharge le prototype pour voir le résultat.</p>
 
   <div id="status" class="note" hidden role="status"></div>
 
@@ -97,7 +97,7 @@ a{color:#FF8FB0}
 (function(){
   "use strict";
   const CATS = [["design","Design / couleurs"],["profils","Profils"],["explorer","Explorer / événements"],["messages","Messages / invitations"],["fonction","Nouvelle fonction"],["bug","Quelque chose ne marche pas"],["autre","Autre"]];
-  const STATUS = {new:["new","Envoyée"], seen:["seen","Lue par Claude"], done:["done","Fait ✓"]};
+  const STATUS = {new:["new","Envoyée"], seen:["seen","En cours"], done:["done","Fait ✓"], needs_noe:["needs","En attente de Noë"]};
   const $ = id => document.getElementById(id);
   let db = null, assets = null, cat = "design", pending = []; // pending: [{blob, url}]
 
