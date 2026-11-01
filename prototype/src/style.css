@@ -243,3 +243,7 @@ textarea{min-height:84px;resize:vertical}
 .face-btn{flex:none;transition:transform .15s}
 .face-btn:hover,.face-btn:active{transform:scale(1.05)}
 .name-btn:hover h3,.name-btn:hover h2{text-decoration:underline;text-underline-offset:3px}
+/* "Identité vérifiée" in green on the People tab */
+.pcard-photo .vbadge,:root[data-brand="afterglow"] .pcard-photo .vbadge{background:var(--ok);color:#06210F}
+.time-name,.bubble time .name-btn{font-size:inherit;color:inherit;text-decoration:underline;text-underline-offset:2px}
+.ticket-type .face-btn .avatar{width:46px;height:46px;border-radius:14px;font-size:18px}

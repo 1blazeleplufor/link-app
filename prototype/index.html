@@ -248,6 +248,10 @@ textarea{min-height:84px;resize:vertical}
 .face-btn{flex:none;transition:transform .15s}
 .face-btn:hover,.face-btn:active{transform:scale(1.05)}
 .name-btn:hover h3,.name-btn:hover h2{text-decoration:underline;text-underline-offset:3px}
+/* "Identité vérifiée" in green on the People tab */
+.pcard-photo .vbadge,:root[data-brand="afterglow"] .pcard-photo .vbadge{background:var(--ok);color:#06210F}
+.time-name,.bubble time .name-btn{font-size:inherit;color:inherit;text-decoration:underline;text-underline-offset:2px}
+.ticket-type .face-btn .avatar{width:46px;height:46px;border-radius:14px;font-size:18px}
 </style>
 <div class="app"><header class="topbar" id="top"></header><main id="main" tabindex="-1"></main></div>
 <nav class="tabbar" id="tabs" aria-label="Navigation"></nav>
@@ -1189,6 +1193,8 @@ function meAsPerson(){
     bio:{en:P.bio, fr:P.bio}, trips:P.trips.map(tr=>({city:tr.city})), photos:P.photos, job:P.job?{en:P.job}:null, lookingFor:P.lookingFor,
     availability:P.availability, prompts:P.prompts.filter(x=>x.a&&x.a.trim()).map(x=>({q:x.q, a:{en:x.a}}))};
 }
+const faceBtn = (p, inner)=> `<button class="face-btn" data-action="person" data-id="${p.id}" aria-label="${esc(t("view_profile",{n:p.name}))}">${inner||avatar(p)}</button>`;
+const nameBtn = (p, inner)=> `<button class="name-btn" data-action="person" data-id="${p.id}">${inner||esc(p.name)}</button>`;
 const LIKE_ICON = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 4.5 6.7 4.5c2.1 0 3.6 1.1 4.3 2.4h2c.7-1.3 2.2-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.2C19.5 16.4 12 21 12 21z"/></svg>';
 const VI = {
   job:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5h6v2"/></svg>',
@@ -1304,7 +1310,7 @@ function renderMessages(){
       const p = c.with?person(c.with):null;
       return `<div class="row"><button class="iconbtn" data-action="convoBack" aria-label="${t("back")}">${I.chev.replace('<svg','<svg style="transform:rotate(90deg)"')}</button>${p?`<button class="face-btn" data-action="person" data-id="${p.id}" aria-label="${esc(t("view_profile",{n:p.name}))}">${avatar(p)}</button>`:""}<div style="flex:1;min-width:0">${p?`<button class="name-btn" data-action="person" data-id="${p.id}"><h2>${esc(c.title)}</h2></button>`:`<h2>${esc(c.title)}</h2>`}${p?`<p class="small muted">${p.verified?t("verified_badge"):t("not_verified")}</p>`:""}</div></div>
         <div class="banner small">${I.shield.replace('<svg','<svg style="color:var(--ok)"')}<p>${t("msg_safety")}</p></div>
-        <div class="msgs" id="msgs">${c.msgs.map(m=>`<div class="bubble${m.me?" me":""}">${esc(m.text)}<time>${esc(m.me?t("you"):(p?p.name:""))} · ${esc(m.at)}</time></div>`).join("")}</div>
+        <div class="msgs" id="msgs">${c.msgs.map(m=>`<div class="bubble${m.me?" me":""}">${esc(m.text)}<time>${m.me?esc(t("you")):(p?nameBtn(p):"")} · ${esc(m.at)}</time></div>`).join("")}</div>
         <form class="composer" id="composer"><label class="sr" for="msgInput">${t("msg_placeholder")}</label><input id="msgInput" type="text" maxlength="1000" autocomplete="off" placeholder="${esc(t("msg_placeholder"))}"><button class="btn" type="submit">${t("send")}</button></form>`;
     }
     openConvoId=null;
@@ -1312,8 +1318,8 @@ function renderMessages(){
   return `<div class="section-head"><h1>${t("tab_messages")}</h1></div>
     <div class="list">${S.convos.length?S.convos.filter(c=>!c.with||!S.blocked.includes(c.with)).map(c=>{
       const p=c.with?person(c.with):null; const last=c.msgs[c.msgs.length-1];
-      return `<article class="card"><button class="event-card person" data-action="convo" data-id="${c.id}">${p?avatar(p):`<div class="avatar" style="background:var(--accent-3)">${I.users.replace('<svg','<svg width="26" height="26"')}</div>`}
-        <div style="flex:1;min-width:0"><h3>${esc(c.title)}</h3><p class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last?esc(last.text):""}</p></div></button></article>`;}).join(""):`<div class="empty"><h3>${t("msg_empty")}</h3><p class="muted">${t("msg_empty_sub")}</p></div>`}</div>`;
+      return `<article class="card"><div class="person">${p?faceBtn(p):`<div class="avatar" style="background:var(--accent-3)">${I.users.replace('<svg','<svg width="26" height="26"')}</div>`}
+        <button class="event-card" data-action="convo" data-id="${c.id}" style="flex:1;min-width:0;align-self:stretch"><h3>${esc(c.title)}</h3><p class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last?esc(last.text):""}</p></button></div></article>`;}).join(""):`<div class="empty"><h3>${t("msg_empty")}</h3><p class="muted">${t("msg_empty_sub")}</p></div>`}</div>`;
 }
 
 function toggleRow(id, label, desc, checked){
@@ -1336,7 +1342,7 @@ function renderProfile(){
   const me = {name:P.name||"?", color:"#FF4D7E", photos:P.photos};
   const pendingMod = S.outings.filter(o=>o.type==="public"&&o.status==="pending");
   return `
-  <div class="row" style="gap:14px">${avatar(me,true)}<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"><h1>${esc(P.name||t("tab_profile"))}</h1><span class="status ${vs[0]}">${t("verif_status")} : ${t(vs[1])}</span></div></div>
+  <div class="row" style="gap:14px"><button class="face-btn" data-action="preview" aria-label="${esc(t("preview"))}">${avatar(me,true)}</button><div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px"><h1>${esc(P.name||t("tab_profile"))}</h1><span class="status ${vs[0]}">${t("verif_status")} : ${t(vs[1])}</span></div></div>
   ${S.verif!=="ok"?`<button class="btn block" data-action="verify">${I.shield.replace('<svg','<svg width="20" height="20"')}${t("verify_now")}</button>`:""}
 
   <button class="btn block secondary" data-action="preview">${t("preview")}</button>
@@ -1407,12 +1413,12 @@ function renderProfile(){
   <section class="card"><div class="card-body">
     <h2>${t("admin")}</h2><p class="small muted">${t("admin_d")}</p>
     ${pendingMod.length?pendingMod.map(o=>`<div class="row" style="justify-content:space-between;border-top:1px solid var(--line);padding-top:10px"><span style="min-width:0"><b>${esc(o.title)}</b><br><span class="small muted">${esc(cityById(o.city).name)} · ${esc(t("cat_"+o.cat))}</span></span><span class="row"><button class="btn" data-action="modApprove" data-id="${o.id}">${t("approve")}</button><button class="btn ghost" data-action="modReject" data-id="${o.id}">${t("reject")}</button></span></div>`).join(""):`<p class="small muted">${t("queue_empty")}</p>`}
-    ${S.reports.length?`<p class="small"><b>${t("report")}</b> : ${S.reports.map(r=>esc((person(r.pid)||{}).name)+" — "+esc(t(r.reason))).join(" · ")}</p>`:""}
+    ${S.reports.length?`<p class="small"><b>${t("report")}</b> : ${S.reports.map(r=>{const rp=person(r.pid); return (rp?nameBtn(rp,`<b>${esc(rp.name)}</b>`):"?")+" — "+esc(t(r.reason));}).join(" · ")}</p>`:""}
   </div></section>
 
   <section class="card"><div class="card-body">
     <h2>${t("privacy")}</h2><p class="small muted">${t("storage_note")}</p>
-    ${S.blocked.map(id=>{const p=person(id);return p?`<div class="row" style="justify-content:space-between"><span>${esc(p.name)}</span><button class="btn ghost" data-action="unblock" data-id="${id}">${t("unblock")}</button></div>`:"";}).join("")}
+    ${S.blocked.map(id=>{const p=person(id);return p?`<div class="row" style="justify-content:space-between"><span class="row">${faceBtn(p)}${nameBtn(p)}</span><button class="btn ghost" data-action="unblock" data-id="${id}">${t("unblock")}</button></div>`:"";}).join("")}
     <div class="row"><button class="btn secondary" data-action="export">${t("export")}</button><button class="btn secondary" data-action="about">${t("about")}</button><button class="btn danger" data-action="resetAsk">${t("reset")}</button></div>
   </div></section>`;
 }
@@ -1560,7 +1566,7 @@ function openPickPerson(evId){
   if(!requireVerified()) return;
   const ev = allEvents().find(e=>e.id===evId);
   const list = PEOPLE.filter(p=>!S.blocked.includes(p.id)).sort((a,b)=>(a.city===ev.city?-1:1)-(b.city===ev.city?-1:1));
-  openSheet(`${sheetHead(t("invite"))}<p class="muted">${esc(ev.title)}</p><div class="list">${list.map(p=>`<button class="ticket-type" data-action="invitePersonEv" data-id="${p.id}" data-ev="${evId}"><span class="row">${avatar(p)}<span><b>${esc(p.name)}</b><br><span class="small muted">${esc(cityById(p.city).name)}</span></span></span></button>`).join("")}</div>`);
+  openSheet(`${sheetHead(t("invite"))}<p class="muted">${esc(ev.title)}</p><div class="list">${list.map(p=>`<div class="ticket-type">${faceBtn(p)}<button class="event-card" data-action="invitePersonEv" data-id="${p.id}" data-ev="${evId}" style="flex:1;min-width:0;padding-left:10px"><b>${esc(p.name)}</b><br><span class="small muted">${esc(cityById(p.city).name)}</span></button></div>`).join("")}</div>`);
 }
 
 function openReport(pid){
