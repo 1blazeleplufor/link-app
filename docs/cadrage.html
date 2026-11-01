@@ -1,0 +1,374 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LINK — Dossier de cadrage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FFF7F0;--fg:#2B1A12;--muted:#7A6255;--line:#F1D9CA;--accent:#FF5A4E;--surface:#fff;--soft:#FFEDE1}
+@media (prefers-color-scheme:dark){:root{--bg:#1C1411;--fg:#FBEDE3;--muted:#C2A898;--line:#43322A;--accent:#FF7568;--surface:#271C17;--soft:#33251E;color-scheme:dark}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 Figtree,system-ui,sans-serif;padding:32px max(16px,env(safe-area-inset-left)) 64px}
+main{max-width:780px;margin:0 auto}h1,h2,h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.15;text-wrap:balance}
+h1{font-size:clamp(30px,6vw,44px);margin:.2em 0}h1::after{content:"";display:block;width:64px;height:6px;border-radius:3px;background:var(--accent);margin-top:14px}
+h2{font-size:24px;margin-top:2.2em;padding-top:1em;border-top:1px solid var(--line)}a{color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-size:14px;display:block;overflow-x:auto}th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--line)}th{background:var(--soft)}
+code{background:var(--soft);padding:1px 5px;border-radius:5px;font-size:.9em}hr{border:0;border-top:1px solid var(--line);margin:2em 0}em{color:var(--muted)}
+.cta{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;padding:10px 18px;border-radius:999px;margin:4px 8px 4px 0}
+</style></head><body><main>
+<p><a class="cta" href="./">Ouvrir le prototype</a><a class="cta" style="background:var(--fg);color:var(--bg)" href="https://github.com/1blazeleplufor/link-app">Voir le code</a></p>
+<h1>LINK — Dossier de cadrage (Phase 0)</h1>
+<p><em>Préparé par Claude pour Indira Henry · 2 novembre 2026 · version 1</em></p>
+<p>Ce dossier répond à la Phase 0 du cahier des charges LINK : architecture recommandée, services à ouvrir et leurs coûts, risques, MVP, critères d&#39;acceptation, directions de marque et décisions qui t&#39;attendent. Il s&#39;appuie sur ce qui a déjà été construit et testé cette nuit (voir la matrice en section 9).</p>
+<p><strong>Liens utiles</strong></p>
+<ul>
+<li>Prototype à essayer sur téléphone : <a href="https://1blazeleplufor.github.io/link-app/">https://1blazeleplufor.github.io/link-app/</a></li>
+<li>Code source complet : <a href="https://github.com/1blazeleplufor/link-app">https://github.com/1blazeleplufor/link-app</a></li>
+</ul>
+<hr>
+<h2>1. Résumé en une minute</h2>
+<ul>
+<li><strong>LINK peut se construire avec une seule base de code</strong> pour iPhone et Android (React Native + Expo), un backend Supabase (PostgreSQL) et Stripe pour les paiements. C&#39;est le choix qui coûte le moins au démarrage tout en tenant la charge, la sécurité et la billetterie.</li>
+<li><strong>Ce qui existe déjà</strong> : un prototype cliquable en 6 langues, et une vraie base technique : schéma de base de données, règles de sécurité testées (41 contrôles automatiques passent), paiement et billets côté serveur, application mobile.</li>
+<li><strong>Ce qui bloque le lancement n&#39;est pas technique</strong> : il faut une société (ou un statut) au nom de LINK, des comptes Apple / Google / Stripe / prestataire d&#39;identité, des contrats avec des organisateurs pour vendre des billets, et des textes juridiques (CGU, confidentialité).</li>
+<li><strong>Budget de départ réaliste</strong> : environ 100 € de frais fixes la première année hors développement (comptes stores), puis 25 à 100 €/mois de services, plus des frais à l&#39;usage (paiements, vérifications d&#39;identité).</li>
+</ul>
+<h2>2. Architecture recommandée</h2>
+<table>
+<thead>
+<tr>
+<th>Brique</th>
+<th>Choix</th>
+<th>Pourquoi</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>App iOS + Android</td>
+<td><strong>React Native + Expo + TypeScript</strong> (Expo Router)</td>
+<td>Une seule base de code, accès natif (caméra pour le scan, notifications push, localisation approximative, Apple Pay / Google Pay via Stripe). Builds et publication stores via EAS.</td>
+</tr>
+<tr>
+<td>Backend &amp; base</td>
+<td><strong>Supabase</strong> (PostgreSQL managé, Auth, Storage, Realtime, Edge Functions)</td>
+<td>Les règles d&#39;accès sont écrites <em>dans la base</em> (Row Level Security) : même si l&#39;app est contournée, personne ne lit un message ou un billet qui n&#39;est pas le sien. Hébergement possible en UE (Francfort/Paris) pour le RGPD.</td>
+</tr>
+<tr>
+<td>Paiements</td>
+<td><strong>Stripe</strong> (Payment Sheet + Connect pour reverser aux organisateurs)</td>
+<td>Couvre les 10 pays des 13 villes, Apple Pay / Google Pay, remboursements, litiges, versements aux organisateurs. Aucun numéro de carte ne transite par LINK.</td>
+</tr>
+<tr>
+<td>Vérification d&#39;identité</td>
+<td><strong>Veriff</strong> (recommandé), alternatives Onfido, Persona, Didit</td>
+<td>Flux hébergé (pièce + selfie + détection du vivant), webhook signé. LINK ne garde que le résultat et une référence.</td>
+</tr>
+<tr>
+<td>Console admin</td>
+<td><strong>Next.js</strong> sur Vercel, connexion staff avec MFA</td>
+<td>Mêmes règles de sécurité que l&#39;app ; chaque décision de modération est journalisée.</td>
+</tr>
+<tr>
+<td>Notifications</td>
+<td>Expo Push (APNs / FCM)</td>
+<td>Catégories et heures calmes réglables, marketing en opt-in seulement.</td>
+</tr>
+<tr>
+<td>Cartes</td>
+<td>Mapbox ou Google Maps Platform (à arbitrer selon le prix au volume)</td>
+<td>Positions toujours approximatives pour les personnes.</td>
+</tr>
+<tr>
+<td>Suivi d&#39;erreurs</td>
+<td>Sentry ; analytics respectueux de la vie privée (PostHog UE ou Plausible)</td>
+<td>Pas de revente de données, consentement pour la mesure non essentielle.</td>
+</tr>
+</tbody></table>
+<p><strong>Environnements séparés</strong> : développement, staging (mode test Stripe et prestataire d&#39;identité en sandbox), production. Les clés ne sont jamais dans le code (fichiers <code>.env.example</code> fournis, secrets dans Supabase et EAS).</p>
+<h3>Décisions techniques (ADR)</h3>
+<ol>
+<li><strong>ADR-01 — Expo plutôt que deux apps natives.</strong> Une équipe réduite livre iOS et Android en même temps ; les besoins (caméra, push, paiement, localisation) sont tous couverts par des modules Expo maintenus. Révisable si une fonctionnalité exige du natif pur.</li>
+<li><strong>ADR-02 — Sécurité dans la base, pas seulement dans l&#39;app.</strong> Invitations et messages passent par des fonctions SQL qui revérifient l&#39;identité vérifiée, les blocages et les quotas. Testé automatiquement.</li>
+<li><strong>ADR-03 — Les billets ne sont émis que par le serveur, après confirmation de Stripe.</strong> Le webhook est idempotent : un événement reçu deux fois n&#39;émet pas de billets en double ; un montant différent est refusé.</li>
+<li><strong>ADR-04 — QR code tournant.</strong> Le QR change toutes les 30 secondes (signature HMAC), une capture d&#39;écran devient vite inutilisable, et chaque billet ne passe qu&#39;une fois à l&#39;entrée.</li>
+<li><strong>ADR-05 — Billetterie derrière un interrupteur.</strong> <code>TICKETING_MODE = disabled | test | live</code>, plus un drapeau <code>sale_enabled</code> par événement. Afficher un événement ne donne jamais le droit d&#39;en vendre les billets.</li>
+<li><strong>ADR-06 — Villes, langues et catégories sont des données.</strong> Les 13 villes prioritaires sont configurées ; l&#39;admin en ajoute d&#39;autres sans modifier l&#39;app.</li>
+</ol>
+<h2>3. Comptes à ouvrir et coûts</h2>
+<p>Les tarifs ci-dessous ont été relevés le 2 novembre 2026 sur les sites des fournisseurs. Ils évoluent : à revérifier au moment de souscrire.</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>À quoi ça sert</th>
+<th>Coût</th>
+<th>Qui ouvre</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Apple Developer Program</td>
+<td>Publier sur l&#39;App Store, Sign in with Apple, Apple Pay</td>
+<td>99 $/an</td>
+<td>Indira (au nom de la société de préférence, avec un numéro D-U-N-S)</td>
+</tr>
+<tr>
+<td>Google Play Console</td>
+<td>Publier sur Google Play</td>
+<td>25 $ une fois</td>
+<td>Indira</td>
+</tr>
+<tr>
+<td>Supabase</td>
+<td>Base, comptes, stockage, temps réel, fonctions</td>
+<td>Gratuit pour développer, <strong>Pro 25 $/mois</strong> en production</td>
+<td>Indira (le développeur est invité)</td>
+</tr>
+<tr>
+<td>Stripe</td>
+<td>Paiements, remboursements, versements aux organisateurs</td>
+<td>Cartes UE standard <strong>1,5 % + 0,25 €</strong>, premium 2,8 % + 0,25 €, britanniques 2,5 % + 0,25 €, internationales 3,15 % + 0,25 €, +2 % en cas de conversion de devise. Connect : <strong>2 € par organisateur actif/mois + 0,25 % + 0,10 € par versement</strong> si LINK fixe ses propres tarifs</td>
+<td>La société LINK (KYC Stripe obligatoire)</td>
+</tr>
+<tr>
+<td>Veriff (identité)</td>
+<td>Pièce + selfie + vivacité</td>
+<td>Essential <strong>49 $/mois minimum, 0,80 $ par vérification</strong> ; Plus 99 $/mois, 1,39 $ (avec revue humaine) ; contrôle PEP/sanctions +0,64 $</td>
+<td>La société LINK</td>
+</tr>
+<tr>
+<td>Expo EAS</td>
+<td>Compilation et envoi aux stores</td>
+<td>Offre gratuite suffisante au début</td>
+<td>Indira</td>
+</tr>
+<tr>
+<td>Nom de domaine + e-mail</td>
+<td>Site vitrine, e-mails de connexion, support</td>
+<td>~15 à 60 €/an</td>
+<td>Indira</td>
+</tr>
+<tr>
+<td>Vercel (console admin)</td>
+<td>Héberger la console</td>
+<td>Gratuit au début</td>
+<td>Indira</td>
+</tr>
+<tr>
+<td>Juriste (ponctuel)</td>
+<td>CGU, confidentialité, contrats organisateurs, revente de billets</td>
+<td>Devis à demander</td>
+<td>Indira</td>
+</tr>
+</tbody></table>
+<p><strong>Exemple de coût d&#39;usage</strong> : 1 000 personnes vérifiées par mois ≈ 800 $ chez Veriff (Essential). Un billet à 20 € payé par carte UE standard coûte 0,55 € de frais Stripe.</p>
+<h2>4. Ce qui est faisable tout de suite / ce qui dépend d&#39;autre chose</h2>
+<p><strong>Faisable immédiatement (déjà commencé)</strong> : app et navigation, 6 langues, profils et préférences, découverte locale / internationale / personnalisée, sorties publiques modérées et privées, invitations et messagerie sécurisées, blocage et signalement, console de modération, export des données personnelles.</p>
+<p><strong>Dépend d&#39;un compte ou d&#39;un contrat</strong></p>
+<ul>
+<li>Connexion Apple et Google : comptes développeurs.</li>
+<li>Vérification d&#39;identité réelle : contrat prestataire et clés API.</li>
+<li>Paiement réel : compte Stripe de la société, mode test d&#39;abord.</li>
+<li><strong>Vente de billets d&#39;un événement donné</strong> : un contrat avec l&#39;organisateur ou une API qui accorde explicitement le droit de vendre. Sans cela, l&#39;événement est affiché sans bouton d&#39;achat.</li>
+<li>Événements en grand nombre : partenariats ou API officielles (pas de scraping de sites sans autorisation).</li>
+<li>Publication sur les stores : comptes, politique de confidentialité en ligne, fiche App Store / Play.</li>
+</ul>
+<p><strong>Dépend d&#39;une validation juridique</strong> : CGU et règles communautaires, politique de confidentialité et registre des traitements RGPD, conditions de vente et de remboursement des billets, règles d&#39;âge et d&#39;alcool par pays (21+ fréquent à New York), conservation des messages.</p>
+<h2>5. Risques principaux et parades</h2>
+<table>
+<thead>
+<tr>
+<th>Risque</th>
+<th>Parade prévue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Revente de billets sans droit (litiges, interdictions locales, revente illicite en France)</td>
+<td>Interrupteur par événement, contrat obligatoire avant activation, catégories A/B/C/D distinguées dans les données.</td>
+</tr>
+<tr>
+<td>Comptes mineurs, prédateurs, faux profils</td>
+<td>Âge ≥ 18 imposé par la base, vérification d&#39;identité avant tout contact, blocage immédiat, signalement « semble mineur », sanctions graduées et journal d&#39;audit.</td>
+</tr>
+<tr>
+<td>Règles Apple / Google sur les paiements</td>
+<td>Les billets d&#39;événements physiques relèvent des « biens et services consommés hors de l&#39;app » (règle App Store 3.1.3(e)) : paiement par Stripe, pas par l&#39;achat intégré Apple. À revérifier au dépôt.</td>
+</tr>
+<tr>
+<td>Données sensibles d&#39;identité</td>
+<td>Jamais stockées chez LINK : seulement statut, date et référence du prestataire.</td>
+</tr>
+<tr>
+<td>Coût de la vérification d&#39;identité qui grimpe vite</td>
+<td>Vérifier seulement avant la première invitation ou le premier message, pas à l&#39;inscription ; découverte ouverte sans vérification.</td>
+</tr>
+<tr>
+<td>Sécurité des sorties (soirées, voyages)</td>
+<td>Conseils de sécurité dans les messages, lieux de rendez-vous publics, adresse privée partagée seulement après accord de l&#39;hôte.</td>
+</tr>
+<tr>
+<td>Dépendance à un fournisseur</td>
+<td>Couches d&#39;abstraction : sources d&#39;événements, prestataire d&#39;identité et paiement sont interchangeables.</td>
+</tr>
+</tbody></table>
+<h2>6. MVP proposé (premier lancement)</h2>
+<ol>
+<li>Inscription e-mail / téléphone / Apple / Google, profil, préférences, 6 langues.</li>
+<li>Découverte d&#39;événements dans les 13 villes (événements partenaires + sorties communautaires modérées) avec les 3 modes.</li>
+<li>Vérification d&#39;identité, puis invitations, groupes et messagerie.</li>
+<li>Sorties publiques (modérées) et privées.</li>
+<li>Blocage, signalement, console de modération.</li>
+<li><strong>Billetterie en mode test</strong> pour 1 ou 2 organisateurs partenaires, passée en réel seulement après contrat.</li>
+</ol>
+<p>Hors MVP : dating (facultatif, désactivé par défaut), comptes organisateurs en libre-service, cartes interactives, recommandations avancées, monétisation.</p>
+<h2>7. Critères d&#39;acceptation du MVP</h2>
+<p>Chaque critère a (ou aura) un test automatique dans le dépôt :</p>
+<ul>
+<li>l&#39;app s&#39;installe et fonctionne sur iPhone et Android ;</li>
+<li>inscription / connexion / déconnexion de tous les appareils ;</li>
+<li>profils et préférences enregistrés côté serveur ;</li>
+<li>13 villes configurées + recherche de n&#39;importe quelle autre ville ;</li>
+<li>parcours essentiels traduits en 6 langues (contrôle automatique des traductions : <strong>OK</strong>) ;</li>
+<li>un utilisateur non vérifié ne peut ni inviter ni écrire (<strong>testé</strong>) ;</li>
+<li>une sortie publique n&#39;apparaît qu&#39;après modération ; une sortie privée n&#39;apparaît jamais aux autres (<strong>testé</strong>) ;</li>
+<li>un billet n&#39;est émis qu&#39;après paiement confirmé, une seule fois, et ne passe qu&#39;une fois à l&#39;entrée (<strong>testé</strong>) ;</li>
+<li>un remboursement révoque le billet (<strong>testé</strong>) ;</li>
+<li>personne ne lit les commandes, billets ou messages des autres (<strong>testé</strong>).</li>
+</ul>
+<h2>8. Directions de marque à valider</h2>
+<p>Les trois directions sont <strong>visibles et comparables dans le prototype</strong> (Profil → Direction visuelle, ou dès l&#39;écran d&#39;accueil). Rien n&#39;est figé tant que tu n&#39;as pas choisi.</p>
+<table>
+<thead>
+<tr>
+<th>Direction</th>
+<th>Palette</th>
+<th>Typo titres</th>
+<th>Esprit</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Fiesta</strong></td>
+<td>corail, tournesol, sarcelle sur fond chaud</td>
+<td>Bricolage Grotesque</td>
+<td>festif, chaleureux, « apéro entre potes »</td>
+</tr>
+<tr>
+<td><strong>Midnight Club</strong></td>
+<td>rose néon, cyan sur bleu nuit (toujours sombre)</td>
+<td>Unbounded</td>
+<td>nightlife, clubs, festivals</td>
+</tr>
+<tr>
+<td><strong>Riviera</strong></td>
+<td>bleu méditerranée, citron, menthe</td>
+<td>Syne</td>
+<td>voyages, été, rooftops, chic décontracté</td>
+</tr>
+</tbody></table>
+<p>Le logo actuel (« LINK » + deux points qui se rejoignent) est un placeholder : un vrai logo et un dépôt de marque (INPI / EUIPO, à vérifier : le nom « LINK » est très courant) sont à prévoir.</p>
+<h2>9. Ce qui fonctionne réellement aujourd&#39;hui</h2>
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>État</th>
+<th>Preuve</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Prototype web (6 langues, 3 directions, tous les parcours)</td>
+<td>✅ En ligne</td>
+<td>Lien en haut ; parcours testés automatiquement dans un navigateur</td>
+</tr>
+<tr>
+<td>Schéma de base (utilisateurs, vérifications, villes, événements, sorties, invitations, messages, signalements, commandes, paiements, billets, scans, notifications, rôles, audit)</td>
+<td>✅ Écrit et testé</td>
+<td><code>supabase/migrations</code>, 41 contrôles de sécurité passent sur PostgreSQL</td>
+</tr>
+<tr>
+<td>Logique partagée (prix, recommandations expliquées, QR tournant, règles d&#39;invitation)</td>
+<td>✅ Testée</td>
+<td>14 tests unitaires</td>
+</tr>
+<tr>
+<td>Fonctions serveur (paiement, webhook Stripe, QR, scan, identité)</td>
+<td>🟡 Écrites, pas encore exécutées</td>
+<td>Il faut un projet Supabase et des clés de test</td>
+</tr>
+<tr>
+<td>App mobile Expo (connexion, découverte, personnes, création, activités, messages, profil, billet, vérification)</td>
+<td>🟡 Écrite, pas encore compilée</td>
+<td>L&#39;installation des dépendances n&#39;était pas possible depuis l&#39;environnement de cette nuit</td>
+</tr>
+<tr>
+<td>Console de modération</td>
+<td>🟡 Première page écrite</td>
+<td>À compléter (Phase 6)</td>
+</tr>
+<tr>
+<td>Vérification d&#39;identité réelle</td>
+<td>⛔ Bloquée</td>
+<td>Contrat prestataire</td>
+</tr>
+<tr>
+<td>Paiement réel / vente de billets</td>
+<td>⛔ Bloqué</td>
+<td>Compte Stripe de la société + contrats organisateurs</td>
+</tr>
+<tr>
+<td>Publication App Store / Google Play</td>
+<td>⛔ Bloquée</td>
+<td>Comptes développeurs, textes juridiques</td>
+</tr>
+<tr>
+<td>Catalogue d&#39;événements réels</td>
+<td>⛔ Bloqué</td>
+<td>Partenariats / API autorisées</td>
+</tr>
+</tbody></table>
+<p>Dans le prototype, les événements et les profils sont <strong>fictifs</strong> et marqués comme tels ; la vérification et le paiement y sont <strong>simulés</strong> et affichés « TEST ».</p>
+<h2>10. Plan de travail proposé</h2>
+<table>
+<thead>
+<tr>
+<th>Étape</th>
+<th>Contenu</th>
+<th>Prérequis</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1 (1 à 2 semaines)</td>
+<td>Choix de la marque, création des comptes, projet Supabase en UE, premier build de test sur ton téléphone (TestFlight / test interne Android)</td>
+<td>Tes réponses en section 11</td>
+</tr>
+<tr>
+<td>2 (2 à 4 semaines)</td>
+<td>Profils, vérification d&#39;identité en sandbox, découverte branchée sur la vraie base, modération</td>
+<td>Compte Veriff (sandbox gratuite)</td>
+</tr>
+<tr>
+<td>3 (3 à 5 semaines)</td>
+<td>Social complet : invitations, groupes, messagerie temps réel, notifications</td>
+<td>—</td>
+</tr>
+<tr>
+<td>4 (3 à 4 semaines)</td>
+<td>Billetterie en mode test avec un organisateur pilote, scan à l&#39;entrée</td>
+<td>Compte Stripe, 1 contrat organisateur</td>
+</tr>
+<tr>
+<td>5 (2 à 3 semaines)</td>
+<td>Console admin complète, QA, accessibilité, textes juridiques, fiches stores</td>
+<td>Juriste</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Bêta fermée dans 1 ou 2 villes (Paris d&#39;abord ?), puis ouverture progressive</td>
+<td>—</td>
+</tr>
+</tbody></table>
+<h2>11. Questions qui bloquent vraiment une décision</h2>
+<ol>
+<li><strong>Quelle direction visuelle</strong> (Fiesta, Midnight Club, Riviera, ou un mélange) ?</li>
+<li><strong>Structure juridique</strong> : LINK sera-t-elle portée par une société existante ou à créer (nécessaire pour Stripe, Apple, les contrats) ?</li>
+<li><strong>Ville pilote</strong> pour la bêta : Paris seule, ou Paris + une autre ?</li>
+<li><strong>Organisateurs partenaires</strong> : as-tu déjà des contacts (lieux, collectifs, festivals) prêts à vendre via LINK ?</li>
+<li><strong>Budget mensuel</strong> acceptable pour les services au démarrage (vérification d&#39;identité surtout) ?</li>
+</ol>
+<hr>
+<p><em>Sources des tarifs : <a href="https://stripe.com/fr/pricing">Stripe – tarifs France</a>, <a href="https://stripe.com/fr/connect/pricing">Stripe Connect – tarifs</a>, <a href="https://veriff.com/plans/self-serve">Veriff – offres self-serve</a>, <a href="https://www.nocode.mba/topics/backend-app-development">Supabase – comparatif des offres 2026</a>, <a href="https://developer.apple.com/forums/thread/767360">forum développeurs Apple sur les paiements hors app</a>.</em></p>
+</main></body></html>
