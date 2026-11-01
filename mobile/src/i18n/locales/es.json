@@ -292,5 +292,6 @@
  "preview": "Ver mi perfil",
  "my_photo_hint": "Hasta 6 fotos, guardadas solo en este dispositivo.",
  "remove": "Quitar",
- "invite_from": "{n} te ha enviado una invitación"
+ "invite_from": "{n} te ha enviado una invitación",
+ "view_profile": "Ver el perfil de {n}"
 }

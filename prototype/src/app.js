@@ -290,8 +290,8 @@ function inviteRow(inv){
   if(!p) return "";
   const st = {pending:["warn","pending"],accepted:["ok","accepted"],declined:["bad","declined"],cancelled:["muted","cancelled"]}[inv.status]||["muted",inv.status];
   const exp = new Date(); exp.setDate(exp.getDate()+(inv.d||3));
-  return `<article class="card"><div class="person">${avatar(p)}<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
-    <div class="row" style="justify-content:space-between"><h3>${esc(p.name)}</h3><span class="status ${st[0]}">${t(st[1])}</span></div>
+  return `<article class="card"><div class="person"><button class="face-btn" data-action="person" data-id="${p.id}" aria-label="${esc(t("view_profile",{n:p.name}))}">${avatar(p)}</button><div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+    <div class="row" style="justify-content:space-between"><button class="name-btn" data-action="person" data-id="${p.id}"><h3>${esc(p.name)}</h3></button><span class="status ${st[0]}">${t(st[1])}</span></div>
     <p class="small"><b>${esc(ev?ev.title:"—")}</b>${ev?` · ${esc(fmtDay(evDate(ev)))} · ${esc(cityById(ev.city).name)}`:""}</p>
     ${inv.note?`<p class="small muted">« ${esc(typeof inv.note==="string"?inv.note:loc(inv.note))} »</p>`:""}
     ${inv.status==="pending"?`<p class="small muted">${t("expires",{d:fmtDay(exp)})}</p>`:""}
@@ -336,7 +336,7 @@ function renderMessages(){
     const c = S.convos.find(c=>c.id===openConvoId);
     if(c){
       const p = c.with?person(c.with):null;
-      return `<div class="row"><button class="iconbtn" data-action="convoBack" aria-label="${t("back")}">${I.chev.replace('<svg','<svg style="transform:rotate(90deg)"')}</button>${p?avatar(p):""}<div style="flex:1;min-width:0"><h2>${esc(c.title)}</h2>${p?`<p class="small muted">${p.verified?t("verified_badge"):t("not_verified")}</p>`:""}</div></div>
+      return `<div class="row"><button class="iconbtn" data-action="convoBack" aria-label="${t("back")}">${I.chev.replace('<svg','<svg style="transform:rotate(90deg)"')}</button>${p?`<button class="face-btn" data-action="person" data-id="${p.id}" aria-label="${esc(t("view_profile",{n:p.name}))}">${avatar(p)}</button>`:""}<div style="flex:1;min-width:0">${p?`<button class="name-btn" data-action="person" data-id="${p.id}"><h2>${esc(c.title)}</h2></button>`:`<h2>${esc(c.title)}</h2>`}${p?`<p class="small muted">${p.verified?t("verified_badge"):t("not_verified")}</p>`:""}</div></div>
         <div class="banner small">${I.shield.replace('<svg','<svg style="color:var(--ok)"')}<p>${t("msg_safety")}</p></div>
         <div class="msgs" id="msgs">${c.msgs.map(m=>`<div class="bubble${m.me?" me":""}">${esc(m.text)}<time>${esc(m.me?t("you"):(p?p.name:""))} · ${esc(m.at)}</time></div>`).join("")}</div>
         <form class="composer" id="composer"><label class="sr" for="msgInput">${t("msg_placeholder")}</label><input id="msgInput" type="text" maxlength="1000" autocomplete="off" placeholder="${esc(t("msg_placeholder"))}"><button class="btn" type="submit">${t("send")}</button></form>`;

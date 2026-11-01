@@ -83,6 +83,7 @@ en:{
   pr_ideal_night:"My ideal night out", pr_never_no:"I never say no to", pr_best_concert:"Best concert of my life", pr_hidden_spot:"A spot in my city you should know", pr_looking_crew:"I'm looking for people to", pr_next_trip:"Next trip on my list", pr_green_flag:"Green flag in an outing buddy", pr_sunday:"My typical Sunday",
   job:"Job", looking_for:"Here for", lf_friends:"New friends", lf_outings:"Going out", lf_travel:"Travel buddies", lf_dating:"Dating", availability:"Usually free", av_weekends:"Weekends", av_weeknights:"Weeknights", av_flexible:"Flexible", liked:"You liked", like_invite:"Like & invite", photos:"Photos", add_photo:"Add a photo", photo_note:"Demo photos: free stock images, people are fictional.", prompts:"Prompts", prompt_pick:"Prompt", prompt_answer:"Your answer", preview:"Preview my profile", my_photo_hint:"Up to 6 photos, stored on this device only.", remove:"Remove",
   invite_from:"{n} sent you an invitation",
+  view_profile:"See {n}'s profile",
   welcome_back:"Hi {n}"
 },
 fr:{
@@ -162,6 +163,7 @@ fr:{
   pr_ideal_night:"Ma soirée idéale", pr_never_no:"Je ne dis jamais non à", pr_best_concert:"Le meilleur concert de ma vie", pr_hidden_spot:"Un spot de ma ville à connaître", pr_looking_crew:"Je cherche du monde pour", pr_next_trip:"Mon prochain voyage", pr_green_flag:"Green flag chez un·e partenaire de sortie", pr_sunday:"Mon dimanche type",
   job:"Métier", looking_for:"Ici pour", lf_friends:"Nouveaux amis", lf_outings:"Sortir", lf_travel:"Voyager à plusieurs", lf_dating:"Rencontres", availability:"Plutôt dispo", av_weekends:"Le week-end", av_weeknights:"En semaine le soir", av_flexible:"Flexible", liked:"Tu as aimé", like_invite:"Aimer et inviter", photos:"Photos", add_photo:"Ajouter une photo", photo_note:"Photos de démonstration : images libres de droits, personnes fictives.", prompts:"Questions", prompt_pick:"Question", prompt_answer:"Ta réponse", preview:"Voir mon profil", my_photo_hint:"Jusqu'à 6 photos, gardées sur cet appareil uniquement.", remove:"Retirer",
   invite_from:"{n} t'a envoyé une invitation",
+  view_profile:"Voir le profil de {n}",
   welcome_back:"Salut {n}"
 },
 es:{
@@ -241,6 +243,7 @@ es:{
   pr_ideal_night:"Mi noche ideal", pr_never_no:"Nunca digo que no a", pr_best_concert:"El mejor concierto de mi vida", pr_hidden_spot:"Un sitio de mi ciudad que debes conocer", pr_looking_crew:"Busco gente para", pr_next_trip:"Mi próximo viaje", pr_green_flag:"Señal verde en un compañero de planes", pr_sunday:"Mi domingo típico",
   job:"Trabajo", looking_for:"Aquí para", lf_friends:"Nuevos amigos", lf_outings:"Salir", lf_travel:"Viajar en grupo", lf_dating:"Citas", availability:"Suele estar libre", av_weekends:"Fines de semana", av_weeknights:"Entre semana por la noche", av_flexible:"Flexible", liked:"Te gustó", like_invite:"Me gusta e invitar", photos:"Fotos", add_photo:"Añadir una foto", photo_note:"Fotos de demo: imágenes libres de derechos, personas ficticias.", prompts:"Preguntas", prompt_pick:"Pregunta", prompt_answer:"Tu respuesta", preview:"Ver mi perfil", my_photo_hint:"Hasta 6 fotos, guardadas solo en este dispositivo.", remove:"Quitar",
   invite_from:"{n} te ha enviado una invitación",
+  view_profile:"Ver el perfil de {n}",
   welcome_back:"Hola {n}"
 },
 de:{
@@ -320,6 +323,7 @@ de:{
   pr_ideal_night:"Mein perfekter Abend", pr_never_no:"Ich sage nie nein zu", pr_best_concert:"Das beste Konzert meines Lebens", pr_hidden_spot:"Ein Ort in meiner Stadt, den du kennen solltest", pr_looking_crew:"Ich suche Leute, um", pr_next_trip:"Meine nächste Reise", pr_green_flag:"Green Flag bei Ausgeh-Buddys", pr_sunday:"Mein typischer Sonntag",
   job:"Beruf", looking_for:"Hier für", lf_friends:"Neue Freunde", lf_outings:"Ausgehen", lf_travel:"Gemeinsam reisen", lf_dating:"Dating", availability:"Meist frei", av_weekends:"Am Wochenende", av_weeknights:"Unter der Woche abends", av_flexible:"Flexibel", liked:"Dir gefällt", like_invite:"Liken & einladen", photos:"Fotos", add_photo:"Foto hinzufügen", photo_note:"Demofotos: lizenzfreie Bilder, fiktive Personen.", prompts:"Fragen", prompt_pick:"Frage", prompt_answer:"Deine Antwort", preview:"Mein Profil ansehen", my_photo_hint:"Bis zu 6 Fotos, nur auf diesem Gerät gespeichert.", remove:"Entfernen",
   invite_from:"{n} hat dir eine Einladung geschickt",
+  view_profile:"Profil von {n} ansehen",
   welcome_back:"Hallo {n}"
 },
 pt:{
@@ -399,6 +403,7 @@ pt:{
   pr_ideal_night:"A minha noite ideal", pr_never_no:"Nunca digo não a", pr_best_concert:"O melhor concerto da minha vida", pr_hidden_spot:"Um sítio da minha cidade que tens de conhecer", pr_looking_crew:"Procuro pessoas para", pr_next_trip:"A minha próxima viagem", pr_green_flag:"Green flag num parceiro de saídas", pr_sunday:"O meu domingo típico",
   job:"Profissão", looking_for:"Aqui para", lf_friends:"Novos amigos", lf_outings:"Sair", lf_travel:"Viajar em grupo", lf_dating:"Encontros", availability:"Normalmente livre", av_weekends:"Fins de semana", av_weeknights:"Dias de semana à noite", av_flexible:"Flexível", liked:"Gostaste de", like_invite:"Gostar e convidar", photos:"Fotos", add_photo:"Adicionar foto", photo_note:"Fotos de demo: imagens livres de direitos, pessoas fictícias.", prompts:"Perguntas", prompt_pick:"Pergunta", prompt_answer:"A tua resposta", preview:"Ver o meu perfil", my_photo_hint:"Até 6 fotos, guardadas só neste dispositivo.", remove:"Remover",
   invite_from:"{n} enviou-te um convite",
+  view_profile:"Ver o perfil de {n}",
   welcome_back:"Olá {n}"
 },
 it:{
@@ -478,6 +483,7 @@ it:{
   pr_ideal_night:"La mia serata ideale", pr_never_no:"Non dico mai di no a", pr_best_concert:"Il concerto più bello della mia vita", pr_hidden_spot:"Un posto della mia città da conoscere", pr_looking_crew:"Cerco persone per", pr_next_trip:"Il mio prossimo viaggio", pr_green_flag:"Green flag in un compagno di uscite", pr_sunday:"La mia domenica tipo",
   job:"Lavoro", looking_for:"Qui per", lf_friends:"Nuovi amici", lf_outings:"Uscire", lf_travel:"Viaggiare insieme", lf_dating:"Incontri", availability:"Di solito libero", av_weekends:"Nel weekend", av_weeknights:"In settimana la sera", av_flexible:"Flessibile", liked:"Ti è piaciuto", like_invite:"Mi piace e invita", photos:"Foto", add_photo:"Aggiungi una foto", photo_note:"Foto demo: immagini libere da diritti, persone fittizie.", prompts:"Domande", prompt_pick:"Domanda", prompt_answer:"La tua risposta", preview:"Vedi il mio profilo", my_photo_hint:"Fino a 6 foto, salvate solo su questo dispositivo.", remove:"Rimuovi",
   invite_from:"{n} ti ha mandato un invito",
+  view_profile:"Vedi il profilo di {n}",
   welcome_back:"Ciao {n}"
 }
 };

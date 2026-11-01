@@ -238,3 +238,8 @@ textarea{min-height:84px;resize:vertical}
 :root[data-brand="afterglow"] .price{color:var(--accent-3)}
 :root[data-brand="afterglow"] .label{color:var(--accent-3)}
 :root[data-brand="afterglow"] .pcard-photo .vbadge{background:var(--accent-3);color:#1C1640}
+/* Tappable faces and names (Activity, chat header) open the person's profile */
+.face-btn,.name-btn{background:none;border:0;padding:0;color:inherit;font:inherit;text-align:left;cursor:pointer;border-radius:18px}
+.face-btn{flex:none;transition:transform .15s}
+.face-btn:hover,.face-btn:active{transform:scale(1.05)}
+.name-btn:hover h3,.name-btn:hover h2{text-decoration:underline;text-underline-offset:3px}
