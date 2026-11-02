@@ -378,3 +378,27 @@ video.msg-media{object-fit:contain;background:#000}
 .composer .send-btn{flex:none;width:46px;height:46px;padding:0;border-radius:50%;display:grid;place-items:center}
 .composer .send-btn svg{width:20px;height:20px}
 .composer input{min-width:0;flex:1}
+
+/* ---------- emoji reactions ---------- */
+#msgs .bubble{position:relative;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;transition:transform .15s}
+#msgs .bubble.reacting{transform:scale(1.03);box-shadow:0 0 0 2px var(--accent)}
+.sr-focus{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sr-focus:focus-visible{width:auto;height:auto;clip:auto;top:-10px;inset-inline-end:-10px;padding:2px 8px;border-radius:99px;background:var(--surface);color:var(--text);border:1px solid var(--line);z-index:2}
+.reacts{display:flex;flex-wrap:wrap;gap:4px;margin:6px -4px -4px}
+.bubble.me .reacts{justify-content:flex-end}
+.react-pill{display:inline-flex;align-items:center;gap:3px;min-height:28px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:15px;line-height:1;cursor:pointer}
+.react-pill span{font-size:12px;font-weight:700;opacity:.85}
+.react-pill[aria-pressed="true"]{border-color:transparent;background:linear-gradient(var(--bg),var(--bg)) padding-box,var(--lgrad,var(--accent)) border-box;border:2px solid transparent}
+.react-pill.add{font-weight:800;color:var(--muted,var(--text));min-width:28px;justify-content:center;opacity:.8}
+.bubble.react-pop .reacts .react-pill:not(.add){animation:reactpop .35s ease}
+@keyframes reactpop{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+#reactbar{position:fixed;z-index:60;display:flex;gap:1px;padding:5px;max-width:calc(100vw - 16px);border-radius:99px;background:var(--surface);border:1px solid var(--line);box-shadow:0 10px 30px #0008;animation:reactbar .18s ease-out}
+#reactbar button{width:36px;height:36px;padding:0;border:0;border-radius:50%;background:none;font-size:22px;line-height:1;cursor:pointer;transition:transform .12s}
+#reactbar button:hover,#reactbar button:focus-visible{transform:scale(1.25)}
+#reactbar button[aria-pressed="true"]{background:var(--accent-soft,rgba(255,255,255,.12))}
+#reactbar .more{font-size:20px;font-weight:800;color:var(--text);background:var(--bg)}
+@keyframes reactbar{from{opacity:0;transform:translateY(6px) scale(.9)}to{opacity:1;transform:none}}
+.emoji-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:4px;min-width:0}
+.emoji-grid button{aspect-ratio:1;min-width:0;padding:0;border:0;border-radius:12px;background:none;font-size:24px;cursor:pointer}
+.emoji-grid button[aria-pressed="true"]{background:linear-gradient(var(--surface),var(--surface)) padding-box,var(--lgrad,var(--accent)) border-box;border:2px solid transparent}
+@media (prefers-reduced-motion:reduce){#reactbar,.bubble.react-pop .reacts .react-pill{animation:none}}

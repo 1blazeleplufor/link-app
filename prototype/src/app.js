@@ -414,8 +414,8 @@ function renderMessages(){
             ? `<div class="banner small"><div style="display:flex;flex-direction:column;gap:8px;flex:1"><b>${esc(t("request_pending",{n:p.name}))}</b><div class="row"><button class="btn" data-action="inviteAccept" data-id="${pin.id}">${t("accept")}</button><button class="btn ghost" data-action="inviteDecline" data-id="${pin.id}">${t("decline")}</button></div></div></div>`
             : `<div class="banner small"><p>${esc(t("waiting_reply",{n:p.name}))}</p></div>`; })()}
         <div class="banner small">${I.shield.replace('<svg','<svg style="color:var(--ok)"')}<p>${t("msg_safety")}</p></div>
-        <div class="msgs" id="msgs">${c.msgs.map(m=>{ const who = m.me?esc(t("you")):(m.from&&person(m.from)?nameBtn(person(m.from)):(p?nameBtn(p):""));
-          return `<div class="bubble${m.me?" me":""}${m.voice?" voice":""}${(m.media||m.gif)?" media":""}${m.ev?" evmsg":""}">${msgBody(m)}<time>${who} · ${esc(m.at)}</time></div>`; }).join("")}</div>
+        <div class="msgs" id="msgs">${c.msgs.map((m,i)=>{ const who = m.me?esc(t("you")):(m.from&&person(m.from)?nameBtn(person(m.from)):(p?nameBtn(p):""));
+          return `<div class="bubble${m.me?" me":""}${m.voice?" voice":""}${(m.media||m.gif)?" media":""}${m.ev?" evmsg":""}" data-i="${i}">${msgBody(m)}<time>${who} · ${esc(m.at)}</time><button type="button" class="react-open sr-focus" data-action="reactOpen" data-i="${i}" aria-label="${esc(t("react"))}" aria-haspopup="true">☺</button>${reactsRow(m,i)}</div>`; }).join("")}</div>
         <form class="composer" id="composer"><button type="button" class="iconbtn attach" data-action="attach" aria-label="${esc(t("attach"))}" aria-haspopup="dialog">${I.plus}</button><label class="sr" for="msgInput">${t("msg_placeholder")}</label><input id="msgInput" type="text" maxlength="1000" autocomplete="off" placeholder="${esc(t("msg_placeholder"))}"><button type="button" class="iconbtn mic" data-action="recChat" aria-label="${esc(t("rec_start"))}">${I.mic}</button><button class="btn send-btn" type="submit" aria-label="${esc(t("send"))}">${I.send}</button></form>`;
     }
     openConvoId=null;
@@ -549,7 +549,8 @@ function render(keepScroll){
   const y = window.scrollY;
   $("#main").innerHTML = `<div class="banner test small">${I.flask}<p>${t("demo_banner")}</p></div>` + fn();
   if(keepScroll) window.scrollTo(0,y);
-  const m = document.getElementById("msgs"); if(m){ m.lastElementChild && m.lastElementChild.scrollIntoView({block:"end"}); hydrateMedia(); }
+  const m = document.getElementById("msgs"); if(m){ m.lastElementChild && m.lastElementChild.scrollIntoView({block:"end"}); hydrateMedia();
+    if(!S.reactHint && m.children.length){ S.reactHint=true; save(); setTimeout(()=>toast(t("react_hint")), 900); } }
   if(!S.onboarded) openOnboarding();
   else if(!S.noeToast && S.invites.some(i=>i.id==="i0" && i.status==="pending")){ S.noeToast=true; save(); setTimeout(()=>toast(t("invite_from",{n:"Noë"})), 600); }
 }
@@ -568,6 +569,7 @@ function openSheet(html, onClose){
   const f = wrap.querySelector("button, input, select"); if(f) f.focus({preventScroll:true});
 }
 function closeSheet(){
+  closeReactBar();
   stopPlaying();
   const w = document.getElementById("sheetWrap");
   if(w){ w.remove(); document.body.style.overflow=""; }
@@ -705,6 +707,7 @@ function demoReply(c, m){
   const from = c.with || (c.members&&c.members[0]); if(!from || S.blocked.includes(from)) return;
   if(!m.ev && Date.now()-(DEMO_LAST.get(c.id)||0) < 15000) return; DEMO_LAST.set(c.id, Date.now());
   setTimeout(()=>{
+    const sent = c.msgs.slice().reverse().find(x=>x.me && (x.ev||x.gif||x.media)); if(sent){ sent.react = sent.react||{me:[],them:[]}; sent.react.them = m.ev?["🔥","😍"]:["😂"]; }
     c.msgs.push({me:false, from: c.members?from:undefined, text: (m.ev?DEMO_EV_REPLY:DEMO_MEDIA_REPLY)[S.lang]||DEMO_EV_REPLY.en, at:now()}); save();
     if(S.tab==="messages" && openConvoId===c.id) render(true);
   }, 1800);
@@ -781,6 +784,69 @@ function shareEventTo(c, evId){
 function viewMedia(src, alt){
   openSheet(`${sheetHead(alt)}<img class="media-full" src="${src}" alt="${esc(alt)}">`);
 }
+
+/* ---------- emoji reactions (several per person, like Snapchat) ---------- */
+const QUICK_REACTS = ["❤️","😂","🔥","😍","😮","😢","👍","🎉"];
+const ALL_REACTS = ["❤️","🧡","💛","💚","💙","💜","🖤","🤍","😂","🤣","😊","😍","🥰","😘","😎","🤩","🥳","😮","😱","😢","😭","😡","🤯","🤔","🙄","😴","🤤","😏","👍","👎","👏","🙌","🙏","💪","👀","✨","🔥","💯","🎉","🎶","🍾","🥂","🍕","🌅","🌈","⚡","💀","🫶"];
+const REACT_MAX = 8;
+function reactsRow(m, i){
+  const r = m.react; if(!r) return "";
+  const counts = new Map();
+  for(const e of (r.me||[])) counts.set(e, {n:(counts.get(e)||{n:0}).n+1, mine:true});
+  for(const e of (r.them||[])){ const c=counts.get(e)||{n:0, mine:false}; counts.set(e, {n:c.n+1, mine:c.mine}); }
+  if(!counts.size) return "";
+  return `<div class="reacts">${[...counts].map(([e,c])=>`<button type="button" class="react-pill" data-action="reactToggle" data-i="${i}" data-e="${e}" aria-pressed="${c.mine}" aria-label="${esc(t("react_pill",{e, n:c.n}))}">${e}${c.n>1?`<span>${c.n}</span>`:""}</button>`).join("")}<button type="button" class="react-pill add" data-action="reactOpen" data-i="${i}" aria-label="${esc(t("react"))}">+</button></div>`;
+}
+function toggleReact(i, e){
+  const c=curConvo(); if(!c||!c.msgs[i]) return;
+  const m=c.msgs[i]; m.react = m.react || {me:[], them:[]}; m.react.me = m.react.me || [];
+  const k=m.react.me.indexOf(e);
+  if(k>=0) m.react.me.splice(k,1);
+  else { if(m.react.me.length>=REACT_MAX){ toast(t("react_max",{n:REACT_MAX})); return; } m.react.me.push(e); }
+  save(); closeReactBar(); render(true);
+  const b=document.querySelector(`#msgs .bubble[data-i="${i}"]`); if(b){ b.classList.add("react-pop"); }
+}
+function closeReactBar(){ const b=document.getElementById("reactbar"); if(b) b.remove(); document.querySelectorAll(".bubble.reacting").forEach(x=>x.classList.remove("reacting")); }
+function openReactBar(i){
+  closeReactBar();
+  const bubble=document.querySelector(`#msgs .bubble[data-i="${i}"]`); if(!bubble) return;
+  const c=curConvo(); const mine=new Set(((c.msgs[i].react||{}).me)||[]);
+  const bar=document.createElement("div"); bar.id="reactbar"; bar.setAttribute("role","toolbar"); bar.setAttribute("aria-label", t("react"));
+  bar.innerHTML = QUICK_REACTS.map(e=>`<button type="button" data-action="reactToggle" data-i="${i}" data-e="${e}" aria-pressed="${mine.has(e)}" aria-label="${e}">${e}</button>`).join("")
+    + `<button type="button" class="more" data-action="reactMore" data-i="${i}" aria-label="${esc(t("react_more"))}">+</button>`;
+  document.body.appendChild(bar);
+  bubble.classList.add("reacting");
+  const r=bubble.getBoundingClientRect(), bw=bar.offsetWidth, bh=bar.offsetHeight;
+  let x = bubble.classList.contains("me") ? r.right-bw : r.left; x=Math.max(8, Math.min(x, innerWidth-bw-8));
+  let y = r.top-bh-8; if(y<70) y=r.bottom+8;
+  bar.style.left=x+"px"; bar.style.top=y+"px";
+  bar.querySelector("button").focus({preventScroll:true});
+  if(navigator.vibrate) try{ navigator.vibrate(12); }catch(e){}
+}
+function openReactSheet(i){
+  closeReactBar();
+  const c=curConvo(); const mine=new Set(((c.msgs[i].react||{}).me)||[]);
+  openSheet(`${sheetHead(t("react_more"))}<p class="small muted">${t("react_sheet_d",{n:REACT_MAX})}</p>
+    <div class="emoji-grid">${ALL_REACTS.map(e=>`<button type="button" data-action="reactPick" data-i="${i}" data-e="${e}" aria-pressed="${mine.has(e)}" aria-label="${e}">${e}</button>`).join("")}</div>
+    <button class="btn block" data-action="close">${t("done")}</button>`);
+}
+// long-press, double-tap or right-click on a bubble opens the reaction bar
+(function(){
+  let timer=null, sx=0, sy=0;
+  const target = e => { const b=e.target.closest && e.target.closest("#msgs .bubble"); if(!b || e.target.closest("button, a, video, input, .vplayer")) return null; return b; };
+  document.addEventListener("pointerdown", e=>{
+    if(!e.target.closest("#reactbar") && document.getElementById("reactbar")) closeReactBar();
+    const b=target(e); if(!b) return; sx=e.clientX; sy=e.clientY;
+    clearTimeout(timer); timer=setTimeout(()=>{ timer=null; openReactBar(+b.dataset.i); }, 430);
+  });
+  const cancel=()=>{ clearTimeout(timer); timer=null; };
+  document.addEventListener("pointerup", cancel); document.addEventListener("pointercancel", cancel);
+  document.addEventListener("pointermove", e=>{ if(timer && Math.hypot(e.clientX-sx, e.clientY-sy)>10) cancel(); });
+  document.addEventListener("dblclick", e=>{ const b=target(e); if(b){ e.preventDefault(); openReactBar(+b.dataset.i); } });
+  document.addEventListener("contextmenu", e=>{ const b=target(e); if(b){ e.preventDefault(); openReactBar(+b.dataset.i); } });
+  document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeReactBar(); });
+  window.addEventListener("scroll", ()=>closeReactBar(), {passive:true});
+})();
 
 /* ---------- voice (messages + Hinge-style voice prompt) ---------- */
 const VOICE_MEM = new Map();
@@ -1106,6 +1172,12 @@ const A = {
   person(el){ openPerson(el.dataset.id); },
   recChat(){ if(!requireVerified()) return; startRecording("chat"); },
   attach(){ if(!requireVerified()) return; openAttach(); },
+  reactOpen(el){ openReactBar(+el.dataset.i); },
+  reactToggle(el){ toggleReact(+el.dataset.i, el.dataset.e); },
+  reactMore(el){ openReactSheet(+el.dataset.i); },
+  reactPick(el){ const i=+el.dataset.i, e=el.dataset.e; const c=curConvo(); if(!c) return; const m=c.msgs[i]; m.react=m.react||{me:[],them:[]}; m.react.me=m.react.me||[];
+    const k=m.react.me.indexOf(e); if(k>=0) m.react.me.splice(k,1); else { if(m.react.me.length>=REACT_MAX){ toast(t("react_max",{n:REACT_MAX})); return; } m.react.me.push(e); }
+    el.setAttribute("aria-pressed", String(k<0)); save(); },
   attachMedia(){ sendFile("image/*,video/*"); },
   attachGif(){ openGifPicker(); },
   gifDevice(){ sendFile("image/gif"); },
