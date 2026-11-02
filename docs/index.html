@@ -275,6 +275,9 @@ textarea{min-height:84px;resize:vertical}
 /* 5. "Link" button */
 .link-word{font-family:var(--font-display);font-weight:800;letter-spacing:.02em}
 :root[data-brand="afterglow"] .logo{width:fit-content;display:inline-flex}
+/* Indira (2 nov.) : Local / International / Pour toi sélectionné aux couleurs de la carte PLAY (vert sauge → jaune doré) */
+:root[data-brand="afterglow"]{--play:linear-gradient(115deg,#63B88A 0%,#A9C062 50%,#EEC24A 100%)}
+:root[data-brand="afterglow"] .topbar .seg button[aria-pressed="true"]{background:var(--play);background-origin:border-box;color:#17122E;text-shadow:none}
 </style>
 <div class="app"><header class="topbar" id="top"></header><main id="main" tabindex="-1"></main></div>
 <nav class="tabbar" id="tabs" aria-label="Navigation"></nav>
