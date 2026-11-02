@@ -257,6 +257,10 @@ textarea{min-height:84px;resize:vertical}
 .pcard-photo .vbadge,:root[data-brand="afterglow"] .pcard-photo .vbadge{background:var(--ok);color:#06210F}
 .time-name,.bubble time .name-btn{font-size:inherit;color:inherit;text-decoration:underline;text-underline-offset:2px}
 .ticket-type .face-btn .avatar{width:46px;height:46px;border-radius:14px;font-size:18px}
+/* Indira (2 nov.) : filtres sélectionnés et bulles « Ce que tu aimes » aux couleurs de la carte FEST (orangé doré → rose) */
+:root[data-brand="afterglow"]{--fest:linear-gradient(120deg,#EBA73F 0%,#E6795A 48%,#D64D72 100%)}
+:root[data-brand="afterglow"] .chip[aria-pressed="true"]{background:var(--fest);color:#fff;border-color:transparent;text-shadow:0 1px 2px rgb(90 20 40 / .35)}
+:root[data-brand="afterglow"] .tag.match{background:var(--fest);color:#fff;text-shadow:0 1px 2px rgb(90 20 40 / .35)}
 </style>
 <div class="app"><header class="topbar" id="top"></header><main id="main" tabindex="-1"></main></div>
 <nav class="tabbar" id="tabs" aria-label="Navigation"></nav>
