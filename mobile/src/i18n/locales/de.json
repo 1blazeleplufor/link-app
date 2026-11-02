@@ -293,5 +293,8 @@
  "my_photo_hint": "Bis zu 6 Fotos, nur auf diesem Gerät gespeichert.",
  "remove": "Entfernen",
  "invite_from": "{n} hat dir eine Einladung geschickt",
- "view_profile": "Profil von {n} ansehen"
+ "view_profile": "Profil von {n} ansehen",
+ "open_convo": "Unterhaltung mit {n} öffnen",
+ "request_pending": "{n} hat dir eine Einladung geschickt",
+ "waiting_reply": "Warte auf die Antwort von {n}"
 }

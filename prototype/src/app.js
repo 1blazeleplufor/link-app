@@ -294,8 +294,10 @@ function inviteRow(inv){
   const exp = new Date(); exp.setDate(exp.getDate()+(inv.d||3));
   return `<article class="card"><div class="person"><button class="face-btn" data-action="person" data-id="${p.id}" aria-label="${esc(t("view_profile",{n:p.name}))}">${avatar(p)}</button><div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
     <div class="row" style="justify-content:space-between"><button class="name-btn" data-action="person" data-id="${p.id}"><h3>${esc(p.name)}</h3></button><span class="status ${st[0]}">${t(st[1])}</span></div>
+    <button class="invite-open" data-action="inviteOpen" data-id="${inv.id}" aria-label="${esc(t("open_convo",{n:p.name}))}">
     <p class="small"><b>${esc(ev?ev.title:"—")}</b>${ev?` · ${esc(fmtDay(evDate(ev)))} · ${esc(cityById(ev.city).name)}`:""}</p>
     ${inv.note?`<p class="small muted">« ${esc(typeof inv.note==="string"?inv.note:loc(inv.note))} »</p>`:""}
+    <span class="small open-hint">${esc(t("open_convo",{n:p.name}))} ›</span></button>
     ${inv.status==="pending"?`<p class="small muted">${t("expires",{d:fmtDay(exp)})}</p>`:""}
     ${inv.status==="pending" && inv.dir==="in" ? `<div class="row"><button class="btn" data-action="inviteAccept" data-id="${inv.id}">${t("accept")}</button><button class="btn ghost" data-action="inviteDecline" data-id="${inv.id}">${t("decline")}</button></div>`:""}
     ${inv.status==="pending" && inv.dir==="out" ? `<div class="row"><button class="btn ghost" data-action="inviteCancel" data-id="${inv.id}">${t("cancel_invite")}</button></div>`:""}
@@ -339,6 +341,11 @@ function renderMessages(){
     if(c){
       const p = c.with?person(c.with):null;
       return `<div class="row"><button class="iconbtn" data-action="convoBack" aria-label="${t("back")}">${I.chev.replace('<svg','<svg style="transform:rotate(90deg)"')}</button>${p?`<button class="face-btn" data-action="person" data-id="${p.id}" aria-label="${esc(t("view_profile",{n:p.name}))}">${avatar(p)}</button>`:""}<div style="flex:1;min-width:0">${p?`<button class="name-btn" data-action="person" data-id="${p.id}"><h2>${esc(c.title)}</h2></button>`:`<h2>${esc(c.title)}</h2>`}${p?`<p class="small muted">${p.verified?t("verified_badge"):t("not_verified")}</p>`:""}</div></div>
+        ${(()=>{ const pin = p && S.invites.find(i=>i.status==="pending" && (i.dir==="in"?i.from:i.to)===p.id);
+          if(!pin) return "";
+          return pin.dir==="in"
+            ? `<div class="banner small"><div style="display:flex;flex-direction:column;gap:8px;flex:1"><b>${esc(t("request_pending",{n:p.name}))}</b><div class="row"><button class="btn" data-action="inviteAccept" data-id="${pin.id}">${t("accept")}</button><button class="btn ghost" data-action="inviteDecline" data-id="${pin.id}">${t("decline")}</button></div></div></div>`
+            : `<div class="banner small"><p>${esc(t("waiting_reply",{n:p.name}))}</p></div>`; })()}
         <div class="banner small">${I.shield.replace('<svg','<svg style="color:var(--ok)"')}<p>${t("msg_safety")}</p></div>
         <div class="msgs" id="msgs">${c.msgs.map(m=>`<div class="bubble${m.me?" me":""}">${esc(m.text)}<time>${m.me?esc(t("you")):(p?nameBtn(p):"")} · ${esc(m.at)}</time></div>`).join("")}</div>
         <form class="composer" id="composer"><label class="sr" for="msgInput">${t("msg_placeholder")}</label><input id="msgInput" type="text" maxlength="1000" autocomplete="off" placeholder="${esc(t("msg_placeholder"))}"><button class="btn" type="submit">${t("send")}</button></form>`;
@@ -450,6 +457,7 @@ function renderProfile(){
     <h2>${t("privacy")}</h2><p class="small muted">${t("storage_note")}</p>
     ${S.blocked.map(id=>{const p=person(id);return p?`<div class="row" style="justify-content:space-between"><span class="row">${faceBtn(p)}${nameBtn(p)}</span><button class="btn ghost" data-action="unblock" data-id="${id}">${t("unblock")}</button></div>`:"";}).join("")}
     <div class="row"><button class="btn secondary" data-action="export">${t("export")}</button><button class="btn secondary" data-action="about">${t("about")}</button><button class="btn danger" data-action="resetAsk">${t("reset")}</button></div>
+    <button class="btn block ghost" data-action="signOut">${t("sign_out")}</button>
   </div></section>`;
 }
 
@@ -572,7 +580,7 @@ function openPerson(id){
       ${!self && photos.length && photos[0].includes("unsplash")?`<p class="small muted">${t("photo_note")}</p>`:""}
     </div>
     ${self?`<button class="btn block secondary" data-action="close">${t("close")}</button>`:`
-    <button class="btn block" data-action="invitePerson" data-id="${p.id}">${verified()?"":I.lock.replace('<svg','<svg width="18" height="18"')}${esc(t("invite_to",{n:p.name}))}</button>
+    <button class="btn block" data-action="invitePerson" data-id="${p.id}">${verified()?"":I.lock.replace('<svg','<svg width="18" height="18"')}<span class="link-word">Link</span></button>
     <div class="grid2"><button class="btn ghost" data-action="block" data-id="${p.id}">${t("block")}</button><button class="btn danger" data-action="report" data-id="${p.id}">${t("report")}</button></div>`}`);
 }
 
@@ -797,6 +805,16 @@ const A = {
     save(); render(true); toast(t("saved"));
   },
   preview(){ A.saveProfile(); openPerson("me"); },
+  inviteOpen(el){
+    const inv = S.invites.find(i=>i.id===el.dataset.id); if(!inv) return;
+    if(!requireVerified()) return;
+    const p = person(inv.dir==="in"?inv.from:inv.to); if(!p) return;
+    const c = ensureConvo(p.id, p.name);
+    const note = typeof inv.note==="string" ? inv.note : loc(inv.note);
+    if(!c.msgs.length && note) c.msgs.push({me: inv.dir==="out", text: note, at: now()});
+    closeSheet(); S.tab="messages"; openConvoId=c.id; save(); render(); window.scrollTo(0,0);
+  },
+  signOut(){ S.onboarded=false; save(); closeSheet(); S.tab="explore"; openConvoId=null; render(); window.scrollTo(0,0); },
   like(el){ openInvite(el.dataset.id, null, el.dataset.v); },
   pLf(el){ toggleIn(S.profile.lookingFor, el.dataset.v); save(); render(true); },
   pAv(el){ S.profile.availability=el.dataset.v; save(); render(true); },

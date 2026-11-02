@@ -251,3 +251,17 @@ textarea{min-height:84px;resize:vertical}
 :root[data-brand="afterglow"]{--fest:linear-gradient(120deg,#EBA73F 0%,#E6795A 48%,#D64D72 100%)}
 :root[data-brand="afterglow"] .chip[aria-pressed="true"]{background:var(--fest);color:#fff;border-color:transparent;text-shadow:0 1px 2px rgb(90 20 40 / .35)}
 :root[data-brand="afterglow"] .tag.match{background:var(--fest);color:#fff;text-shadow:0 1px 2px rgb(90 20 40 / .35)}
+/* Indira (2 nov., suite) */
+/* 1. no yellow sliver: paint the gradient under the (transparent) border too */
+:root[data-brand="afterglow"] .chip[aria-pressed="true"],:root[data-brand="afterglow"] .tag.match{background-origin:border-box;background-clip:border-box;border-color:transparent}
+.seg button[aria-pressed="true"],.btn{background-origin:border-box}
+/* 3. LINK wordmark in gradient, no dots (Afterglow) */
+:root[data-brand="afterglow"] .logo{background:linear-gradient(90deg,#F2685A 0%,#E8457E 50%,#A845D8 100%);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.01em}
+:root[data-brand="afterglow"] .logo .dot{display:none}
+/* 4. invitation body opens the conversation */
+.invite-open{display:flex;flex-direction:column;gap:6px;text-align:left;background:none;border:0;padding:0;color:inherit;font:inherit;cursor:pointer;border-radius:10px}
+.invite-open .open-hint{color:var(--accent);font-weight:700}
+.invite-open:hover .open-hint{text-decoration:underline}
+/* 5. "Link" button */
+.link-word{font-family:var(--font-display);font-weight:800;letter-spacing:.02em}
+:root[data-brand="afterglow"] .logo{width:fit-content;display:inline-flex}

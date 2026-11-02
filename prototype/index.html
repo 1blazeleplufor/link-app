@@ -256,6 +256,20 @@ textarea{min-height:84px;resize:vertical}
 :root[data-brand="afterglow"]{--fest:linear-gradient(120deg,#EBA73F 0%,#E6795A 48%,#D64D72 100%)}
 :root[data-brand="afterglow"] .chip[aria-pressed="true"]{background:var(--fest);color:#fff;border-color:transparent;text-shadow:0 1px 2px rgb(90 20 40 / .35)}
 :root[data-brand="afterglow"] .tag.match{background:var(--fest);color:#fff;text-shadow:0 1px 2px rgb(90 20 40 / .35)}
+/* Indira (2 nov., suite) */
+/* 1. no yellow sliver: paint the gradient under the (transparent) border too */
+:root[data-brand="afterglow"] .chip[aria-pressed="true"],:root[data-brand="afterglow"] .tag.match{background-origin:border-box;background-clip:border-box;border-color:transparent}
+.seg button[aria-pressed="true"],.btn{background-origin:border-box}
+/* 3. LINK wordmark in gradient, no dots (Afterglow) */
+:root[data-brand="afterglow"] .logo{background:linear-gradient(90deg,#F2685A 0%,#E8457E 50%,#A845D8 100%);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.01em}
+:root[data-brand="afterglow"] .logo .dot{display:none}
+/* 4. invitation body opens the conversation */
+.invite-open{display:flex;flex-direction:column;gap:6px;text-align:left;background:none;border:0;padding:0;color:inherit;font:inherit;cursor:pointer;border-radius:10px}
+.invite-open .open-hint{color:var(--accent);font-weight:700}
+.invite-open:hover .open-hint{text-decoration:underline}
+/* 5. "Link" button */
+.link-word{font-family:var(--font-display);font-weight:800;letter-spacing:.02em}
+:root[data-brand="afterglow"] .logo{width:fit-content;display:inline-flex}
 </style>
 <div class="app"><header class="topbar" id="top"></header><main id="main" tabindex="-1"></main></div>
 <nav class="tabbar" id="tabs" aria-label="Navigation"></nav>
@@ -347,6 +361,7 @@ en:{
   job:"Job", looking_for:"Here for", lf_friends:"New friends", lf_outings:"Going out", lf_travel:"Travel buddies", lf_dating:"Dating", availability:"Usually free", av_weekends:"Weekends", av_weeknights:"Weeknights", av_flexible:"Flexible", liked:"You liked", like_invite:"Like & invite", photos:"Photos", add_photo:"Add a photo", photo_note:"Demo photos: free stock images, people are fictional.", prompts:"Prompts", prompt_pick:"Prompt", prompt_answer:"Your answer", preview:"Preview my profile", my_photo_hint:"Up to 6 photos, stored on this device only.", remove:"Remove",
   invite_from:"{n} sent you an invitation",
   view_profile:"See {n}'s profile",
+  open_convo:"Open the conversation with {n}", request_pending:"{n} sent you an invitation", waiting_reply:"Waiting for {n}'s answer", sign_out:"Sign out",
   welcome_back:"Hi {n}"
 },
 fr:{
@@ -427,6 +442,7 @@ fr:{
   job:"Métier", looking_for:"Ici pour", lf_friends:"Nouveaux amis", lf_outings:"Sortir", lf_travel:"Voyager à plusieurs", lf_dating:"Rencontres", availability:"Plutôt dispo", av_weekends:"Le week-end", av_weeknights:"En semaine le soir", av_flexible:"Flexible", liked:"Tu as aimé", like_invite:"Aimer et inviter", photos:"Photos", add_photo:"Ajouter une photo", photo_note:"Photos de démonstration : images libres de droits, personnes fictives.", prompts:"Questions", prompt_pick:"Question", prompt_answer:"Ta réponse", preview:"Voir mon profil", my_photo_hint:"Jusqu'à 6 photos, gardées sur cet appareil uniquement.", remove:"Retirer",
   invite_from:"{n} t'a envoyé une invitation",
   view_profile:"Voir le profil de {n}",
+  open_convo:"Ouvrir la conversation avec {n}", request_pending:"{n} t'a envoyé une invitation", waiting_reply:"En attente de la réponse de {n}", sign_out:"Se déconnecter",
   welcome_back:"Salut {n}"
 },
 es:{
@@ -507,6 +523,7 @@ es:{
   job:"Trabajo", looking_for:"Aquí para", lf_friends:"Nuevos amigos", lf_outings:"Salir", lf_travel:"Viajar en grupo", lf_dating:"Citas", availability:"Suele estar libre", av_weekends:"Fines de semana", av_weeknights:"Entre semana por la noche", av_flexible:"Flexible", liked:"Te gustó", like_invite:"Me gusta e invitar", photos:"Fotos", add_photo:"Añadir una foto", photo_note:"Fotos de demo: imágenes libres de derechos, personas ficticias.", prompts:"Preguntas", prompt_pick:"Pregunta", prompt_answer:"Tu respuesta", preview:"Ver mi perfil", my_photo_hint:"Hasta 6 fotos, guardadas solo en este dispositivo.", remove:"Quitar",
   invite_from:"{n} te ha enviado una invitación",
   view_profile:"Ver el perfil de {n}",
+  open_convo:"Abrir la conversación con {n}", request_pending:"{n} te ha enviado una invitación", waiting_reply:"Esperando la respuesta de {n}", sign_out:"Cerrar sesión",
   welcome_back:"Hola {n}"
 },
 de:{
@@ -587,6 +604,7 @@ de:{
   job:"Beruf", looking_for:"Hier für", lf_friends:"Neue Freunde", lf_outings:"Ausgehen", lf_travel:"Gemeinsam reisen", lf_dating:"Dating", availability:"Meist frei", av_weekends:"Am Wochenende", av_weeknights:"Unter der Woche abends", av_flexible:"Flexibel", liked:"Dir gefällt", like_invite:"Liken & einladen", photos:"Fotos", add_photo:"Foto hinzufügen", photo_note:"Demofotos: lizenzfreie Bilder, fiktive Personen.", prompts:"Fragen", prompt_pick:"Frage", prompt_answer:"Deine Antwort", preview:"Mein Profil ansehen", my_photo_hint:"Bis zu 6 Fotos, nur auf diesem Gerät gespeichert.", remove:"Entfernen",
   invite_from:"{n} hat dir eine Einladung geschickt",
   view_profile:"Profil von {n} ansehen",
+  open_convo:"Unterhaltung mit {n} öffnen", request_pending:"{n} hat dir eine Einladung geschickt", waiting_reply:"Warte auf die Antwort von {n}", sign_out:"Abmelden",
   welcome_back:"Hallo {n}"
 },
 pt:{
@@ -667,6 +685,7 @@ pt:{
   job:"Profissão", looking_for:"Aqui para", lf_friends:"Novos amigos", lf_outings:"Sair", lf_travel:"Viajar em grupo", lf_dating:"Encontros", availability:"Normalmente livre", av_weekends:"Fins de semana", av_weeknights:"Dias de semana à noite", av_flexible:"Flexível", liked:"Gostaste de", like_invite:"Gostar e convidar", photos:"Fotos", add_photo:"Adicionar foto", photo_note:"Fotos de demo: imagens livres de direitos, pessoas fictícias.", prompts:"Perguntas", prompt_pick:"Pergunta", prompt_answer:"A tua resposta", preview:"Ver o meu perfil", my_photo_hint:"Até 6 fotos, guardadas só neste dispositivo.", remove:"Remover",
   invite_from:"{n} enviou-te um convite",
   view_profile:"Ver o perfil de {n}",
+  open_convo:"Abrir a conversa com {n}", request_pending:"{n} enviou-te um convite", waiting_reply:"À espera da resposta de {n}", sign_out:"Terminar sessão",
   welcome_back:"Olá {n}"
 },
 it:{
@@ -747,6 +766,7 @@ it:{
   job:"Lavoro", looking_for:"Qui per", lf_friends:"Nuovi amici", lf_outings:"Uscire", lf_travel:"Viaggiare insieme", lf_dating:"Incontri", availability:"Di solito libero", av_weekends:"Nel weekend", av_weeknights:"In settimana la sera", av_flexible:"Flessibile", liked:"Ti è piaciuto", like_invite:"Mi piace e invita", photos:"Foto", add_photo:"Aggiungi una foto", photo_note:"Foto demo: immagini libere da diritti, persone fittizie.", prompts:"Domande", prompt_pick:"Domanda", prompt_answer:"La tua risposta", preview:"Vedi il mio profilo", my_photo_hint:"Fino a 6 foto, salvate solo su questo dispositivo.", remove:"Rimuovi",
   invite_from:"{n} ti ha mandato un invito",
   view_profile:"Vedi il profilo di {n}",
+  open_convo:"Apri la conversazione con {n}", request_pending:"{n} ti ha mandato un invito", waiting_reply:"In attesa della risposta di {n}", sign_out:"Esci",
   welcome_back:"Ciao {n}"
 }
 };
@@ -1268,8 +1288,10 @@ function inviteRow(inv){
   const exp = new Date(); exp.setDate(exp.getDate()+(inv.d||3));
   return `<article class="card"><div class="person"><button class="face-btn" data-action="person" data-id="${p.id}" aria-label="${esc(t("view_profile",{n:p.name}))}">${avatar(p)}</button><div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
     <div class="row" style="justify-content:space-between"><button class="name-btn" data-action="person" data-id="${p.id}"><h3>${esc(p.name)}</h3></button><span class="status ${st[0]}">${t(st[1])}</span></div>
+    <button class="invite-open" data-action="inviteOpen" data-id="${inv.id}" aria-label="${esc(t("open_convo",{n:p.name}))}">
     <p class="small"><b>${esc(ev?ev.title:"—")}</b>${ev?` · ${esc(fmtDay(evDate(ev)))} · ${esc(cityById(ev.city).name)}`:""}</p>
     ${inv.note?`<p class="small muted">« ${esc(typeof inv.note==="string"?inv.note:loc(inv.note))} »</p>`:""}
+    <span class="small open-hint">${esc(t("open_convo",{n:p.name}))} ›</span></button>
     ${inv.status==="pending"?`<p class="small muted">${t("expires",{d:fmtDay(exp)})}</p>`:""}
     ${inv.status==="pending" && inv.dir==="in" ? `<div class="row"><button class="btn" data-action="inviteAccept" data-id="${inv.id}">${t("accept")}</button><button class="btn ghost" data-action="inviteDecline" data-id="${inv.id}">${t("decline")}</button></div>`:""}
     ${inv.status==="pending" && inv.dir==="out" ? `<div class="row"><button class="btn ghost" data-action="inviteCancel" data-id="${inv.id}">${t("cancel_invite")}</button></div>`:""}
@@ -1313,6 +1335,11 @@ function renderMessages(){
     if(c){
       const p = c.with?person(c.with):null;
       return `<div class="row"><button class="iconbtn" data-action="convoBack" aria-label="${t("back")}">${I.chev.replace('<svg','<svg style="transform:rotate(90deg)"')}</button>${p?`<button class="face-btn" data-action="person" data-id="${p.id}" aria-label="${esc(t("view_profile",{n:p.name}))}">${avatar(p)}</button>`:""}<div style="flex:1;min-width:0">${p?`<button class="name-btn" data-action="person" data-id="${p.id}"><h2>${esc(c.title)}</h2></button>`:`<h2>${esc(c.title)}</h2>`}${p?`<p class="small muted">${p.verified?t("verified_badge"):t("not_verified")}</p>`:""}</div></div>
+        ${(()=>{ const pin = p && S.invites.find(i=>i.status==="pending" && (i.dir==="in"?i.from:i.to)===p.id);
+          if(!pin) return "";
+          return pin.dir==="in"
+            ? `<div class="banner small"><div style="display:flex;flex-direction:column;gap:8px;flex:1"><b>${esc(t("request_pending",{n:p.name}))}</b><div class="row"><button class="btn" data-action="inviteAccept" data-id="${pin.id}">${t("accept")}</button><button class="btn ghost" data-action="inviteDecline" data-id="${pin.id}">${t("decline")}</button></div></div></div>`
+            : `<div class="banner small"><p>${esc(t("waiting_reply",{n:p.name}))}</p></div>`; })()}
         <div class="banner small">${I.shield.replace('<svg','<svg style="color:var(--ok)"')}<p>${t("msg_safety")}</p></div>
         <div class="msgs" id="msgs">${c.msgs.map(m=>`<div class="bubble${m.me?" me":""}">${esc(m.text)}<time>${m.me?esc(t("you")):(p?nameBtn(p):"")} · ${esc(m.at)}</time></div>`).join("")}</div>
         <form class="composer" id="composer"><label class="sr" for="msgInput">${t("msg_placeholder")}</label><input id="msgInput" type="text" maxlength="1000" autocomplete="off" placeholder="${esc(t("msg_placeholder"))}"><button class="btn" type="submit">${t("send")}</button></form>`;
@@ -1424,6 +1451,7 @@ function renderProfile(){
     <h2>${t("privacy")}</h2><p class="small muted">${t("storage_note")}</p>
     ${S.blocked.map(id=>{const p=person(id);return p?`<div class="row" style="justify-content:space-between"><span class="row">${faceBtn(p)}${nameBtn(p)}</span><button class="btn ghost" data-action="unblock" data-id="${id}">${t("unblock")}</button></div>`:"";}).join("")}
     <div class="row"><button class="btn secondary" data-action="export">${t("export")}</button><button class="btn secondary" data-action="about">${t("about")}</button><button class="btn danger" data-action="resetAsk">${t("reset")}</button></div>
+    <button class="btn block ghost" data-action="signOut">${t("sign_out")}</button>
   </div></section>`;
 }
 
@@ -1546,7 +1574,7 @@ function openPerson(id){
       ${!self && photos.length && photos[0].includes("unsplash")?`<p class="small muted">${t("photo_note")}</p>`:""}
     </div>
     ${self?`<button class="btn block secondary" data-action="close">${t("close")}</button>`:`
-    <button class="btn block" data-action="invitePerson" data-id="${p.id}">${verified()?"":I.lock.replace('<svg','<svg width="18" height="18"')}${esc(t("invite_to",{n:p.name}))}</button>
+    <button class="btn block" data-action="invitePerson" data-id="${p.id}">${verified()?"":I.lock.replace('<svg','<svg width="18" height="18"')}<span class="link-word">Link</span></button>
     <div class="grid2"><button class="btn ghost" data-action="block" data-id="${p.id}">${t("block")}</button><button class="btn danger" data-action="report" data-id="${p.id}">${t("report")}</button></div>`}`);
 }
 
@@ -1771,6 +1799,16 @@ const A = {
     save(); render(true); toast(t("saved"));
   },
   preview(){ A.saveProfile(); openPerson("me"); },
+  inviteOpen(el){
+    const inv = S.invites.find(i=>i.id===el.dataset.id); if(!inv) return;
+    if(!requireVerified()) return;
+    const p = person(inv.dir==="in"?inv.from:inv.to); if(!p) return;
+    const c = ensureConvo(p.id, p.name);
+    const note = typeof inv.note==="string" ? inv.note : loc(inv.note);
+    if(!c.msgs.length && note) c.msgs.push({me: inv.dir==="out", text: note, at: now()});
+    closeSheet(); S.tab="messages"; openConvoId=c.id; save(); render(); window.scrollTo(0,0);
+  },
+  signOut(){ S.onboarded=false; save(); closeSheet(); S.tab="explore"; openConvoId=null; render(); window.scrollTo(0,0); },
   like(el){ openInvite(el.dataset.id, null, el.dataset.v); },
   pLf(el){ toggleIn(S.profile.lookingFor, el.dataset.v); save(); render(true); },
   pAv(el){ S.profile.availability=el.dataset.v; save(); render(true); },

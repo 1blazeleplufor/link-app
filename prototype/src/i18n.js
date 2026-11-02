@@ -84,6 +84,7 @@ en:{
   job:"Job", looking_for:"Here for", lf_friends:"New friends", lf_outings:"Going out", lf_travel:"Travel buddies", lf_dating:"Dating", availability:"Usually free", av_weekends:"Weekends", av_weeknights:"Weeknights", av_flexible:"Flexible", liked:"You liked", like_invite:"Like & invite", photos:"Photos", add_photo:"Add a photo", photo_note:"Demo photos: free stock images, people are fictional.", prompts:"Prompts", prompt_pick:"Prompt", prompt_answer:"Your answer", preview:"Preview my profile", my_photo_hint:"Up to 6 photos, stored on this device only.", remove:"Remove",
   invite_from:"{n} sent you an invitation",
   view_profile:"See {n}'s profile",
+  open_convo:"Open the conversation with {n}", request_pending:"{n} sent you an invitation", waiting_reply:"Waiting for {n}'s answer", sign_out:"Sign out",
   welcome_back:"Hi {n}"
 },
 fr:{
@@ -164,6 +165,7 @@ fr:{
   job:"Métier", looking_for:"Ici pour", lf_friends:"Nouveaux amis", lf_outings:"Sortir", lf_travel:"Voyager à plusieurs", lf_dating:"Rencontres", availability:"Plutôt dispo", av_weekends:"Le week-end", av_weeknights:"En semaine le soir", av_flexible:"Flexible", liked:"Tu as aimé", like_invite:"Aimer et inviter", photos:"Photos", add_photo:"Ajouter une photo", photo_note:"Photos de démonstration : images libres de droits, personnes fictives.", prompts:"Questions", prompt_pick:"Question", prompt_answer:"Ta réponse", preview:"Voir mon profil", my_photo_hint:"Jusqu'à 6 photos, gardées sur cet appareil uniquement.", remove:"Retirer",
   invite_from:"{n} t'a envoyé une invitation",
   view_profile:"Voir le profil de {n}",
+  open_convo:"Ouvrir la conversation avec {n}", request_pending:"{n} t'a envoyé une invitation", waiting_reply:"En attente de la réponse de {n}", sign_out:"Se déconnecter",
   welcome_back:"Salut {n}"
 },
 es:{
@@ -244,6 +246,7 @@ es:{
   job:"Trabajo", looking_for:"Aquí para", lf_friends:"Nuevos amigos", lf_outings:"Salir", lf_travel:"Viajar en grupo", lf_dating:"Citas", availability:"Suele estar libre", av_weekends:"Fines de semana", av_weeknights:"Entre semana por la noche", av_flexible:"Flexible", liked:"Te gustó", like_invite:"Me gusta e invitar", photos:"Fotos", add_photo:"Añadir una foto", photo_note:"Fotos de demo: imágenes libres de derechos, personas ficticias.", prompts:"Preguntas", prompt_pick:"Pregunta", prompt_answer:"Tu respuesta", preview:"Ver mi perfil", my_photo_hint:"Hasta 6 fotos, guardadas solo en este dispositivo.", remove:"Quitar",
   invite_from:"{n} te ha enviado una invitación",
   view_profile:"Ver el perfil de {n}",
+  open_convo:"Abrir la conversación con {n}", request_pending:"{n} te ha enviado una invitación", waiting_reply:"Esperando la respuesta de {n}", sign_out:"Cerrar sesión",
   welcome_back:"Hola {n}"
 },
 de:{
@@ -324,6 +327,7 @@ de:{
   job:"Beruf", looking_for:"Hier für", lf_friends:"Neue Freunde", lf_outings:"Ausgehen", lf_travel:"Gemeinsam reisen", lf_dating:"Dating", availability:"Meist frei", av_weekends:"Am Wochenende", av_weeknights:"Unter der Woche abends", av_flexible:"Flexibel", liked:"Dir gefällt", like_invite:"Liken & einladen", photos:"Fotos", add_photo:"Foto hinzufügen", photo_note:"Demofotos: lizenzfreie Bilder, fiktive Personen.", prompts:"Fragen", prompt_pick:"Frage", prompt_answer:"Deine Antwort", preview:"Mein Profil ansehen", my_photo_hint:"Bis zu 6 Fotos, nur auf diesem Gerät gespeichert.", remove:"Entfernen",
   invite_from:"{n} hat dir eine Einladung geschickt",
   view_profile:"Profil von {n} ansehen",
+  open_convo:"Unterhaltung mit {n} öffnen", request_pending:"{n} hat dir eine Einladung geschickt", waiting_reply:"Warte auf die Antwort von {n}", sign_out:"Abmelden",
   welcome_back:"Hallo {n}"
 },
 pt:{
@@ -404,6 +408,7 @@ pt:{
   job:"Profissão", looking_for:"Aqui para", lf_friends:"Novos amigos", lf_outings:"Sair", lf_travel:"Viajar em grupo", lf_dating:"Encontros", availability:"Normalmente livre", av_weekends:"Fins de semana", av_weeknights:"Dias de semana à noite", av_flexible:"Flexível", liked:"Gostaste de", like_invite:"Gostar e convidar", photos:"Fotos", add_photo:"Adicionar foto", photo_note:"Fotos de demo: imagens livres de direitos, pessoas fictícias.", prompts:"Perguntas", prompt_pick:"Pergunta", prompt_answer:"A tua resposta", preview:"Ver o meu perfil", my_photo_hint:"Até 6 fotos, guardadas só neste dispositivo.", remove:"Remover",
   invite_from:"{n} enviou-te um convite",
   view_profile:"Ver o perfil de {n}",
+  open_convo:"Abrir a conversa com {n}", request_pending:"{n} enviou-te um convite", waiting_reply:"À espera da resposta de {n}", sign_out:"Terminar sessão",
   welcome_back:"Olá {n}"
 },
 it:{
@@ -484,6 +489,7 @@ it:{
   job:"Lavoro", looking_for:"Qui per", lf_friends:"Nuovi amici", lf_outings:"Uscire", lf_travel:"Viaggiare insieme", lf_dating:"Incontri", availability:"Di solito libero", av_weekends:"Nel weekend", av_weeknights:"In settimana la sera", av_flexible:"Flessibile", liked:"Ti è piaciuto", like_invite:"Mi piace e invita", photos:"Foto", add_photo:"Aggiungi una foto", photo_note:"Foto demo: immagini libere da diritti, persone fittizie.", prompts:"Domande", prompt_pick:"Domanda", prompt_answer:"La tua risposta", preview:"Vedi il mio profilo", my_photo_hint:"Fino a 6 foto, salvate solo su questo dispositivo.", remove:"Rimuovi",
   invite_from:"{n} ti ha mandato un invito",
   view_profile:"Vedi il profilo di {n}",
+  open_convo:"Apri la conversazione con {n}", request_pending:"{n} ti ha mandato un invito", waiting_reply:"In attesa della risposta di {n}", sign_out:"Esci",
   welcome_back:"Ciao {n}"
 }
 };
