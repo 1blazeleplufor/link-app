@@ -112,6 +112,8 @@ const I = {
   gif:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M10 10H8.2a1.2 1.2 0 0 0-1.2 1.2v1.6A1.2 1.2 0 0 0 8.2 14H10v-2H9M13 10v4M16 14v-4h2.5M16 12h2"/></svg>',
   cal:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
   send:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12 20 4l-6 16-3-7z"/></svg>',
+  star:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="m12 3.5 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg>',
   chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>'
 };
 
@@ -407,7 +409,7 @@ function renderMessages(){
     const c = S.convos.find(c=>c.id===openConvoId);
     if(c){
       const p = c.with?person(c.with):null;
-      return `<div class="row"><button class="iconbtn" data-action="convoBack" aria-label="${t("back")}">${I.chev.replace('<svg','<svg style="transform:rotate(90deg)"')}</button>${p?`<button class="face-btn" data-action="person" data-id="${p.id}" aria-label="${esc(t("view_profile",{n:p.name}))}">${avatar(p)}</button>`:""}<div style="flex:1;min-width:0">${p?`<button class="name-btn" data-action="person" data-id="${p.id}"><h2>${esc(c.title)}</h2></button>`:`<h2>${esc(c.title)}</h2>`}${p?`<p class="small muted">${p.verified?t("verified_badge"):t("not_verified")}</p>`:""}${c.members?`<div class="member-row">${c.members.map(id=>person(id)).filter(Boolean).map(m=>faceBtn(m)).join("")}<span class="small muted">${t("members_n",{n:c.members.length+1})}</span></div>`:""}</div></div>
+      return `<div class="row"><button class="iconbtn" data-action="convoBack" aria-label="${t("back")}">${I.chev.replace('<svg','<svg style="transform:rotate(90deg)"')}</button>${p?`<button class="face-btn" data-action="person" data-id="${p.id}" aria-label="${esc(t("view_profile",{n:p.name}))}">${avatar(p)}</button>`:""}<div style="flex:1;min-width:0">${p?`<button class="name-btn" data-action="person" data-id="${p.id}"><h2>${esc(c.title)}</h2></button>`:`<h2>${esc(c.title)}</h2>`}${p?`<p class="small muted">${p.verified?t("verified_badge"):t("not_verified")}</p>`:""}${c.members?`<div class="member-row">${c.members.map(id=>person(id)).filter(Boolean).map(m=>faceBtn(m)).join("")}<span class="small muted">${t("members_n",{n:c.members.length+1})}</span></div>`:""}</div><button class="iconbtn fav-toggle" data-action="convoFav" data-id="${c.id}" aria-pressed="${!!c.fav}" aria-label="${esc(t(c.fav?"unfav":"fav"))}">${I.star}</button><button class="iconbtn" data-action="convoDelete" data-id="${c.id}" aria-label="${esc(t("delete_convo"))}">${I.trash}</button></div>
         ${(()=>{ const pin = p && S.invites.find(i=>i.status==="pending" && (i.dir==="in"?i.from:i.to)===p.id);
           if(!pin) return "";
           return pin.dir==="in"
@@ -420,11 +422,21 @@ function renderMessages(){
     }
     openConvoId=null;
   }
+  const visible = S.convos.filter(c=>!c.with||!S.blocked.includes(c.with));
+  const favs = visible.filter(c=>c.fav), rest = visible.filter(c=>!c.fav);
+  const convoAvatar = c => { const p=c.with?person(c.with):null; return p?avatar(p):c.members?`<span class="group-faces">${c.members.map(id=>person(id)).filter(Boolean).slice(0,3).map(m=>avatar(m)).join("")}</span>`:`<div class="avatar" style="background:var(--accent-3)">${I.users.replace('<svg','<svg width="26" height="26"')}</div>`; };
+  const unread = c => { const l=c.msgs[c.msgs.length-1]; return l && !l.me && !c.read; };
   return `<div class="section-head"><h1>${t("tab_messages")}</h1><button class="btn secondary" data-action="newGroup">+ ${t("new_group")}</button></div>
-    <div class="list">${S.convos.length?S.convos.filter(c=>!c.with||!S.blocked.includes(c.with)).map(c=>{
+    ${favs.length?`<section class="favs" aria-label="${esc(t("favs"))}">${favs.map(c=>{ const last=c.msgs[c.msgs.length-1];
+      return `<button class="fav" data-action="convo" data-id="${c.id}" data-fav="${c.id}" aria-label="${esc(t("fav_open",{n:c.title}))}">${last&&!last.me&&last.text?`<span class="fav-peek">${esc(last.text.slice(0,40))}</span>`:""}<span class="fav-ring">${convoAvatar(c)}</span><span class="fav-name">${esc(c.title)}</span></button>`; }).join("")}</section>`:""}
+    ${visible.length?`<p class="small muted swipe-hint">${t("swipe_hint")}</p>`:""}
+    <div class="list convo-list">${visible.length?rest.map(c=>{
       const p=c.with?person(c.with):null; const last=c.msgs[c.msgs.length-1];
-      return `<article class="card"><div class="person">${p?faceBtn(p):c.members?groupFaces(c):`<div class="avatar" style="background:var(--accent-3)">${I.users.replace('<svg','<svg width="26" height="26"')}</div>`}
-        <button class="event-card" data-action="convo" data-id="${c.id}" style="flex:1;min-width:0;align-self:stretch"><h3>${esc(c.title)}</h3><p class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last?esc(msgPreview(last)):""}</p></button></div></article>`;}).join(""):`<div class="empty"><h3>${t("msg_empty")}</h3><p class="muted">${t("msg_empty_sub")}</p></div>`}</div>`;
+      return `<div class="swipe" data-swipe="${c.id}">
+        <div class="swipe-act fav-act" aria-hidden="true">${I.star}<span>${t(c.fav?"unfav":"fav")}</span></div>
+        <div class="swipe-act del-act"><button type="button" data-action="convoDelete" data-id="${c.id}" tabindex="-1">${I.trash}<span>${t("delete")}</span></button></div>
+        <article class="card swipe-row"><div class="person">${p?faceBtn(p):c.members?groupFaces(c):convoAvatar(c)}
+        <button class="event-card" data-action="convo" data-id="${c.id}" style="flex:1;min-width:0;align-self:stretch"><h3>${esc(c.title)}</h3><p class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last?esc(msgPreview(last)):""}</p></button></div></article></div>`;}).join("") + (!rest.length?`<p class="small muted" style="text-align:center">${t("all_favs")}</p>`:""):`<div class="empty"><h3>${t("msg_empty")}</h3><p class="muted">${t("msg_empty_sub")}</p></div>`}</div>`;
 }
 
 function toggleRow(id, label, desc, checked){
@@ -785,6 +797,55 @@ function viewMedia(src, alt){
   openSheet(`${sheetHead(alt)}<img class="media-full" src="${src}" alt="${esc(alt)}">`);
 }
 
+/* ---------- conversation list: swipe right = favourite (pinned on top, like iMessage), swipe left = delete ---------- */
+function toggleFav(id){
+  const c=S.convos.find(x=>x.id===id); if(!c) return;
+  c.fav=!c.fav; save(); render(true); toast(t(c.fav?"fav_added":"fav_removed",{n:c.title}));
+}
+function deleteConvo(id){
+  const i=S.convos.findIndex(x=>x.id===id); if(i<0) return;
+  const [c]=S.convos.splice(i,1); if(openConvoId===id) openConvoId=null; save(); render(true);
+  toast(t("convo_deleted",{n:c.title}), {label:t("undo"), fn:()=>{ S.convos.splice(Math.min(i,S.convos.length),0,c); save(); render(true); }});
+}
+(function(){
+  const OPEN=-96, FAV=72; let d=null;
+  const closeAll = except => document.querySelectorAll(".swipe.open").forEach(w=>{ if(w!==except){ w.classList.remove("open"); w.querySelector(".swipe-row").style.transform=""; w.querySelector(".del-act button").tabIndex=-1; } });
+  document.addEventListener("pointerdown", e=>{
+    const w=e.target.closest(".swipe"); if(!w){ closeAll(); return; }
+    closeAll(w);
+    d={w, row:w.querySelector(".swipe-row"), x0:e.clientX, y0:e.clientY, base:w.classList.contains("open")?OPEN:0, dx:0, active:false, id:e.pointerId};
+  });
+  document.addEventListener("pointermove", e=>{
+    if(!d || e.pointerId!==d.id) return;
+    const dx=e.clientX-d.x0, dy=e.clientY-d.y0;
+    if(!d.active){ if(Math.abs(dy)>10 && Math.abs(dy)>Math.abs(dx)){ d=null; return; } if(Math.abs(dx)<10) return; d.active=true; d.w.classList.add("dragging"); }
+    let x=d.base+dx; x=Math.max(-170, Math.min(130, x)); d.dx=x;
+    d.row.style.transform=`translateX(${x}px)`;
+    d.w.classList.toggle("show-fav", x>0); d.w.classList.toggle("show-del", x<0);
+    d.w.classList.toggle("armed", x>FAV);
+    e.preventDefault();
+  }, {passive:false});
+  const end = e=>{
+    if(!d || (e && e.pointerId!==d.id)) return; const s=d; d=null;
+    s.w.classList.remove("dragging","armed");
+    if(!s.active) return;
+    // swallow the click that follows a drag
+    const stop=ev=>{ ev.stopPropagation(); ev.preventDefault(); }; document.addEventListener("click", stop, {capture:true, once:true}); setTimeout(()=>document.removeEventListener("click", stop, {capture:true}), 50);
+    if(s.dx>FAV){ s.row.style.transform=""; toggleFav(s.w.dataset.swipe); return; }
+    if(s.dx < -150){ deleteConvo(s.w.dataset.swipe); return; }        // full swipe deletes straight away (undo in the toast)
+    if(s.dx < OPEN/2){ s.w.classList.add("open"); s.row.style.transform=`translateX(${OPEN}px)`; s.w.querySelector(".del-act button").tabIndex=0; }
+    else { s.w.classList.remove("open"); s.row.style.transform=""; }
+  };
+  document.addEventListener("pointerup", end); document.addEventListener("pointercancel", end);
+})();
+// long-press a pinned favourite to unpin it
+(function(){
+  let tm=null;
+  document.addEventListener("pointerdown", e=>{ const f=e.target.closest(".fav[data-fav]"); if(!f) return; tm=setTimeout(()=>{ tm=null; const stop=ev=>{ ev.stopPropagation(); ev.preventDefault(); }; document.addEventListener("click", stop, {capture:true, once:true}); toggleFav(f.dataset.fav); }, 550); });
+  const c=()=>{ clearTimeout(tm); tm=null; }; ["pointerup","pointercancel","pointermove"].forEach(ev=>document.addEventListener(ev, e=>{ if(ev!=="pointermove"||tm) c(); }));
+  document.addEventListener("contextmenu", e=>{ const f=e.target.closest(".fav[data-fav]"); if(f){ e.preventDefault(); toggleFav(f.dataset.fav); } });
+})();
+
 /* ---------- emoji reactions (several per person, like Snapchat) ---------- */
 const QUICK_REACTS = ["❤️","😂","🔥","😍","😮","😢","👍","🎉"];
 const ALL_REACTS = ["❤️","🧡","💛","💚","💙","💜","🖤","🤍","😂","🤣","😊","😍","🥰","😘","😎","🤩","🥳","😮","😱","😢","😭","😡","🤯","🤔","🙄","😴","🤤","😏","👍","👎","👏","🙌","🙏","💪","👀","✨","🔥","💯","🎉","🎶","🍾","🥂","🍕","🌅","🌈","⚡","💀","🫶"];
@@ -1136,11 +1197,12 @@ function openResetConfirm(){
 
 /* ---------- toast ---------- */
 let toastT=null;
-function toast(msg){
+function toast(msg, action){
   let el = document.getElementById("toast");
   if(!el){ el=document.createElement("div"); el.id="toast"; el.className="toast"; el.setAttribute("role","status"); document.body.appendChild(el); }
   el.textContent = msg; el.hidden=false;
-  clearTimeout(toastT); toastT=setTimeout(()=>{ el.hidden=true; }, 3200);
+  if(action){ const b=document.createElement("button"); b.type="button"; b.className="toast-act"; b.textContent=action.label; b.onclick=()=>{ el.hidden=true; action.fn(); }; el.appendChild(b); }
+  clearTimeout(toastT); toastT=setTimeout(()=>{ el.hidden=true; }, action?5500:3200);
 }
 
 /* ---------- actions ---------- */
@@ -1280,6 +1342,8 @@ const A = {
   actTab(el){ S.actTab=el.dataset.v; save(); render(true); },
   convo(el){ openConvoId=el.dataset.id; render(); },
   convoBack(){ openConvoId=null; render(); },
+  convoFav(el){ toggleFav(el.dataset.id); },
+  convoDelete(el){ deleteConvo(el.dataset.id); },
   block(el){ const p=person(el.dataset.id); if(!S.blocked.includes(p.id)) S.blocked.push(p.id); save(); closeSheet(); render(true); toast(t("blocked",{n:p.name})); },
   unblock(el){ S.blocked=S.blocked.filter(x=>x!==el.dataset.id); save(); render(true); },
   report(el){ openReport(el.dataset.id); },
