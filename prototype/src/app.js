@@ -9,7 +9,7 @@ const DEFAULT_STATE = () => ({
   v:1, onboarded:false, lang:guessLang(), brand:"afterglow", afterglowSeen:true, noeSeeded:true, theme:"system",
   tab:"explore", city:"paris", mode:"local", cat:"all", when:"all", budget:"any", etype:"all", day:"",
   adv:{min:0, max:150, unknown:true, free:false, verified:false, access:false, age21:false, sort:"date"},
-  customCities:[], peopleAll:false, actTab:"invites", inviteDir:"in",
+  customCities:[], peopleAll:false, peopleView:"discover", friends:[], actTab:"invites", inviteDir:"in",
   profile:{name:"", bio:"", city:"paris", langs:["fr"], interests:["concerts","rooftops"], music:["House"], trips:[], dating:false, showAge:true, visibility:"public",
     photos:[], job:"", lookingFor:["friends","outings"], availability:"weekends",
     prompts:[{q:"pr_ideal_night",a:""},{q:"pr_never_no",a:""},{q:"pr_hidden_spot",a:""}]},
@@ -273,8 +273,12 @@ const VI = {
 function renderPeople(){
   const list = visiblePeople();
   const city = cityById(S.city);
+  const nf = S.friends.filter(f=>f.status==="friend").length;
+  const viewSeg = `<div class="seg people-view" role="group"><button data-action="peopleView" data-v="discover" aria-pressed="${S.peopleView!=="friends"}">${t("ppl_discover")}</button><button data-action="peopleView" data-v="friends" aria-pressed="${S.peopleView==="friends"}">${t("friends")}${nf?` (${nf})`:""}</button></div>`;
+  if(S.peopleView==="friends") return `<div class="section-head"><h1>${t("tab_people")}</h1></div>${viewSeg}${renderFriends()}`;
   return `
   <div class="section-head"><h1>${t("tab_people")}</h1></div>
+  ${viewSeg}
   <p class="muted">${t("people_sub")}</p>
   <div class="seg" role="group"><button data-action="peopleAll" data-v="0" aria-pressed="${!S.peopleAll}">${esc(t("people_filter_city",{c:city.name}))}</button><button data-action="peopleAll" data-v="1" aria-pressed="${S.peopleAll}">${t("people_all")}</button></div>
   ${verified()?"":lockBanner()}
@@ -289,6 +293,23 @@ function renderPeople(){
         <div class="tags">${p.interests.map(i=>`<span class="tag${shared.includes(i)?" match":""}">${esc(t("cat_"+i))}</span>`).join("")}</div>
         ${p.trips.filter(tr=>tr.city===S.city && p.city!==S.city).map(tr=>`<p class="small" style="color:var(--accent-3);font-weight:700">${esc(t("p_trip",{x:cityById(tr.city).name}))}</p>`).join("")}
       </div></button></article>`).join("") : `<div class="empty"><h3>${t("no_results")}</h3><button class="btn ghost" data-action="peopleAll" data-v="1">${t("people_all")}</button></div>`}</div>`;
+}
+function friendState(pid){ const f=S.friends.find(x=>x.id===pid); return f?f.status:"none"; }
+function isMatch(p){ const f=S.friends.find(x=>x.id===p.id); return !!(f && (f.match || p.interests.filter(i=>S.profile.interests.includes(i)).length>=2)); }
+function renderFriends(){
+  const friends = S.friends.filter(f=>f.status==="friend" && !S.blocked.includes(f.id)).map(f=>person(f.id)).filter(Boolean);
+  const pending = S.friends.filter(f=>f.status==="pending").map(f=>person(f.id)).filter(Boolean);
+  friends.sort((a,b)=>isMatch(b)-isMatch(a));
+  const card = p => `<article class="card"><div class="person">${faceBtn(p)}
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+        <div class="row" style="justify-content:space-between">${nameBtn(p,`<h3>${esc(p.name)}</h3>`)}${isMatch(p)?`<span class="match-pill">${t("match")}</span>`:""}</div>
+        <p class="small muted">${esc(cityById(p.city).name)}${p.job?" · "+esc(loc(p.job)):""}</p>
+        <div class="row"><button class="btn" data-action="friendMsg" data-id="${p.id}">${t("message_btn")}</button><button class="btn secondary" data-action="invitePerson" data-id="${p.id}"><span class="link-word">Link</span></button></div>
+      </div></div></article>`;
+  return `<p class="muted">${t("friends_sub")}</p>
+    ${verified()?"":lockBanner()}
+    <div class="list">${friends.length?friends.map(card).join(""):`<div class="empty"><h3>${t("friends_empty")}</h3><p class="muted">${t("friends_empty_sub")}</p><button class="btn ghost" data-action="peopleView" data-v="discover">${t("ppl_discover")}</button></div>`}</div>
+    ${pending.length?`<span class="label">${t("requests_sent")}</span><div class="list">${pending.map(p=>`<article class="card"><div class="person">${faceBtn(p)}<div style="flex:1">${nameBtn(p,`<h3>${esc(p.name)}</h3>`)}<p class="small muted">${t("friend_pending")}</p></div></div></article>`).join("")}</div>`:""}`;
 }
 function lockBanner(){
   return `<div class="banner">${I.lock.replace('<svg','<svg style="color:var(--accent)"')}<div style="display:flex;flex-direction:column;gap:8px"><b>${t("lock_title")}</b><p class="small muted">${t("lock_sub")}</p><button class="btn" data-action="verify" style="align-self:flex-start">${t("verify_now")}</button></div></div>`;
@@ -378,7 +399,7 @@ function renderMessages(){
     const c = S.convos.find(c=>c.id===openConvoId);
     if(c){
       const p = c.with?person(c.with):null;
-      return `<div class="row"><button class="iconbtn" data-action="convoBack" aria-label="${t("back")}">${I.chev.replace('<svg','<svg style="transform:rotate(90deg)"')}</button>${p?`<button class="face-btn" data-action="person" data-id="${p.id}" aria-label="${esc(t("view_profile",{n:p.name}))}">${avatar(p)}</button>`:""}<div style="flex:1;min-width:0">${p?`<button class="name-btn" data-action="person" data-id="${p.id}"><h2>${esc(c.title)}</h2></button>`:`<h2>${esc(c.title)}</h2>`}${p?`<p class="small muted">${p.verified?t("verified_badge"):t("not_verified")}</p>`:""}</div></div>
+      return `<div class="row"><button class="iconbtn" data-action="convoBack" aria-label="${t("back")}">${I.chev.replace('<svg','<svg style="transform:rotate(90deg)"')}</button>${p?`<button class="face-btn" data-action="person" data-id="${p.id}" aria-label="${esc(t("view_profile",{n:p.name}))}">${avatar(p)}</button>`:""}<div style="flex:1;min-width:0">${p?`<button class="name-btn" data-action="person" data-id="${p.id}"><h2>${esc(c.title)}</h2></button>`:`<h2>${esc(c.title)}</h2>`}${p?`<p class="small muted">${p.verified?t("verified_badge"):t("not_verified")}</p>`:""}${c.members?`<div class="member-row">${c.members.map(id=>person(id)).filter(Boolean).map(m=>faceBtn(m)).join("")}<span class="small muted">${t("members_n",{n:c.members.length+1})}</span></div>`:""}</div></div>
         ${(()=>{ const pin = p && S.invites.find(i=>i.status==="pending" && (i.dir==="in"?i.from:i.to)===p.id);
           if(!pin) return "";
           return pin.dir==="in"
@@ -390,10 +411,10 @@ function renderMessages(){
     }
     openConvoId=null;
   }
-  return `<div class="section-head"><h1>${t("tab_messages")}</h1></div>
+  return `<div class="section-head"><h1>${t("tab_messages")}</h1><button class="btn secondary" data-action="newGroup">+ ${t("new_group")}</button></div>
     <div class="list">${S.convos.length?S.convos.filter(c=>!c.with||!S.blocked.includes(c.with)).map(c=>{
       const p=c.with?person(c.with):null; const last=c.msgs[c.msgs.length-1];
-      return `<article class="card"><div class="person">${p?faceBtn(p):`<div class="avatar" style="background:var(--accent-3)">${I.users.replace('<svg','<svg width="26" height="26"')}</div>`}
+      return `<article class="card"><div class="person">${p?faceBtn(p):c.members?groupFaces(c):`<div class="avatar" style="background:var(--accent-3)">${I.users.replace('<svg','<svg width="26" height="26"')}</div>`}
         <button class="event-card" data-action="convo" data-id="${c.id}" style="flex:1;min-width:0;align-self:stretch"><h3>${esc(c.title)}</h3><p class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last?esc(last.text):""}</p></button></div></article>`;}).join(""):`<div class="empty"><h3>${t("msg_empty")}</h3><p class="muted">${t("msg_empty_sub")}</p></div>`}</div>`;
 }
 
@@ -596,6 +617,21 @@ function openFilters(){
 }
 function refreshCount(){ const b=document.getElementById("advApply"); if(b) b.textContent=t("show_n",{n:filteredEvents().length}); }
 
+function groupFaces(c){
+  const ms = c.members.map(id=>person(id)).filter(Boolean).slice(0,3);
+  return `<button class="face-btn group-faces" data-action="convo" data-id="${c.id}" aria-label="${esc(c.title)}">${ms.map(m=>avatar(m)).join("")}</button>`;
+}
+function openNewGroup(){
+  if(!requireVerified()) return;
+  const friends = S.friends.filter(f=>f.status==="friend" && !S.blocked.includes(f.id)).map(f=>person(f.id)).filter(Boolean);
+  openSheet(`${sheetHead(t("new_group"))}
+    ${friends.length<2?`<div class="empty"><p>${t("group_need_friends")}</p><button class="btn" data-action="goFriends">${t("ppl_discover")}</button></div>`:`
+    <div class="field"><label for="g_name">${t("group_name")}</label><input id="g_name" type="text" maxlength="40" placeholder="${esc(t("group_name_ph"))}"></div>
+    <span class="label">${t("group_pick")}</span>
+    <div class="list">${friends.map(p=>`<label class="ticket-type" for="gm_${p.id}"><span class="row">${avatar(p)}<b>${esc(p.name)}</b></span><input type="checkbox" class="switch" id="gm_${p.id}" data-gm="${p.id}"></label>`).join("")}</div>
+    <button class="btn block" data-action="createGroup">${t("group_create")}</button>`}`);
+}
+
 function openCity(){
   openSheet(`${sheetHead(t("f_city"))}
     <div class="field"><label class="sr" for="citySearch">${t("search_city")}</label><input id="citySearch" type="search" placeholder="${esc(t("search_city"))}" autocomplete="off"></div>
@@ -665,6 +701,7 @@ function openPerson(id){
     </div>
     ${self?`<button class="btn block secondary" data-action="close">${t("close")}</button>`:`
     <button class="btn block" data-action="invitePerson" data-id="${p.id}">${verified()?"":I.lock.replace('<svg','<svg width="18" height="18"')}<span class="link-word">Link</span></button>
+    ${(()=>{ const st=friendState(p.id); return st==="friend" ? `<button class="btn block ghost" data-action="friendMsg" data-id="${p.id}">✓ ${t("friends_yes")} · ${t("message_btn")}</button>` : st==="pending" ? `<button class="btn block ghost" disabled>${t("friend_pending")}</button>` : `<button class="btn block secondary" data-action="addFriend" data-id="${p.id}">${t("add_friend")}</button>`; })()}
     <div class="grid2"><button class="btn ghost" data-action="block" data-id="${p.id}">${t("block")}</button><button class="btn danger" data-action="report" data-id="${p.id}">${t("report")}</button></div>`}`);
 }
 
@@ -816,6 +853,29 @@ const A = {
   about(){ openAbout(); },
   event(el){ openEvent(el.dataset.id); },
   person(el){ openPerson(el.dataset.id); },
+  peopleView(el){ S.peopleView=el.dataset.v; save(); render(); },
+  goFriends(){ closeSheet(); S.tab="people"; S.peopleView="discover"; save(); render(); },
+  addFriend(el){
+    if(!requireVerified()) return;
+    const id=el.dataset.id, p=person(id);
+    if(!S.friends.some(f=>f.id===id)) S.friends.push({id, status:"pending", since:new Date().toISOString()});
+    save(); openPerson(id); toast(t("friend_pending"));
+    // Demo: fictional members accept after a moment (clearly a simulation)
+    setTimeout(()=>{ const f=S.friends.find(x=>x.id===id); if(f && f.status==="pending"){ f.status="friend"; save(); render(true); toast(t("friend_accepted",{n:p.name})); } }, 1600);
+  },
+  friendMsg(el){
+    if(!requireVerified()) return;
+    const p=person(el.dataset.id); const c=ensureConvo(p.id, p.name);
+    closeSheet(); S.tab="messages"; openConvoId=c.id; save(); render(); window.scrollTo(0,0);
+  },
+  newGroup(){ openNewGroup(); },
+  createGroup(){
+    const ids=[...document.querySelectorAll('[data-gm]')].filter(x=>x.checked).map(x=>x.dataset.gm);
+    if(ids.length<2){ toast(t("group_pick")); return; }
+    const name=(document.getElementById("g_name").value.trim()) || ids.map(id=>person(id).name).join(", ");
+    const c={id:uid("g"), with:null, title:name.slice(0,40), eventId:null, members:ids, msgs:[]};
+    S.convos.unshift(c); closeSheet(); S.tab="messages"; openConvoId=c.id; save(); render(); toast(t("group_created"));
+  },
   peopleAll(el){ S.peopleAll = el.dataset.v==="1"; save(); render(true); },
   close(){ closeSheet(); render(true); },
   verify(){ openVerify(); },
@@ -870,6 +930,7 @@ const A = {
     const inv=S.invites.find(i=>i.id===el.dataset.id); inv.status="accepted";
     const p=person(inv.from); const c=ensureConvo(p.id, p.name);
     if(!c.msgs.length) c.msgs.push({me:false, text:loc(inv.note), at:now()});
+    const fr=S.friends.find(f=>f.id===p.id); if(fr){ fr.status="friend"; fr.match=true; } else S.friends.push({id:p.id, status:"friend", match:true, since:new Date().toISOString()});
     save(); render(true); toast(t("accepted"));
   },
   inviteDecline(el){ S.invites.find(i=>i.id===el.dataset.id).status="declined"; save(); render(true); },
