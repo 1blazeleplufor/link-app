@@ -85,6 +85,7 @@ en:{
   invite_from:"{n} sent you an invitation",
   view_profile:"See {n}'s profile",
   open_convo:"Open the conversation with {n}", request_pending:"{n} sent you an invitation", waiting_reply:"Waiting for {n}'s answer", sign_out:"Sign out",
+  etype:"Outing type", etype_all:"All types", etype_public:"Public", etype_private:"Private", etype_org:"Organizers", filters:"Filters", filters_title:"Your filters", price_range:"Price range", price_min:"Minimum price", price_max:"Maximum price", free_only:"Free only", price_unknown_incl:"Include unannounced prices", day_pick:"Or a specific date", more_filters:"More criteria", verified_only:"Checked availability only", step_free:"Step-free access", age21_only:"21+ events only", sort_by:"Sort by", sort_date:"Date", sort_pop:"Popularity", sort_price:"Price", show_n:"Show {n} results",
   welcome_back:"Hi {n}"
 },
 fr:{
@@ -166,6 +167,7 @@ fr:{
   invite_from:"{n} t'a envoyé une invitation",
   view_profile:"Voir le profil de {n}",
   open_convo:"Ouvrir la conversation avec {n}", request_pending:"{n} t'a envoyé une invitation", waiting_reply:"En attente de la réponse de {n}", sign_out:"Se déconnecter",
+  etype:"Type de sortie", etype_all:"Tous types", etype_public:"Publiques", etype_private:"Privées", etype_org:"Organisateurs", filters:"Filtres", filters_title:"Tes filtres", price_range:"Tranche de prix", price_min:"Prix minimum", price_max:"Prix maximum", free_only:"Gratuit uniquement", price_unknown_incl:"Inclure les prix non communiqués", day_pick:"Ou une date précise", more_filters:"Plus de critères", verified_only:"Disponibilité vérifiée uniquement", step_free:"Accès sans marche", age21_only:"Soirées 21+ uniquement", sort_by:"Trier par", sort_date:"Date", sort_pop:"Popularité", sort_price:"Prix", show_n:"Voir {n} résultats",
   welcome_back:"Salut {n}"
 },
 es:{
@@ -247,6 +249,7 @@ es:{
   invite_from:"{n} te ha enviado una invitación",
   view_profile:"Ver el perfil de {n}",
   open_convo:"Abrir la conversación con {n}", request_pending:"{n} te ha enviado una invitación", waiting_reply:"Esperando la respuesta de {n}", sign_out:"Cerrar sesión",
+  etype:"Tipo de plan", etype_all:"Todos", etype_public:"Públicos", etype_private:"Privados", etype_org:"Organizadores", filters:"Filtros", filters_title:"Tus filtros", price_range:"Rango de precio", price_min:"Precio mínimo", price_max:"Precio máximo", free_only:"Solo gratis", price_unknown_incl:"Incluir precios no anunciados", day_pick:"O una fecha concreta", more_filters:"Más criterios", verified_only:"Solo disponibilidad comprobada", step_free:"Acceso sin escalones", age21_only:"Solo eventos 21+", sort_by:"Ordenar por", sort_date:"Fecha", sort_pop:"Popularidad", sort_price:"Precio", show_n:"Ver {n} resultados",
   welcome_back:"Hola {n}"
 },
 de:{
@@ -328,6 +331,7 @@ de:{
   invite_from:"{n} hat dir eine Einladung geschickt",
   view_profile:"Profil von {n} ansehen",
   open_convo:"Unterhaltung mit {n} öffnen", request_pending:"{n} hat dir eine Einladung geschickt", waiting_reply:"Warte auf die Antwort von {n}", sign_out:"Abmelden",
+  etype:"Art des Treffens", etype_all:"Alle Arten", etype_public:"Öffentlich", etype_private:"Privat", etype_org:"Veranstalter", filters:"Filter", filters_title:"Deine Filter", price_range:"Preisspanne", price_min:"Mindestpreis", price_max:"Höchstpreis", free_only:"Nur kostenlos", price_unknown_incl:"Unbekannte Preise einbeziehen", day_pick:"Oder ein bestimmtes Datum", more_filters:"Weitere Kriterien", verified_only:"Nur geprüfte Verfügbarkeit", step_free:"Stufenloser Zugang", age21_only:"Nur Events ab 21", sort_by:"Sortieren nach", sort_date:"Datum", sort_pop:"Beliebtheit", sort_price:"Preis", show_n:"{n} Ergebnisse anzeigen",
   welcome_back:"Hallo {n}"
 },
 pt:{
@@ -409,6 +413,7 @@ pt:{
   invite_from:"{n} enviou-te um convite",
   view_profile:"Ver o perfil de {n}",
   open_convo:"Abrir a conversa com {n}", request_pending:"{n} enviou-te um convite", waiting_reply:"À espera da resposta de {n}", sign_out:"Terminar sessão",
+  etype:"Tipo de programa", etype_all:"Todos", etype_public:"Públicos", etype_private:"Privados", etype_org:"Organizadores", filters:"Filtros", filters_title:"Os teus filtros", price_range:"Faixa de preço", price_min:"Preço mínimo", price_max:"Preço máximo", free_only:"Só grátis", price_unknown_incl:"Incluir preços não anunciados", day_pick:"Ou uma data precisa", more_filters:"Mais critérios", verified_only:"Só disponibilidade confirmada", step_free:"Acesso sem degraus", age21_only:"Só eventos 21+", sort_by:"Ordenar por", sort_date:"Data", sort_pop:"Popularidade", sort_price:"Preço", show_n:"Ver {n} resultados",
   welcome_back:"Olá {n}"
 },
 it:{
@@ -490,6 +495,7 @@ it:{
   invite_from:"{n} ti ha mandato un invito",
   view_profile:"Vedi il profilo di {n}",
   open_convo:"Apri la conversazione con {n}", request_pending:"{n} ti ha mandato un invito", waiting_reply:"In attesa della risposta di {n}", sign_out:"Esci",
+  etype:"Tipo di uscita", etype_all:"Tutti i tipi", etype_public:"Pubbliche", etype_private:"Private", etype_org:"Organizzatori", filters:"Filtri", filters_title:"I tuoi filtri", price_range:"Fascia di prezzo", price_min:"Prezzo minimo", price_max:"Prezzo massimo", free_only:"Solo gratis", price_unknown_incl:"Includi prezzi non comunicati", day_pick:"O una data precisa", more_filters:"Altri criteri", verified_only:"Solo disponibilità verificata", step_free:"Accesso senza gradini", age21_only:"Solo eventi 21+", sort_by:"Ordina per", sort_date:"Data", sort_pop:"Popolarità", sort_price:"Prezzo", show_n:"Vedi {n} risultati",
   welcome_back:"Ciao {n}"
 }
 };

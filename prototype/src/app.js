@@ -7,7 +7,8 @@
 const STORE_KEY = "link-proto-v1";
 const DEFAULT_STATE = () => ({
   v:1, onboarded:false, lang:guessLang(), brand:"afterglow", afterglowSeen:true, noeSeeded:true, theme:"system",
-  tab:"explore", city:"paris", mode:"local", cat:"all", when:"all", budget:"any",
+  tab:"explore", city:"paris", mode:"local", cat:"all", when:"all", budget:"any", etype:"all", day:"",
+  adv:{min:0, max:150, unknown:true, free:false, verified:false, access:false, age21:false, sort:"date"},
   customCities:[], peopleAll:false, actTab:"invites", inviteDir:"in",
   profile:{name:"", bio:"", city:"paris", langs:["fr"], interests:["concerts","rooftops"], music:["House"], trips:[], dating:false, showAge:true, visibility:"public",
     photos:[], job:"", lookingFor:["friends","outings"], availability:"weekends",
@@ -27,6 +28,7 @@ function load(){
       if(s && s.v===1){
         const d = DEFAULT_STATE(); const m = Object.assign(d, s);
         m.profile = Object.assign(DEFAULT_STATE().profile, s.profile||{});
+        m.adv = Object.assign(DEFAULT_STATE().adv, s.adv||{});
         if(!s.afterglowSeen){ m.brand = "afterglow"; m.afterglowSeen = true; }   // new default look after Indira's feedback
         if(!s.noeSeeded){ m.invites = SEED_INVITES.filter(i=>i.id==="i0").map(i=>({...i})).concat(m.invites||[]); m.noeSeeded = true; }
         return m;
@@ -101,12 +103,13 @@ const I = {
   x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
   globe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>',
   users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5"/></svg>',
+  sliders:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>',
   chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>'
 };
 
 /* ---------- derived data ---------- */
 function allEvents(){
-  const member = S.outings.filter(o=>o.type==="public" && o.status==="approved").map(o=>({
+  const member = S.outings.filter(o=>(o.type==="public" && o.status==="approved") || o.type==="private").map(o=>({ private:o.type==="private",
     id:o.id, city:o.city, cat:o.cat, title:o.title, venue:o.place||"—", area:"", date:o.date, t:o.time, price:0, avail:"unknown", tk:"D",
     age:18, acc:null, going:1, org:S.profile.name||t("you"), member:true, desc:{en:o.desc, fr:o.desc}
   }));
@@ -121,6 +124,20 @@ function scoreEvent(ev){
   if(ev.going>20) s+=0.5;
   return {s, reasons};
 }
+const PRICE_MAX = 150;
+function etypeOf(ev){
+  if(ev.member) return ev.private ? "private" : "public";
+  if(ev.cat==="private") return "private";
+  return /community|communaut/i.test(ev.org||"") ? "public" : "org";
+}
+function advCount(){
+  const a=S.adv, d=DEFAULT_STATE().adv; let n=0;
+  if(a.min!==d.min || a.max!==d.max) n++;
+  ["unknown","free","verified","access","age21"].forEach(k=>{ if(a[k]!==d[k]) n++; });
+  if(a.sort!==d.sort) n++;
+  if(S.when!=="all" || S.day) n++;
+  return n;
+}
 function filteredEvents(){
   let list = allEvents();
   if(S.mode==="local") list = list.filter(e=>e.city===S.city);
@@ -132,14 +149,24 @@ function filteredEvents(){
     if(S.when==="weekend"){ const wd=evDate(e).getDay(); return off<=7 && (wd===0||wd===6||(wd===5)); }
     return true;
   });
-  if(S.budget==="free") list = list.filter(e=>e.price===0);
-  if(S.budget==="30") list = list.filter(e=>e.price!==null && e.price<=30);
-  if(S.budget==="60") list = list.filter(e=>e.price!==null && e.price<=60);
+  if(S.etype!=="all") list = list.filter(e=>etypeOf(e)===S.etype);
+  if(S.day) list = list.filter(e=>{ const d=evDate(e); const x=new Date(S.day+"T12:00:00"); return d.toDateString()===x.toDateString(); });
+  const A=S.adv;
+  list = list.filter(e=>{
+    if(e.price===null || e.price===undefined) return A.unknown && !A.free;
+    if(A.free && e.price!==0) return false;
+    return e.price>=A.min && (A.max>=PRICE_MAX || e.price<=A.max);
+  });
+  if(A.verified) list = list.filter(e=>e.avail==="verified");
+  if(A.access) list = list.filter(e=>e.acc===true);
+  if(A.age21) list = list.filter(e=>e.age>=21);
   if(S.mode==="personal"){
     list = list.map(e=>({e, sc:scoreEvent(e)})).filter(x=>x.sc.s>0).sort((a,b)=>b.sc.s-a.sc.s).map(x=>Object.assign({}, x.e, {_why:x.sc.reasons}));
   } else {
     list.sort((a,b)=>dayOffset(a)-dayOffset(b));
   }
+  if(A.sort==="pop") list.sort((a,b)=>b.going-a.going);
+  if(A.sort==="price") list.sort((a,b)=>(a.price??1e9)-(b.price??1e9));
   return list;
 }
 function person(id){ return PEOPLE.find(p=>p.id===id); }
@@ -204,10 +231,11 @@ function renderExplore(){
   const greeting = S.profile.name ? `<p class="muted">${esc(t("welcome_back",{n:S.profile.name}))}</p>` : "";
   return `
   <div class="hero">${greeting}<h1>${esc(t("tagline"))}</h1></div>
+  <div class="chips" role="group" aria-label="${t("etype")}">
+    <button class="chip filters-btn" data-action="filters" aria-haspopup="dialog">${I.sliders}${t("filters")}${advCount()?` <span class="fcount">${advCount()}</span>`:""}</button>
+    ${chip("etype","all",t("etype_all"),S.etype==="all")}${["public","private","org"].map(k=>chip("etype",k,t("etype_"+k),S.etype===k)).join("")}</div>
   <div class="chips" role="group" aria-label="${t("f_cat")}">${chip("cat","all",t("cat_all"),S.cat==="all")}${CATEGORIES.map(c=>chip("cat",c,t("cat_"+c),S.cat===c)).join("")}</div>
-  <div class="chips" role="group" aria-label="${t("date")}">${["all","today","weekend","week"].map(w=>chip("when",w,t("when_"+w),S.when===w)).join("")}
-    <span style="width:1px;background:var(--line);flex:none"></span>
-    ${chip("budget","any",t("budget_any"),S.budget==="any")}${chip("budget","free",t("budget_free"),S.budget==="free")}${chip("budget","30",t("budget_30",{p:money(30,cur)}),S.budget==="30")}${chip("budget","60",t("budget_60",{p:money(60,cur)}),S.budget==="60")}</div>
+  <div class="chips" role="group" aria-label="${t("date")}">${["all","today","weekend","week"].map(w=>chip("when",w,t("when_"+w),S.when===w&&!S.day)).join("")}</div>
   <div class="list">${list.length? list.map(eventCard).join("") : `
     <div class="empty"><h3>${t("no_results")}</h3><p class="muted">${t("no_results_sub")}</p>
     <div class="row" style="justify-content:center"><button class="btn" data-action="tab" data-v="create">${t("create_first")}</button><button class="btn ghost" data-action="resetFilters">${t("reset_filters")}</button></div></div>`}</div>`;
@@ -512,6 +540,49 @@ function openOnboarding(){
   document.getElementById("ob_age").addEventListener("change", e=>{ document.getElementById("obStart").disabled = !e.target.checked; });
 }
 
+function openFilters(){
+  const A=S.adv, cur=cityById(S.city).cur;
+  const fmt=v=> v>=PRICE_MAX ? money(PRICE_MAX,cur)+"+" : money(v,cur);
+  const tg=(id,k,label)=>`<div class="toggle"><label for="${id}"><b>${label}</b></label><input class="switch" type="checkbox" id="${id}" data-adv="${k}" ${A[k]?"checked":""}></div>`;
+  openSheet(`${sheetHead(t("filters_title"))}
+    <section class="fsec"><span class="label">${t("price_range")}</span>
+      <div class="price-readout" id="priceReadout" aria-live="polite">${fmt(A.min)} – ${fmt(A.max)}</div>
+      <div class="baro" id="baro">
+        <div class="baro-track"><div class="baro-fill" id="baroFill"></div></div>
+        <label class="sr" for="pmin">${t("price_min")}</label><input type="range" id="pmin" min="0" max="${PRICE_MAX}" step="5" value="${A.min}">
+        <label class="sr" for="pmax">${t("price_max")}</label><input type="range" id="pmax" min="0" max="${PRICE_MAX}" step="5" value="${A.max}">
+      </div>
+      <div class="baro-scale small muted"><span>${money(0,cur)}</span><span>${money(50,cur)}</span><span>${money(100,cur)}</span><span>${money(PRICE_MAX,cur)}+</span></div>
+      ${tg("adv_free","free",t("free_only"))}
+      ${tg("adv_unknown","unknown",t("price_unknown_incl"))}
+    </section>
+    <section class="fsec"><span class="label">${t("date")}</span>
+      <div class="chips wrap">${["all","today","weekend","week"].map(w=>`<button class="chip" data-action="advWhen" data-v="${w}" aria-pressed="${S.when===w&&!S.day}">${t("when_"+w)}</button>`).join("")}</div>
+      <div class="field"><label for="adv_day">${t("day_pick")}</label><input type="date" id="adv_day" value="${esc(S.day)}"></div>
+    </section>
+    <section class="fsec"><span class="label">${t("more_filters")}</span>
+      ${tg("adv_verified","verified",t("verified_only"))}
+      ${tg("adv_access","access",t("step_free"))}
+      ${tg("adv_age21","age21",t("age21_only"))}
+    </section>
+    <section class="fsec"><span class="label">${t("sort_by")}</span>
+      <div class="seg">${["date","pop","price"].map(k=>`<button data-action="advSort" data-v="${k}" aria-pressed="${A.sort===k}">${t("sort_"+k)}</button>`).join("")}</div>
+    </section>
+    <div class="grid2"><button class="btn ghost" data-action="advReset">${t("reset_filters")}</button><button class="btn" data-action="advApply" id="advApply">${t("show_n",{n:filteredEvents().length})}</button></div>`);
+  const pmin=document.getElementById("pmin"), pmax=document.getElementById("pmax");
+  const sync=(moved)=>{
+    let a=+pmin.value, b=+pmax.value;
+    if(a>b){ if(moved===pmin){ b=a; pmax.value=b; } else { a=b; pmin.value=a; } }
+    S.adv.min=a; S.adv.max=b;
+    const f=document.getElementById("baroFill"); f.style.left=(a/PRICE_MAX*100)+"%"; f.style.right=(100-b/PRICE_MAX*100)+"%";
+    document.getElementById("priceReadout").textContent=`${fmt(a)} – ${fmt(b)}`;
+    refreshCount();
+  };
+  pmin.addEventListener("input",()=>sync(pmin)); pmax.addEventListener("input",()=>sync(pmax)); sync(null);
+  document.getElementById("adv_day").addEventListener("change", e=>{ S.day=e.target.value; if(S.day) S.when="all"; refreshCount(); document.querySelectorAll('[data-action="advWhen"]').forEach(b=>b.setAttribute("aria-pressed", String(!S.day && b.dataset.v===S.when))); });
+}
+function refreshCount(){ const b=document.getElementById("advApply"); if(b) b.textContent=t("show_n",{n:filteredEvents().length}); }
+
 function openCity(){
   openSheet(`${sheetHead(t("f_city"))}
     <div class="field"><label class="sr" for="citySearch">${t("search_city")}</label><input id="citySearch" type="search" placeholder="${esc(t("search_city"))}" autocomplete="off"></div>
@@ -716,8 +787,13 @@ function ensureConvo(pid, title, eventId){
 }
 const A = {
   tab(el){ S.tab=el.dataset.v; openConvoId=null; save(); render(); window.scrollTo(0,0); },
-  set(el){ S[el.dataset.k]=el.dataset.v; save(); render(true); },
-  resetFilters(){ S.cat="all"; S.when="all"; S.budget="any"; S.mode="international"; save(); render(); },
+  set(el){ S[el.dataset.k]=el.dataset.v; if(el.dataset.k==="when") S.day=""; save(); render(true); },
+  resetFilters(){ S.cat="all"; S.when="all"; S.budget="any"; S.etype="all"; S.day=""; S.adv=DEFAULT_STATE().adv; S.mode="international"; save(); render(); },
+  filters(){ openFilters(); },
+  advWhen(el){ S.when=el.dataset.v; S.day=""; const d=document.getElementById("adv_day"); if(d) d.value=""; document.querySelectorAll('[data-action="advWhen"]').forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===S.when))); refreshCount(); },
+  advSort(el){ S.adv.sort=el.dataset.v; document.querySelectorAll('[data-action="advSort"]').forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===S.adv.sort))); refreshCount(); },
+  advReset(){ S.adv=DEFAULT_STATE().adv; S.when="all"; S.day=""; save(); openFilters(); },
+  advApply(){ save(); closeSheet(); render(true); },
   city(){ openCity(); },
   pickCity(el){ S.city=el.dataset.v; if(S.mode==="international") S.mode="local"; save(); closeSheet(); render(); },
   addCity(el){ const n=el.dataset.v.slice(0,60); if(!S.customCities.includes(n)) S.customCities.push(n); S.city="c:"+n; S.mode="local"; save(); closeSheet(); render(); },
@@ -859,6 +935,7 @@ document.addEventListener("click", e=>{
 document.addEventListener("change", e=>{
   const el = e.target;
   if(el.dataset.action==="lang"){ S.lang=el.value; save(); const ob=!S.onboarded; if(ob){ closeSheet(); } render(true); if(ob) openOnboarding(); return; }
+  if(el.dataset.adv){ S.adv[el.dataset.adv]=el.checked; refreshCount(); return; }
   if(el.dataset.action==="toggle"){
     const map = {tg_age:()=>S.profile.showAge=el.checked, tg_dating:()=>S.profile.dating=el.checked,
       tg_n_invites:()=>S.notif.invites=el.checked, tg_n_messages:()=>S.notif.messages=el.checked, tg_n_events:()=>S.notif.events=el.checked,
