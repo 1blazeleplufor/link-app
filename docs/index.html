@@ -1176,12 +1176,21 @@ function etypeOf(ev){
   if(ev.cat==="private") return "private";
   return /community|communaut/i.test(ev.org||"") ? "public" : "org";
 }
+function budgetKey(){
+  const A=S.adv, d=DEFAULT_STATE().adv;
+  if(A.free) return "free";
+  if(A.min===0 && A.max===30) return "30";
+  if(A.min===0 && A.max===60) return "60";
+  if(A.min===d.min && A.max===d.max) return "any";
+  return "";
+}
 function advCount(){
   const a=S.adv, d=DEFAULT_STATE().adv; let n=0;
   if(a.min!==d.min || a.max!==d.max) n++;
   ["unknown","free","verified","access","age21"].forEach(k=>{ if(a[k]!==d[k]) n++; });
   if(a.sort!==d.sort) n++;
   if(S.when!=="all" || S.day) n++;
+  if(S.etype!=="all") n++;
   return n;
 }
 function filteredEvents(){
@@ -1277,11 +1286,12 @@ function renderExplore(){
   const greeting = S.profile.name ? `<p class="muted">${esc(t("welcome_back",{n:S.profile.name}))}</p>` : "";
   return `
   <div class="hero">${greeting}<h1>${esc(t("tagline"))}</h1></div>
-  <div class="chips" role="group" aria-label="${t("etype")}">
+  <div class="chips" role="group" aria-label="${t("f_cat")}">
     <button class="chip filters-btn" data-action="filters" aria-haspopup="dialog">${I.sliders}${t("filters")}${advCount()?` <span class="fcount">${advCount()}</span>`:""}</button>
-    ${chip("etype","all",t("etype_all"),S.etype==="all")}${["public","private","org"].map(k=>chip("etype",k,t("etype_"+k),S.etype===k)).join("")}</div>
-  <div class="chips" role="group" aria-label="${t("f_cat")}">${chip("cat","all",t("cat_all"),S.cat==="all")}${CATEGORIES.map(c=>chip("cat",c,t("cat_"+c),S.cat===c)).join("")}</div>
-  <div class="chips" role="group" aria-label="${t("date")}">${["all","today","weekend","week"].map(w=>chip("when",w,t("when_"+w),S.when===w&&!S.day)).join("")}</div>
+    ${chip("cat","all",t("cat_all"),S.cat==="all")}${CATEGORIES.map(c=>chip("cat",c,t("cat_"+c),S.cat===c)).join("")}</div>
+  <div class="chips" role="group" aria-label="${t("date")}">${["all","today","weekend","week"].map(w=>chip("when",w,t("when_"+w),S.when===w&&!S.day)).join("")}
+    <span style="width:1px;background:var(--line);flex:none"></span>
+    ${["any","free","30","60"].map(k=>`<button class="chip" data-action="budget" data-v="${k}" aria-pressed="${budgetKey()===k}">${k==="any"?t("budget_any"):k==="free"?t("budget_free"):t("budget_30",{p:money(+k,cur)})}</button>`).join("")}</div>
   <div class="list">${list.length? list.map(eventCard).join("") : `
     <div class="empty"><h3>${t("no_results")}</h3><p class="muted">${t("no_results_sub")}</p>
     <div class="row" style="justify-content:center"><button class="btn" data-action="tab" data-v="create">${t("create_first")}</button><button class="btn ghost" data-action="resetFilters">${t("reset_filters")}</button></div></div>`}</div>`;
@@ -1591,6 +1601,9 @@ function openFilters(){
   const fmt=v=> v>=PRICE_MAX ? money(PRICE_MAX,cur)+"+" : money(v,cur);
   const tg=(id,k,label)=>`<div class="toggle"><label for="${id}"><b>${label}</b></label><input class="switch" type="checkbox" id="${id}" data-adv="${k}" ${A[k]?"checked":""}></div>`;
   openSheet(`${sheetHead(t("filters_title"))}
+    <section class="fsec"><span class="label">${t("etype")}</span>
+      <div class="chips wrap">${["all","public","private","org"].map(k=>`<button class="chip" data-action="advType" data-v="${k}" aria-pressed="${S.etype===k}">${t("etype_"+k)}</button>`).join("")}</div>
+    </section>
     <section class="fsec"><span class="label">${t("price_range")}</span>
       <div class="price-readout" id="priceReadout" aria-live="polite">${fmt(A.min)} – ${fmt(A.max)}</div>
       <div class="baro" id="baro">
@@ -1837,9 +1850,11 @@ const A = {
   set(el){ S[el.dataset.k]=el.dataset.v; if(el.dataset.k==="when") S.day=""; save(); render(true); },
   resetFilters(){ S.cat="all"; S.when="all"; S.budget="any"; S.etype="all"; S.day=""; S.adv=DEFAULT_STATE().adv; S.mode="international"; save(); render(); },
   filters(){ openFilters(); },
+  budget(el){ const k=el.dataset.v; S.adv.free = k==="free"; S.adv.min=0; S.adv.max = k==="30"?30 : k==="60"?60 : PRICE_MAX; save(); render(true); },
+  advType(el){ S.etype=el.dataset.v; document.querySelectorAll('[data-action="advType"]').forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===S.etype))); refreshCount(); },
   advWhen(el){ S.when=el.dataset.v; S.day=""; const d=document.getElementById("adv_day"); if(d) d.value=""; document.querySelectorAll('[data-action="advWhen"]').forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===S.when))); refreshCount(); },
   advSort(el){ S.adv.sort=el.dataset.v; document.querySelectorAll('[data-action="advSort"]').forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===S.adv.sort))); refreshCount(); },
-  advReset(){ S.adv=DEFAULT_STATE().adv; S.when="all"; S.day=""; save(); openFilters(); },
+  advReset(){ S.adv=DEFAULT_STATE().adv; S.when="all"; S.day=""; S.etype="all"; save(); openFilters(); },
   advApply(){ save(); closeSheet(); render(true); },
   city(){ openCity(); },
   pickCity(el){ S.city=el.dataset.v; if(S.mode==="international") S.mode="local"; save(); closeSheet(); render(); },
