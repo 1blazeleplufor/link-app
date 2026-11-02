@@ -4,7 +4,7 @@
 # Old versions share the browser storage of the current one (same site), so data created in one shows in the others.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-for spec in v0:59c4dc3 v1:98acdaf v2:c1215f5 v3:3f33fb5; do
+for spec in v0:59c4dc3 v1:98acdaf v2:c1215f5 v3:3f33fb5 v4:e4de5e8; do
   v=${spec%%:*}; c=${spec##*:}
   mkdir -p docs/$v
   sw="<script>window.LINK_VERSION=\"$v\"</script>$(cat prototype/src/version-switcher.html)"
@@ -16,4 +16,4 @@ for spec in v0:59c4dc3 v1:98acdaf v2:c1215f5 v3:3f33fb5; do
     python3 -c "import sys; p=sys.argv[1]; h=open(p).read(); i=h.rfind('</body>'); open(p,'w').write(h[:i]+sys.argv[2]+h[i:])" docs/$v/index.html "$css"
   fi
 done
-echo "Archived v0 to v3 in docs/"
+echo "Archived v0 to v4 in docs/"

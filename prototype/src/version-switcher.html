@@ -15,14 +15,15 @@
     <a role="menuitem" data-v="v1" href="https://1blazeleplufor.github.io/link-app/v1/"><b>v1 · Afterglow + profils</b><small>Couleurs de l'affiche, profils façon Hinge</small></a>
     <a role="menuitem" data-v="v2" href="https://1blazeleplufor.github.io/link-app/v2/"><b>v2 · Profil de Noë</b><small>Touches dorées, filtres sans jaune</small></a>
     <a role="menuitem" data-v="v3" href="https://1blazeleplufor.github.io/link-app/v3/"><b>v3 · Filtres FEST</b><small>Filtres et bulles en dégradé FEST</small></a>
-    <a role="menuitem" data-v="v4" href="https://1blazeleplufor.github.io/link-app/"><b>v4 · Actuelle</b><small>Logo L8nk, modes PLAY, bouton Link, conversations depuis les invitations</small></a>
+    <a role="menuitem" data-v="v4" href="https://1blazeleplufor.github.io/link-app/v4/"><b>v4 · Logo L8nk</b><small>Étoile, modes PLAY, bouton Link, filtres avancés</small></a>
+    <a role="menuitem" data-v="v5" href="https://1blazeleplufor.github.io/link-app/"><b>v5 · Actuelle</b><small>Logo affiné + ombre, Friends, groupes, vocaux</small></a>
     <a role="menuitem" data-v="feedback" href="https://claude.ai/artifact/L5uNNEW4BNeqrVw7YnMTKg" style="border-top:1px solid rgb(255 255 255 / .12);margin-top:4px"><b>✎ Envoyer un retour</b><small>Consignes, remarques et photos pour Claude</small></a>
   </div>
   <button type="button" aria-expanded="false" aria-controls="lnkv-menu">Versions · <span id="lnkv-cur"></span></button>
 </div>
 <script>
 (function(){
-  var cur = window.LINK_VERSION || "v4";
+  var cur = window.LINK_VERSION || "v5";
   var root = document.getElementById("lnkv"), btn = root.querySelector("button"), menu = document.getElementById("lnkv-menu");
   document.getElementById("lnkv-cur").textContent = cur;
   menu.querySelectorAll("a").forEach(function(a){ if(a.dataset.v===cur) a.setAttribute("aria-current","page"); a.target = a.dataset.v==="feedback" ? "_blank" : "_top"; if(a.dataset.v==="feedback") a.rel="noopener"; });
