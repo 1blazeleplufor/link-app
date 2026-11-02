@@ -13,7 +13,8 @@ const LIFESTYLE = {
   trips:["1507525428034-b723cf961d3e","1469854523086-cc02fe5d8800"],
   food:["1504674900247-0877df9cc836","1414235077428-338989a2e8c0"]
 };
-const PROMPT_KEYS = ["pr_ideal_night","pr_never_no","pr_best_concert","pr_hidden_spot","pr_looking_crew","pr_next_trip","pr_green_flag","pr_sunday"];
+const PROMPT_KEYS = ["pr_ideal_night","pr_never_no","pr_best_concert","pr_hidden_spot","pr_looking_crew","pr_next_trip","pr_green_flag","pr_sunday",
+  "pr_embarrassing","pr_toxic","pr_attracted","pr_weekend","pr_should_know","pr_imitation","pr_song","pr_useless_talent","pr_controversial","pr_never_shut_up","pr_hill","pr_two_truths"];
 
 const PROFILE_EXTRA = {
   p0:{portrait:"1472099645785-5658abf4ff4e", job:{en:"Electrical engineer (smart buildings)",fr:"Ingé génie électrique (smart building)"}, lf:["friends","outings","travel"], av:"weeknights",
