@@ -318,5 +318,6 @@
  "sort_date": "Fecha",
  "sort_pop": "Popularidad",
  "sort_price": "Precio",
- "show_n": "Ver {n} resultados"
+ "show_n": "Ver {n} resultados",
+ "go_home": "Volver a la página principal"
 }

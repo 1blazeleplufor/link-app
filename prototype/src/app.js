@@ -213,7 +213,7 @@ function renderTop(){
   const showFilters = S.tab==="explore";
   $("#top").innerHTML = `
     <div class="topbar-row">
-      <div class="logo" aria-label="LINK">LINK<span class="dot" aria-hidden="true"></span><span class="dot b" aria-hidden="true"></span></div>
+      <button class="logo-btn" data-action="home" aria-label="${esc(t("go_home"))}"><span class="logo" aria-hidden="true">LINK<span class="dot"></span><span class="dot b"></span></span><span class="spark" aria-hidden="true"></span></button>
       <div class="row" style="gap:8px">
         <button class="chip" data-action="city" aria-label="${esc(city.name)}" style="display:flex;align-items:center;gap:4px">${I.pin.replace('<svg','<svg width="15" height="15"')}${esc(city.name)}${I.chev.replace('<svg','<svg width="14" height="14"')}</button>
         <button class="demo-pill" data-action="about">${t("demo")}</button>
@@ -529,7 +529,7 @@ function sheetHead(title){ return `<div class="sheet-head"><h2>${esc(title)}</h2
 function openOnboarding(){
   if(document.getElementById("sheetWrap")) return;
   openSheet(`
-    <div class="logo" style="font-size:44px">LINK<span class="dot"></span><span class="dot b"></span></div>
+    <div class="logo-btn" style="cursor:default"><span class="logo" style="font-size:44px" aria-label="LINK">LINK<span class="dot"></span><span class="dot b"></span></span><span class="spark big" aria-hidden="true"></span></div>
     <h1>${t("ob_title")}</h1><p class="muted">${t("ob_sub")}</p>
     <div class="field"><label for="ob_lang">${t("ob_lang")}</label><select id="ob_lang" data-action="lang">${LANGS.map(l=>`<option value="${l.code}"${S.lang===l.code?" selected":""}>${l.name}</option>`).join("")}</select></div>
     <div class="field"><label for="ob_name">${t("name")}</label><input id="ob_name" type="text" maxlength="40" value="${esc(S.profile.name)}"></div>
@@ -786,6 +786,7 @@ function ensureConvo(pid, title, eventId){
   return c;
 }
 const A = {
+  home(){ closeSheet(); openConvoId=null; S.tab="explore"; save(); render(); window.scrollTo({top:0, behavior:"smooth"}); },
   tab(el){ S.tab=el.dataset.v; openConvoId=null; save(); render(); window.scrollTo(0,0); },
   set(el){ S[el.dataset.k]=el.dataset.v; if(el.dataset.k==="when") S.day=""; save(); render(true); },
   resetFilters(){ S.cat="all"; S.when="all"; S.budget="any"; S.etype="all"; S.day=""; S.adv=DEFAULT_STATE().adv; S.mode="international"; save(); render(); },

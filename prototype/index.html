@@ -294,6 +294,17 @@ textarea{min-height:84px;resize:vertical}
 .baro input[type=range]::-moz-range-thumb{pointer-events:auto;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--accent);cursor:grab}
 .baro input[type=range]:focus-visible::-webkit-slider-thumb{outline:3px solid var(--accent-2);outline-offset:2px}
 .baro-scale{display:flex;justify-content:space-between;padding:0 4px}
+
+/* v4 — Indira's sparkle next to the L8nk logo; logo + sparkle = home button */
+.logo-btn{display:inline-flex;align-items:flex-start;gap:0;background:none;border:0;padding:2px 4px 2px 0;font:inherit;color:inherit;cursor:pointer;border-radius:14px;position:relative}
+.logo-btn .logo{font-size:26px}
+.spark{display:none}
+:root[data-brand="afterglow"] .spark{display:block;width:22px;height:24px;margin:-4px 0 0 -3px;background:url("data:image/webp;base64,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") center/contain no-repeat;filter:drop-shadow(0 0 6px rgb(255 160 230 / .55));animation:twinkle 3.6s ease-in-out infinite;transform-origin:50% 50%}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0deg);opacity:1}45%{transform:scale(.82) rotate(-8deg);opacity:.85}55%{transform:scale(1.12) rotate(6deg);opacity:1}}
+.logo-btn:hover .spark,.logo-btn:focus-visible .spark{animation-duration:1.2s}
+.logo-btn:active{transform:scale(.97)}
+@media (prefers-reduced-motion:reduce){:root[data-brand="afterglow"] .spark{animation:none}}
+:root[data-brand="afterglow"] .spark.big{width:36px;height:40px;margin:-6px 0 0 -5px}
 </style>
 <div class="app"><header class="topbar" id="top"></header><main id="main" tabindex="-1"></main></div>
 <nav class="tabbar" id="tabs" aria-label="Navigation"></nav>
@@ -387,6 +398,7 @@ en:{
   view_profile:"See {n}'s profile",
   open_convo:"Open the conversation with {n}", request_pending:"{n} sent you an invitation", waiting_reply:"Waiting for {n}'s answer", sign_out:"Sign out",
   etype:"Outing type", etype_all:"All types", etype_public:"Public", etype_private:"Private", etype_org:"Organizers", filters:"Filters", filters_title:"Your filters", price_range:"Price range", price_min:"Minimum price", price_max:"Maximum price", free_only:"Free only", price_unknown_incl:"Include unannounced prices", day_pick:"Or a specific date", more_filters:"More criteria", verified_only:"Checked availability only", step_free:"Step-free access", age21_only:"21+ events only", sort_by:"Sort by", sort_date:"Date", sort_pop:"Popularity", sort_price:"Price", show_n:"Show {n} results",
+  go_home:"Back to the home page",
   welcome_back:"Hi {n}"
 },
 fr:{
@@ -469,6 +481,7 @@ fr:{
   view_profile:"Voir le profil de {n}",
   open_convo:"Ouvrir la conversation avec {n}", request_pending:"{n} t'a envoyé une invitation", waiting_reply:"En attente de la réponse de {n}", sign_out:"Se déconnecter",
   etype:"Type de sortie", etype_all:"Tous types", etype_public:"Publiques", etype_private:"Privées", etype_org:"Organisateurs", filters:"Filtres", filters_title:"Tes filtres", price_range:"Tranche de prix", price_min:"Prix minimum", price_max:"Prix maximum", free_only:"Gratuit uniquement", price_unknown_incl:"Inclure les prix non communiqués", day_pick:"Ou une date précise", more_filters:"Plus de critères", verified_only:"Disponibilité vérifiée uniquement", step_free:"Accès sans marche", age21_only:"Soirées 21+ uniquement", sort_by:"Trier par", sort_date:"Date", sort_pop:"Popularité", sort_price:"Prix", show_n:"Voir {n} résultats",
+  go_home:"Retour à la page principale",
   welcome_back:"Salut {n}"
 },
 es:{
@@ -551,6 +564,7 @@ es:{
   view_profile:"Ver el perfil de {n}",
   open_convo:"Abrir la conversación con {n}", request_pending:"{n} te ha enviado una invitación", waiting_reply:"Esperando la respuesta de {n}", sign_out:"Cerrar sesión",
   etype:"Tipo de plan", etype_all:"Todos", etype_public:"Públicos", etype_private:"Privados", etype_org:"Organizadores", filters:"Filtros", filters_title:"Tus filtros", price_range:"Rango de precio", price_min:"Precio mínimo", price_max:"Precio máximo", free_only:"Solo gratis", price_unknown_incl:"Incluir precios no anunciados", day_pick:"O una fecha concreta", more_filters:"Más criterios", verified_only:"Solo disponibilidad comprobada", step_free:"Acceso sin escalones", age21_only:"Solo eventos 21+", sort_by:"Ordenar por", sort_date:"Fecha", sort_pop:"Popularidad", sort_price:"Precio", show_n:"Ver {n} resultados",
+  go_home:"Volver a la página principal",
   welcome_back:"Hola {n}"
 },
 de:{
@@ -633,6 +647,7 @@ de:{
   view_profile:"Profil von {n} ansehen",
   open_convo:"Unterhaltung mit {n} öffnen", request_pending:"{n} hat dir eine Einladung geschickt", waiting_reply:"Warte auf die Antwort von {n}", sign_out:"Abmelden",
   etype:"Art des Treffens", etype_all:"Alle Arten", etype_public:"Öffentlich", etype_private:"Privat", etype_org:"Veranstalter", filters:"Filter", filters_title:"Deine Filter", price_range:"Preisspanne", price_min:"Mindestpreis", price_max:"Höchstpreis", free_only:"Nur kostenlos", price_unknown_incl:"Unbekannte Preise einbeziehen", day_pick:"Oder ein bestimmtes Datum", more_filters:"Weitere Kriterien", verified_only:"Nur geprüfte Verfügbarkeit", step_free:"Stufenloser Zugang", age21_only:"Nur Events ab 21", sort_by:"Sortieren nach", sort_date:"Datum", sort_pop:"Beliebtheit", sort_price:"Preis", show_n:"{n} Ergebnisse anzeigen",
+  go_home:"Zur Startseite",
   welcome_back:"Hallo {n}"
 },
 pt:{
@@ -715,6 +730,7 @@ pt:{
   view_profile:"Ver o perfil de {n}",
   open_convo:"Abrir a conversa com {n}", request_pending:"{n} enviou-te um convite", waiting_reply:"À espera da resposta de {n}", sign_out:"Terminar sessão",
   etype:"Tipo de programa", etype_all:"Todos", etype_public:"Públicos", etype_private:"Privados", etype_org:"Organizadores", filters:"Filtros", filters_title:"Os teus filtros", price_range:"Faixa de preço", price_min:"Preço mínimo", price_max:"Preço máximo", free_only:"Só grátis", price_unknown_incl:"Incluir preços não anunciados", day_pick:"Ou uma data precisa", more_filters:"Mais critérios", verified_only:"Só disponibilidade confirmada", step_free:"Acesso sem degraus", age21_only:"Só eventos 21+", sort_by:"Ordenar por", sort_date:"Data", sort_pop:"Popularidade", sort_price:"Preço", show_n:"Ver {n} resultados",
+  go_home:"Voltar à página principal",
   welcome_back:"Olá {n}"
 },
 it:{
@@ -797,6 +813,7 @@ it:{
   view_profile:"Vedi il profilo di {n}",
   open_convo:"Apri la conversazione con {n}", request_pending:"{n} ti ha mandato un invito", waiting_reply:"In attesa della risposta di {n}", sign_out:"Esci",
   etype:"Tipo di uscita", etype_all:"Tutti i tipi", etype_public:"Pubbliche", etype_private:"Private", etype_org:"Organizzatori", filters:"Filtri", filters_title:"I tuoi filtri", price_range:"Fascia di prezzo", price_min:"Prezzo minimo", price_max:"Prezzo massimo", free_only:"Solo gratis", price_unknown_incl:"Includi prezzi non comunicati", day_pick:"O una data precisa", more_filters:"Altri criteri", verified_only:"Solo disponibilità verificata", step_free:"Accesso senza gradini", age21_only:"Solo eventi 21+", sort_by:"Ordina per", sort_date:"Data", sort_pop:"Popolarità", sort_price:"Prezzo", show_n:"Vedi {n} risultati",
+  go_home:"Torna alla pagina principale",
   welcome_back:"Ciao {n}"
 }
 };
@@ -1237,7 +1254,7 @@ function renderTop(){
   const showFilters = S.tab==="explore";
   $("#top").innerHTML = `
     <div class="topbar-row">
-      <div class="logo" aria-label="LINK">LINK<span class="dot" aria-hidden="true"></span><span class="dot b" aria-hidden="true"></span></div>
+      <button class="logo-btn" data-action="home" aria-label="${esc(t("go_home"))}"><span class="logo" aria-hidden="true">LINK<span class="dot"></span><span class="dot b"></span></span><span class="spark" aria-hidden="true"></span></button>
       <div class="row" style="gap:8px">
         <button class="chip" data-action="city" aria-label="${esc(city.name)}" style="display:flex;align-items:center;gap:4px">${I.pin.replace('<svg','<svg width="15" height="15"')}${esc(city.name)}${I.chev.replace('<svg','<svg width="14" height="14"')}</button>
         <button class="demo-pill" data-action="about">${t("demo")}</button>
@@ -1553,7 +1570,7 @@ function sheetHead(title){ return `<div class="sheet-head"><h2>${esc(title)}</h2
 function openOnboarding(){
   if(document.getElementById("sheetWrap")) return;
   openSheet(`
-    <div class="logo" style="font-size:44px">LINK<span class="dot"></span><span class="dot b"></span></div>
+    <div class="logo-btn" style="cursor:default"><span class="logo" style="font-size:44px" aria-label="LINK">LINK<span class="dot"></span><span class="dot b"></span></span><span class="spark big" aria-hidden="true"></span></div>
     <h1>${t("ob_title")}</h1><p class="muted">${t("ob_sub")}</p>
     <div class="field"><label for="ob_lang">${t("ob_lang")}</label><select id="ob_lang" data-action="lang">${LANGS.map(l=>`<option value="${l.code}"${S.lang===l.code?" selected":""}>${l.name}</option>`).join("")}</select></div>
     <div class="field"><label for="ob_name">${t("name")}</label><input id="ob_name" type="text" maxlength="40" value="${esc(S.profile.name)}"></div>
@@ -1810,6 +1827,7 @@ function ensureConvo(pid, title, eventId){
   return c;
 }
 const A = {
+  home(){ closeSheet(); openConvoId=null; S.tab="explore"; save(); render(); window.scrollTo({top:0, behavior:"smooth"}); },
   tab(el){ S.tab=el.dataset.v; openConvoId=null; save(); render(); window.scrollTo(0,0); },
   set(el){ S[el.dataset.k]=el.dataset.v; if(el.dataset.k==="when") S.day=""; save(); render(true); },
   resetFilters(){ S.cat="all"; S.when="all"; S.budget="any"; S.etype="all"; S.day=""; S.adv=DEFAULT_STATE().adv; S.mode="international"; save(); render(); },
