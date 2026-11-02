@@ -92,7 +92,7 @@ const I = {
   explore:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>',
   people:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.4 0 4 1.6 4.5 4"/></svg>',
   create:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
-  activity:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V6a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v3a2.5 2.5 0 0 0 0 5v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-3a2.5 2.5 0 0 0 0-5z"/><path d="M14 5v14" stroke-dasharray="2 2.5"/></svg>',
+  activity:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3.2-3.2a4.5 4.5 0 0 0-6.4-6.4L12 5.6"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3.2 3.2a4.5 4.5 0 0 0 6.4 6.4L12 18.4"/></svg>',
   messages:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>',
   profile:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4 4-6.5 8-6.5s7.2 2.5 8 6.5"/></svg>',
   pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
@@ -235,7 +235,8 @@ function renderTop(){
       <button class="logo-btn" data-action="home" aria-label="${esc(t("go_home"))}"><span class="logo" aria-hidden="true">LINK<span class="dot"></span><span class="dot b"></span></span><span class="spark" aria-hidden="true"></span></button>
       <div class="row" style="gap:8px">
         <button class="chip" data-action="city" aria-label="${esc(city.name)}" style="display:flex;align-items:center;gap:4px">${I.pin.replace('<svg','<svg width="15" height="15"')}${esc(city.name)}${I.chev.replace('<svg','<svg width="14" height="14"')}</button>
-        <button class="demo-pill" data-action="about">${t("demo")}</button>
+        <button class="demo-pill" data-action="about" aria-label="${esc(t("demo"))}">${I.flask}<span>${t("demo")}</span></button>
+        <button class="me-btn" data-action="tab" data-v="profile" ${S.tab==="profile"?'aria-current="page"':""} aria-label="${esc(t("tab_profile"))}">${avatar(meAsPerson())}</button>
       </div>
     </div>
     ${showFilters?`<div class="seg" role="group" aria-label="mode">
@@ -551,7 +552,7 @@ function renderProfile(){
 
 function renderTabs(){
   const pendingIn = S.invites.filter(i=>i.dir==="in"&&i.status==="pending").length;
-  $("#tabs").innerHTML = `<div class="tabbar-inner" role="tablist">${["explore","people","create","activity","messages","profile"].map(k=>
+  $("#tabs").innerHTML = `<div class="tabbar-inner" role="tablist">${["explore","people","create","activity","messages"].map(k=>
     `<button class="tab${k==="create"?" create":""}" role="tab" data-action="tab" data-v="${k}" ${S.tab===k?'aria-current="page" aria-selected="true"':'aria-selected="false"'}>${I[k]}<span>${t("tab_"+k)}</span>${k==="activity"&&pendingIn?`<span class="badge">${pendingIn}</span>`:""}</button>`).join("")}</div>`;
 }
 function render(keepScroll){

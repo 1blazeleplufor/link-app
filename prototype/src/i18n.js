@@ -8,7 +8,7 @@ const LANGS = [
 const I18N = {
 en:{
   tagline:"Never skip an experience for lack of company.",
-  tab_explore:"Explore", tab_people:"People", tab_create:"Create", tab_activity:"Activity", tab_messages:"Messages", tab_profile:"Profile",
+  tab_explore:"Explore", tab_people:"People", tab_create:"Create", tab_activity:"Links", tab_messages:"Messages", tab_profile:"Profile",
   demo:"Prototype", demo_banner:"Prototype with demo data. No real payment, ID check or notification is made.",
   mode_local:"Local", mode_international:"International", mode_personal:"For you",
   mode_local_d:"Around {c}", mode_international_d:"Everywhere, no limit", mode_personal_d:"Based on your interests, dates and trips",
@@ -93,7 +93,7 @@ en:{
 },
 fr:{
   tagline:"Ne renonce plus à une sortie faute de compagnie.",
-  tab_explore:"Explorer", tab_people:"Personnes", tab_create:"Créer", tab_activity:"Activités", tab_messages:"Messages", tab_profile:"Profil",
+  tab_explore:"Explorer", tab_people:"Personnes", tab_create:"Créer", tab_activity:"Links", tab_messages:"Messages", tab_profile:"Profil",
   demo:"Prototype", demo_banner:"Prototype avec données de démonstration. Aucun paiement, contrôle d'identité ou notification réels.",
   mode_local:"Local", mode_international:"International", mode_personal:"Pour toi",
   mode_local_d:"Autour de {c}", mode_international_d:"Partout, sans limite", mode_personal_d:"Selon tes envies, tes dates et tes voyages",
@@ -178,7 +178,7 @@ fr:{
 },
 es:{
   tagline:"No renuncies a un plan por no tener compañía.",
-  tab_explore:"Explorar", tab_people:"Personas", tab_create:"Crear", tab_activity:"Actividad", tab_messages:"Mensajes", tab_profile:"Perfil",
+  tab_explore:"Explorar", tab_people:"Personas", tab_create:"Crear", tab_activity:"Links", tab_messages:"Mensajes", tab_profile:"Perfil",
   demo:"Prototipo", demo_banner:"Prototipo con datos de demostración. Sin pagos, verificaciones ni notificaciones reales.",
   mode_local:"Local", mode_international:"Internacional", mode_personal:"Para ti",
   mode_local_d:"Cerca de {c}", mode_international_d:"En todas partes, sin límite", mode_personal_d:"Según tus gustos, fechas y viajes",
@@ -263,7 +263,7 @@ es:{
 },
 de:{
   tagline:"Verpass kein Erlebnis mehr, nur weil dir die Begleitung fehlt.",
-  tab_explore:"Entdecken", tab_people:"Leute", tab_create:"Erstellen", tab_activity:"Aktivität", tab_messages:"Nachrichten", tab_profile:"Profil",
+  tab_explore:"Entdecken", tab_people:"Leute", tab_create:"Erstellen", tab_activity:"Links", tab_messages:"Nachrichten", tab_profile:"Profil",
   demo:"Prototyp", demo_banner:"Prototyp mit Demodaten. Keine echten Zahlungen, Ausweisprüfungen oder Benachrichtigungen.",
   mode_local:"Lokal", mode_international:"International", mode_personal:"Für dich",
   mode_local_d:"Rund um {c}", mode_international_d:"Überall, ohne Grenzen", mode_personal_d:"Nach deinen Interessen, Daten und Reisen",
@@ -348,7 +348,7 @@ de:{
 },
 pt:{
   tagline:"Nunca mais desistas de um programa por falta de companhia.",
-  tab_explore:"Explorar", tab_people:"Pessoas", tab_create:"Criar", tab_activity:"Atividade", tab_messages:"Mensagens", tab_profile:"Perfil",
+  tab_explore:"Explorar", tab_people:"Pessoas", tab_create:"Criar", tab_activity:"Links", tab_messages:"Mensagens", tab_profile:"Perfil",
   demo:"Protótipo", demo_banner:"Protótipo com dados de demonstração. Sem pagamentos, verificações ou notificações reais.",
   mode_local:"Local", mode_international:"Internacional", mode_personal:"Para ti",
   mode_local_d:"Perto de {c}", mode_international_d:"Em todo o lado, sem limite", mode_personal_d:"Segundo os teus gostos, datas e viagens",
@@ -433,7 +433,7 @@ pt:{
 },
 it:{
   tagline:"Non rinunciare più a un'esperienza per mancanza di compagnia.",
-  tab_explore:"Esplora", tab_people:"Persone", tab_create:"Crea", tab_activity:"Attività", tab_messages:"Messaggi", tab_profile:"Profilo",
+  tab_explore:"Esplora", tab_people:"Persone", tab_create:"Crea", tab_activity:"Links", tab_messages:"Messaggi", tab_profile:"Profilo",
   demo:"Prototipo", demo_banner:"Prototipo con dati dimostrativi. Nessun pagamento, verifica d'identità o notifica reale.",
   mode_local:"Locale", mode_international:"Internazionale", mode_personal:"Per te",
   mode_local_d:"Intorno a {c}", mode_international_d:"Ovunque, senza limiti", mode_personal_d:"In base a gusti, date e viaggi",
