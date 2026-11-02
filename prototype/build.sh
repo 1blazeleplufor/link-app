@@ -15,7 +15,7 @@ QR='<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.mi
   echo '<div class="app"><header class="topbar" id="top"></header><main id="main" tabindex="-1"></main></div>'
   echo '<nav class="tabbar" id="tabs" aria-label="Navigation"></nav>'
   echo "$QR"
-  echo '<script>'; cat src/i18n.js; echo; cat src/data.js; echo; cat src/profiles.js; echo; cat src/app.js; echo '</script>'
+  echo '<script>'; cat src/i18n.js; echo; cat src/gifs.js; echo; cat src/data.js; echo; cat src/profiles.js; echo; cat src/app.js; echo '</script>'
   echo '<script>window.LINK_VERSION="v5"</script>'; cat src/version-switcher.html
 } > index.html
 

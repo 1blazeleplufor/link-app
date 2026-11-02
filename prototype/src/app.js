@@ -107,6 +107,11 @@ const I = {
   play:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>',
   pause:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/></svg>',
   sliders:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  image:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg>',
+  gif:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M10 10H8.2a1.2 1.2 0 0 0-1.2 1.2v1.6A1.2 1.2 0 0 0 8.2 14H10v-2H9M13 10v4M16 14v-4h2.5M16 12h2"/></svg>',
+  cal:'<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
+  send:'<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12 20 4l-6 16-3-7z"/></svg>',
   chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>'
 };
 
@@ -409,8 +414,9 @@ function renderMessages(){
             ? `<div class="banner small"><div style="display:flex;flex-direction:column;gap:8px;flex:1"><b>${esc(t("request_pending",{n:p.name}))}</b><div class="row"><button class="btn" data-action="inviteAccept" data-id="${pin.id}">${t("accept")}</button><button class="btn ghost" data-action="inviteDecline" data-id="${pin.id}">${t("decline")}</button></div></div></div>`
             : `<div class="banner small"><p>${esc(t("waiting_reply",{n:p.name}))}</p></div>`; })()}
         <div class="banner small">${I.shield.replace('<svg','<svg style="color:var(--ok)"')}<p>${t("msg_safety")}</p></div>
-        <div class="msgs" id="msgs">${c.msgs.map(m=>`<div class="bubble${m.me?" me":""}${m.voice?" voice":""}">${m.voice?voicePlayer(m.voice, m.dur, m.wave):esc(m.text)}<time>${m.me?esc(t("you")):(p?nameBtn(p):"")} · ${esc(m.at)}</time></div>`).join("")}</div>
-        <form class="composer" id="composer"><label class="sr" for="msgInput">${t("msg_placeholder")}</label><input id="msgInput" type="text" maxlength="1000" autocomplete="off" placeholder="${esc(t("msg_placeholder"))}"><button type="button" class="iconbtn mic" data-action="recChat" aria-label="${esc(t("rec_start"))}">${I.mic}</button><button class="btn" type="submit">${t("send")}</button></form>`;
+        <div class="msgs" id="msgs">${c.msgs.map(m=>{ const who = m.me?esc(t("you")):(m.from&&person(m.from)?nameBtn(person(m.from)):(p?nameBtn(p):""));
+          return `<div class="bubble${m.me?" me":""}${m.voice?" voice":""}${(m.media||m.gif)?" media":""}${m.ev?" evmsg":""}">${msgBody(m)}<time>${who} · ${esc(m.at)}</time></div>`; }).join("")}</div>
+        <form class="composer" id="composer"><button type="button" class="iconbtn attach" data-action="attach" aria-label="${esc(t("attach"))}" aria-haspopup="dialog">${I.plus}</button><label class="sr" for="msgInput">${t("msg_placeholder")}</label><input id="msgInput" type="text" maxlength="1000" autocomplete="off" placeholder="${esc(t("msg_placeholder"))}"><button type="button" class="iconbtn mic" data-action="recChat" aria-label="${esc(t("rec_start"))}">${I.mic}</button><button class="btn send-btn" type="submit" aria-label="${esc(t("send"))}">${I.send}</button></form>`;
     }
     openConvoId=null;
   }
@@ -418,7 +424,7 @@ function renderMessages(){
     <div class="list">${S.convos.length?S.convos.filter(c=>!c.with||!S.blocked.includes(c.with)).map(c=>{
       const p=c.with?person(c.with):null; const last=c.msgs[c.msgs.length-1];
       return `<article class="card"><div class="person">${p?faceBtn(p):c.members?groupFaces(c):`<div class="avatar" style="background:var(--accent-3)">${I.users.replace('<svg','<svg width="26" height="26"')}</div>`}
-        <button class="event-card" data-action="convo" data-id="${c.id}" style="flex:1;min-width:0;align-self:stretch"><h3>${esc(c.title)}</h3><p class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last?(last.voice?"🎙 "+esc(t("voice_msg")):esc(last.text)):""}</p></button></div></article>`;}).join(""):`<div class="empty"><h3>${t("msg_empty")}</h3><p class="muted">${t("msg_empty_sub")}</p></div>`}</div>`;
+        <button class="event-card" data-action="convo" data-id="${c.id}" style="flex:1;min-width:0;align-self:stretch"><h3>${esc(c.title)}</h3><p class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last?esc(msgPreview(last)):""}</p></button></div></article>`;}).join(""):`<div class="empty"><h3>${t("msg_empty")}</h3><p class="muted">${t("msg_empty_sub")}</p></div>`}</div>`;
 }
 
 function toggleRow(id, label, desc, checked){
@@ -543,7 +549,7 @@ function render(keepScroll){
   const y = window.scrollY;
   $("#main").innerHTML = `<div class="banner test small">${I.flask}<p>${t("demo_banner")}</p></div>` + fn();
   if(keepScroll) window.scrollTo(0,y);
-  const m = document.getElementById("msgs"); if(m) m.lastElementChild && m.lastElementChild.scrollIntoView({block:"end"});
+  const m = document.getElementById("msgs"); if(m){ m.lastElementChild && m.lastElementChild.scrollIntoView({block:"end"}); hydrateMedia(); }
   if(!S.onboarded) openOnboarding();
   else if(!S.noeToast && S.invites.some(i=>i.id==="i0" && i.status==="pending")){ S.noeToast=true; save(); setTimeout(()=>toast(t("invite_from",{n:"Noë"})), 600); }
 }
@@ -642,6 +648,138 @@ function openNewGroup(){
     <span class="label">${t("group_pick")}</span>
     <div class="list">${friends.map(p=>`<label class="ticket-type" for="gm_${p.id}"><span class="row">${avatar(p)}<b>${esc(p.name)}</b></span><input type="checkbox" class="switch" id="gm_${p.id}" data-gm="${p.id}"></label>`).join("")}</div>
     <button class="btn block" data-action="createGroup">${t("group_create")}</button>`}`);
+}
+
+/* ---------- rich messages: photos, videos, GIFs and events ---------- */
+const MEDIA_MAX = 40*1024*1024;
+function msgPreview(m){
+  if(m.voice) return "🎙 "+t("voice_msg");
+  if(m.ev){ const ev=allEvents().find(e=>e.id===m.ev); return "📅 "+(ev?ev.title:t("event_msg")); }
+  if(m.gif) return "GIF";
+  if(m.media) return m.mtype==="video" ? "🎬 "+t("video_msg") : m.mtype==="gif" ? "GIF" : "📷 "+t("photo_msg");
+  return m.text||"";
+}
+function msgBody(m){
+  if(m.voice) return voicePlayer(m.voice, m.dur, m.wave);
+  if(m.gif){ const g=GIFS.find(x=>x.id===m.gif); return g?`<button class="media-btn" data-action="viewMedia" data-gif="${g.id}" aria-label="GIF ${esc(g.label)}"><img class="msg-media" src="${g.src}" alt="GIF ${esc(g.label)}" width="240" height="180"></button>`:"GIF"; }
+  if(m.media){
+    const ar = m.w&&m.h ? `style="aspect-ratio:${m.w}/${m.h}"` : "";
+    return m.mtype==="video"
+      ? `<video class="msg-media" data-mid="${esc(m.media)}" ${ar} controls playsinline preload="metadata" aria-label="${esc(t("video_msg"))}"></video>`
+      : `<button class="media-btn" data-action="viewMedia" data-id="${esc(m.media)}" aria-label="${esc(t("photo_msg"))}"><img class="msg-media" data-mid="${esc(m.media)}" ${ar} alt="${esc(m.mtype==="gif"?"GIF":t("photo_msg"))}"></button>`;
+  }
+  if(m.ev) return eventMsgCard(m.ev) + (m.text?`<p class="evnote">${esc(m.text)}</p>`:"");
+  return esc(m.text);
+}
+function eventMsgCard(id){
+  const ev = allEvents().find(e=>e.id===id);
+  if(!ev) return `<p class="small">${esc(t("event_gone"))}</p>`;
+  const city = cityById(ev.city);
+  return `<button class="ev-share" data-action="event" data-id="${ev.id}" aria-label="${esc(ev.title)}">${visual(ev)}
+    <span class="ev-share-body"><b>${esc(ev.title)}</b>
+    <span class="small">${I.clock}${esc(fmtDay(evDate(ev)))} · ${esc(ev.t)}</span>
+    <span class="small">${I.pin}${esc(ev.venue)}, ${esc(city.name)}</span>
+    <span class="row" style="justify-content:space-between"><span class="price">${esc(priceLabel(ev))}</span><span class="ev-open">${t("see_event")} →</span></span></span></button>`;
+}
+const MEDIA_URLS = new Map();
+async function hydrateMedia(){
+  for(const el of document.querySelectorAll("[data-mid]:not([src])")){
+    const id = el.dataset.mid; let url = MEDIA_URLS.get(id);
+    if(!url){ const blob = await VDB.get(id); if(!blob){ el.replaceWith(Object.assign(document.createElement("p"),{className:"small",textContent:t("media_missing")})); continue; } url = URL.createObjectURL(blob); MEDIA_URLS.set(id, url); }
+    el.src = url;
+  }
+}
+function curConvo(){ return S.convos.find(c=>c.id===openConvoId); }
+function pushMsg(c, m){
+  c.msgs.push(Object.assign({me:true, at:now()}, m));
+  // move the conversation to the top of the list
+  S.convos = [c].concat(S.convos.filter(x=>x!==c)); save();
+  demoReply(c, m);
+}
+const DEMO_EV_REPLY = {fr:"Oh trop bien, j'en suis ! On se retrouve là-bas ?", en:"Oh nice, I'm in! Meet you there?", es:"¡Qué bien, me apunto! ¿Nos vemos allí?", de:"Wie cool, ich bin dabei! Treffen wir uns dort?", pt:"Que fixe, alinho! Encontramo-nos lá?", it:"Che bello, ci sto! Ci vediamo lì?"};
+const DEMO_MEDIA_REPLY = {fr:"Haha j'adore 😂", en:"Haha love it 😂", es:"Jaja me encanta 😂", de:"Haha, ich liebe es 😂", pt:"Haha adoro 😂", it:"Haha lo adoro 😂"};
+const DEMO_LAST = new Map();
+function demoReply(c, m){
+  // Demo only: fictional members answer an event or a GIF so the flow can be felt end to end.
+  if(!(m.ev||m.gif||m.media)) return;
+  const from = c.with || (c.members&&c.members[0]); if(!from || S.blocked.includes(from)) return;
+  if(!m.ev && Date.now()-(DEMO_LAST.get(c.id)||0) < 15000) return; DEMO_LAST.set(c.id, Date.now());
+  setTimeout(()=>{
+    c.msgs.push({me:false, from: c.members?from:undefined, text: (m.ev?DEMO_EV_REPLY:DEMO_MEDIA_REPLY)[S.lang]||DEMO_EV_REPLY.en, at:now()}); save();
+    if(S.tab==="messages" && openConvoId===c.id) render(true);
+  }, 1800);
+}
+function openAttach(){
+  const opt=(act, icon, title, desc)=>`<button class="attach-opt" data-action="${act}">${icon}<span><b>${t(title)}</b><span class="small muted">${t(desc)}</span></span></button>`;
+  openSheet(`${sheetHead(t("attach"))}<div class="list">
+    ${opt("attachMedia", I.image, "att_media", "att_media_d")}
+    ${opt("attachGif", I.gif, "att_gif", "att_gif_d")}
+    ${opt("attachEvent", I.cal, "att_event", "att_event_d")}</div>`);
+}
+function pickFile(accept){
+  return new Promise(res=>{
+    const inp=document.createElement("input"); inp.type="file"; inp.accept=accept; inp.style.display="none";
+    inp.addEventListener("change", ()=>{ res(inp.files&&inp.files[0]||null); inp.remove(); });
+    document.body.appendChild(inp); inp.click();
+  });
+}
+function mediaSize(file){
+  return new Promise(res=>{
+    const url=URL.createObjectURL(file); const done=(w,h)=>{ URL.revokeObjectURL(url); res({w,h}); };
+    if(file.type.startsWith("video/")){ const v=document.createElement("video"); v.preload="metadata"; v.onloadedmetadata=()=>done(v.videoWidth,v.videoHeight); v.onerror=()=>done(0,0); v.src=url; }
+    else { const i=new Image(); i.onload=()=>done(i.naturalWidth,i.naturalHeight); i.onerror=()=>done(0,0); i.src=url; }
+  });
+}
+async function sendFile(accept){
+  const c=curConvo(); if(!c) return;
+  const file = await pickFile(accept); if(!file) return;
+  if(!/^(image|video)\//.test(file.type)){ toast(t("media_fail")); return; }
+  if(file.size>MEDIA_MAX){ toast(t("media_too_big")); return; }
+  const {w,h} = await mediaSize(file);
+  if(!w && !file.type.startsWith("video/")){ toast(t("media_fail")); return; }
+  const id=uid("m"); await VDB.put(id, file);
+  const mtype = file.type.startsWith("video/") ? "video" : file.type==="image/gif" ? "gif" : "image";
+  closeSheet(); pushMsg(c, {media:id, mtype, w, h}); render();
+}
+function openGifPicker(){
+  openSheet(`${sheetHead(t("att_gif"))}
+    <div class="gif-grid">${GIFS.map(g=>`<button class="gif-pick" data-action="sendGif" data-id="${g.id}" aria-label="GIF ${esc(g.label)}"><img src="${g.src}" alt="" width="240" height="180" loading="lazy"></button>`).join("")}</div>
+    <button class="btn ghost block" data-action="gifDevice">${I.image} ${t("gif_device")}</button>
+    <p class="small muted">${t("gif_note")}</p>`);
+}
+function eventPickList(q){
+  const qq=(q||"").trim().toLowerCase();
+  const evs = allEvents().filter(e=>!qq || [e.title,e.venue,cityById(e.city).name,t("cat_"+e.cat)].join(" ").toLowerCase().includes(qq))
+    .sort((a,b)=> (b.city===S.city)-(a.city===S.city) || (evDate(a)-evDate(b))).slice(0,30);
+  return evs.length ? evs.map(ev=>`<button class="ev-pick" data-action="sendEvent" data-id="${ev.id}">${visual(ev)}<span><b>${esc(ev.title)}</b><span class="small muted">${esc(fmtDay(evDate(ev)))} · ${esc(ev.t)} · ${esc(cityById(ev.city).name)}</span><span class="small price">${esc(priceLabel(ev))}</span></span></button>`).join("")
+    : `<p class="muted">${t("no_results")}</p>`;
+}
+function openEventPicker(){
+  openSheet(`${sheetHead(t("att_event"))}
+    <div class="field"><label class="sr" for="evSearch">${t("ev_search")}</label><input id="evSearch" type="search" autocomplete="off" placeholder="${esc(t("ev_search"))}"></div>
+    <div class="list" id="evPickList">${eventPickList("")}</div>`);
+  document.getElementById("evSearch").addEventListener("input", e=>{ document.getElementById("evPickList").innerHTML = eventPickList(e.target.value); });
+}
+function openShareEvent(evId){
+  if(!requireVerified()) return;
+  const convos = S.convos.filter(c=>!c.with||!S.blocked.includes(c.with));
+  const friends = S.friends.filter(f=>f.status==="friend" && !S.blocked.includes(f.id) && !convos.some(c=>c.with===f.id)).map(f=>person(f.id)).filter(Boolean);
+  const ev = allEvents().find(e=>e.id===evId);
+  openSheet(`${sheetHead(t("send_in_msg"))}
+    ${ev?`<p class="muted">${esc(ev.title)}</p>`:""}
+    <div class="field"><label for="shareNote">${t("share_note")}</label><input id="shareNote" type="text" maxlength="300" placeholder="${esc(t("share_note_ph"))}"></div>
+    <div class="list">${convos.map(c=>{ const p=c.with?person(c.with):null;
+      return `<button class="attach-opt" data-action="shareTo" data-id="${c.id}" data-ev="${evId}">${p?avatar(p):c.members?`<span class="group-faces">${c.members.map(id=>person(id)).filter(Boolean).slice(0,3).map(m=>avatar(m)).join("")}</span>`:`<span class="avatar">${I.users}</span>`}<span><b>${esc(c.title)}</b></span><span class="ev-open">${t("send")}</span></button>`; }).join("")}
+    ${friends.map(p=>`<button class="attach-opt" data-action="shareToPerson" data-id="${p.id}" data-ev="${evId}">${avatar(p)}<span><b>${esc(p.name)}</b><span class="small muted">${t("friends")}</span></span><span class="ev-open">${t("send")}</span></button>`).join("")}
+    ${!convos.length&&!friends.length?`<p class="muted">${t("no_convos")}</p><button class="btn block" data-action="inviteFromEvent" data-id="${evId}">${t("invite")}</button>`:""}</div>`);
+}
+function shareEventTo(c, evId){
+  const note=((document.getElementById("shareNote")||{}).value||"").trim().slice(0,300);
+  closeSheet(); pushMsg(c, {ev:evId, text:note||undefined});
+  S.tab="messages"; openConvoId=c.id; save(); render(); window.scrollTo(0,0); toast(t("sent_to",{n:c.title}));
+}
+function viewMedia(src, alt){
+  openSheet(`${sheetHead(alt)}<img class="media-full" src="${src}" alt="${esc(alt)}">`);
 }
 
 /* ---------- voice (messages + Hinge-style voice prompt) ---------- */
@@ -773,7 +911,8 @@ function openEvent(id){
     </dl>
     <p class="small muted">${t("going",{n:ev.going})}</p>
     ${canBuy?`<button class="btn block" data-action="buy" data-id="${ev.id}">${t("buy")} · ${esc(priceLabel(ev))}</button>`:ev.tk==="D"?`<p class="small muted">${t("no_ticketing")}</p>`:""}
-    <div class="grid2"><button class="btn secondary" data-action="join" data-id="${ev.id}">${t("join")}</button><button class="btn secondary" data-action="inviteFromEvent" data-id="${ev.id}">${t("invite")}</button></div>`);
+    <div class="grid2"><button class="btn secondary" data-action="join" data-id="${ev.id}">${t("join")}</button><button class="btn secondary" data-action="inviteFromEvent" data-id="${ev.id}">${t("invite")}</button></div>
+    <button class="btn ghost block" data-action="shareEvent" data-id="${ev.id}">${I.send} ${t("send_in_msg")}</button>`);
 }
 
 /* Hinge-style profile: photos and prompts interleaved, a vitals card, and a like button on each item
@@ -947,13 +1086,16 @@ function ensureConvo(pid, title, eventId){
 const A = {
   home(){ closeSheet(); openConvoId=null; S.tab="explore"; save(); render(); window.scrollTo({top:0, behavior:"smooth"}); },
   tab(el){ S.tab=el.dataset.v; openConvoId=null; save(); render(); window.scrollTo(0,0); },
-  set(el){ S[el.dataset.k]=el.dataset.v; if(el.dataset.k==="when") S.day=""; save(); render(true); },
+  set(el){ const k=el.dataset.k; let v=el.dataset.v;
+    // Re-clicking an active filter chip un-selects it (back to "all"); the mode segmented control stays a radio.
+    if(k!=="mode" && v!=="all" && S[k]===v && !(k==="when" && S.day)) v="all";
+    S[k]=v; if(k==="when") S.day=""; save(); render(true); },
   resetFilters(){ S.cat="all"; S.when="all"; S.budget="any"; S.etype="all"; S.day=""; S.adv=DEFAULT_STATE().adv; S.mode="international"; save(); render(); },
   filters(){ openFilters(); },
-  budget(el){ const k=el.dataset.v; S.adv.free = k==="free"; S.adv.min=0; S.adv.max = k==="30"?30 : k==="60"?60 : PRICE_MAX; save(); render(true); },
-  advType(el){ S.etype=el.dataset.v; document.querySelectorAll('[data-action="advType"]').forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===S.etype))); refreshCount(); },
-  advWhen(el){ S.when=el.dataset.v; S.day=""; const d=document.getElementById("adv_day"); if(d) d.value=""; document.querySelectorAll('[data-action="advWhen"]').forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===S.when))); refreshCount(); },
-  advSort(el){ S.adv.sort=el.dataset.v; document.querySelectorAll('[data-action="advSort"]').forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===S.adv.sort))); refreshCount(); },
+  budget(el){ let k=el.dataset.v; if(k!=="any" && budgetKey()===k) k="any"; S.adv.free = k==="free"; S.adv.min=0; S.adv.max = k==="30"?30 : k==="60"?60 : PRICE_MAX; save(); render(true); },
+  advType(el){ S.etype = (el.dataset.v!=="all" && S.etype===el.dataset.v) ? "all" : el.dataset.v; document.querySelectorAll('[data-action="advType"]').forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===S.etype))); refreshCount(); },
+  advWhen(el){ S.when = (el.dataset.v!=="all" && S.when===el.dataset.v && !S.day) ? "all" : el.dataset.v; S.day=""; const d=document.getElementById("adv_day"); if(d) d.value=""; document.querySelectorAll('[data-action="advWhen"]').forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===S.when))); refreshCount(); },
+  advSort(el){ S.adv.sort = (el.dataset.v!=="date" && S.adv.sort===el.dataset.v) ? "date" : el.dataset.v; document.querySelectorAll('[data-action="advSort"]').forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===S.adv.sort))); refreshCount(); },
   advReset(){ S.adv=DEFAULT_STATE().adv; S.when="all"; S.day=""; S.etype="all"; save(); openFilters(); },
   advApply(){ save(); closeSheet(); render(true); },
   city(){ openCity(); },
@@ -963,6 +1105,17 @@ const A = {
   event(el){ openEvent(el.dataset.id); },
   person(el){ openPerson(el.dataset.id); },
   recChat(){ if(!requireVerified()) return; startRecording("chat"); },
+  attach(){ if(!requireVerified()) return; openAttach(); },
+  attachMedia(){ sendFile("image/*,video/*"); },
+  attachGif(){ openGifPicker(); },
+  gifDevice(){ sendFile("image/gif"); },
+  attachEvent(){ openEventPicker(); },
+  sendGif(el){ const c=curConvo(); if(!c) return; closeSheet(); pushMsg(c, {gif:el.dataset.id}); render(); },
+  sendEvent(el){ const c=curConvo(); if(!c) return; closeSheet(); pushMsg(c, {ev:el.dataset.id}); render(); },
+  shareEvent(el){ openShareEvent(el.dataset.id); },
+  shareTo(el){ const c=S.convos.find(x=>x.id===el.dataset.id); if(c) shareEventTo(c, el.dataset.ev); },
+  shareToPerson(el){ const p=person(el.dataset.id); if(p) shareEventTo(ensureConvo(p.id, p.name), el.dataset.ev); },
+  viewMedia(el){ if(el.dataset.gif){ const g=GIFS.find(x=>x.id===el.dataset.gif); if(g) viewMedia(g.src, "GIF "+g.label); return; } const img=el.querySelector("img"); if(img&&img.src) viewMedia(img.src, t("photo_msg")); },
   recProfile(){ startRecording("profile"); },
   recDone(){ finishRecording(true); },
   recCancel(){ finishRecording(false); },
@@ -1150,7 +1303,7 @@ document.addEventListener("submit", e=>{
   }
   if(e.target.id==="composer"){
     const inp=document.getElementById("msgInput"); const txt=inp.value.trim(); if(!txt) return;
-    const c=S.convos.find(c=>c.id===openConvoId); c.msgs.push({me:true, text:txt, at:now()}); save(); render(); document.getElementById("msgInput").focus();
+    const c=S.convos.find(c=>c.id===openConvoId); pushMsg(c, {text:txt}); render(); document.getElementById("msgInput").focus();
   }
 });
 // A photo that cannot load (offline, blocked host) is removed so the coloured tile with the initial shows.
