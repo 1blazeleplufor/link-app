@@ -339,5 +339,20 @@
  "group_create": "Create group",
  "group_need_friends": "Add at least 2 friends to create a group.",
  "members_n": "{n} members",
- "group_created": "Group created"
+ "group_created": "Group created",
+ "voice_msg": "Voice message",
+ "rec_start": "Record a voice message",
+ "recording": "Recording",
+ "rec_send": "Send",
+ "rec_save": "Keep",
+ "rec_cancel": "Cancel",
+ "mic_denied": "Microphone unavailable: allow the microphone in your browser (and open the public prototype link).",
+ "voice_prompt": "Voice prompt",
+ "voice_prompt_d": "Record your answer out loud (30 s max), like on Hinge.",
+ "voice_record": "Record my answer",
+ "voice_redo": "Redo",
+ "voice_delete": "Delete",
+ "tts_demo": "Synthetic voice (demo)",
+ "play": "Play",
+ "voice_missing": "This voice note isn't available on this device."
 }

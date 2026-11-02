@@ -339,5 +339,20 @@
  "group_create": "Créer le groupe",
  "group_need_friends": "Ajoute au moins 2 amis pour créer un groupe.",
  "members_n": "{n} membres",
- "group_created": "Groupe créé"
+ "group_created": "Groupe créé",
+ "voice_msg": "Message vocal",
+ "rec_start": "Enregistrer un vocal",
+ "recording": "Enregistrement",
+ "rec_send": "Envoyer",
+ "rec_save": "Garder",
+ "rec_cancel": "Annuler",
+ "mic_denied": "Micro indisponible : autorise le micro dans ton navigateur (et ouvre le lien public du prototype).",
+ "voice_prompt": "Question vocale",
+ "voice_prompt_d": "Enregistre ta réponse à voix haute (30 s max), comme sur Hinge.",
+ "voice_record": "Enregistrer ma réponse",
+ "voice_redo": "Refaire",
+ "voice_delete": "Supprimer",
+ "tts_demo": "Voix de synthèse (démo)",
+ "play": "Écouter",
+ "voice_missing": "Ce vocal n'est pas disponible sur cet appareil."
 }

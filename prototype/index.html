@@ -322,6 +322,34 @@ textarea{min-height:84px;resize:vertical}
 .member-row .avatar{width:32px;height:32px;border-radius:10px;font-size:13px}
 .section-head .btn{min-height:40px;padding:8px 14px;font-size:14px}
 label.ticket-type{cursor:pointer}
+/* v4 — voice messages & voice prompt */
+.composer .mic{flex:none;width:46px;height:46px;color:var(--accent)}
+.vplayer{display:flex;align-items:center;gap:10px;min-width:200px;--p:0%}
+.vplay{flex:none;width:38px;height:38px;border-radius:50%;border:0;display:grid;place-items:center;background:var(--fg);color:var(--bg);cursor:pointer}
+.bubble.me .vplay{background:#fff;color:var(--accent)}
+.wave{flex:1;display:flex;align-items:center;gap:2px;height:30px;position:relative;
+  -webkit-mask:linear-gradient(90deg,#000 var(--p),rgb(0 0 0 / .45) var(--p));mask:linear-gradient(90deg,#000 var(--p),rgb(0 0 0 / .45) var(--p))}
+.wave i{flex:1;min-width:2px;border-radius:2px;background:currentColor;opacity:.9}
+.vplayer.on .wave{-webkit-mask:linear-gradient(90deg,#000 var(--p),rgb(0 0 0 / .45) var(--p))}
+.vdur{font-size:12px;font-variant-numeric:tabular-nums;opacity:.8}
+.bubble.voice{padding:8px 12px}
+.voice-card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 20px;display:flex;flex-direction:column;gap:12px}
+.voice-card .q{font-size:13px;font-weight:700;color:var(--accent-3);display:flex;gap:6px;align-items:center}
+.voice-card .vplayer{padding-right:52px}
+.voice-card.mine .vplayer{padding-right:0}
+.voice-card .like{bottom:14px;right:14px;width:46px;height:46px;background:var(--surface-2)}
+#recbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:70;width:min(420px,calc(100% - 24px));display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  background:var(--surface);border:1px solid var(--accent);border-radius:20px;padding:12px 14px;box-shadow:0 12px 30px rgb(0 0 0 / .45)}
+#recbar .btn{min-height:40px;padding:8px 14px}
+.rec-dot{width:12px;height:12px;border-radius:50%;background:#FF4D6A;animation:recpulse 1s ease-in-out infinite}
+@keyframes recpulse{50%{opacity:.35}}
+.rec-label{font-weight:700}
+.rec-time{font-variant-numeric:tabular-nums;color:var(--muted);font-size:13px}
+.rec-level{flex:1;min-width:60px;height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.rec-level i{display:block;height:100%;width:100%;background:var(--lgrad,var(--accent));transform-origin:left;transform:scaleX(.2);transition:transform .1s}
+@media (prefers-reduced-motion:reduce){.rec-dot{animation:none}}
+body:has(#composer) #lnkv{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
+body:has(#recbar) #lnkv{display:none}
 </style>
 <div class="app"><header class="topbar" id="top"></header><main id="main" tabindex="-1"></main></div>
 <nav class="tabbar" id="tabs" aria-label="Navigation"></nav>
@@ -417,6 +445,7 @@ en:{
   etype:"Outing type", etype_all:"All types", etype_public:"Public", etype_private:"Private", etype_org:"Organizers", filters:"Filters", filters_title:"Your filters", price_range:"Price range", price_min:"Minimum price", price_max:"Maximum price", free_only:"Free only", price_unknown_incl:"Include unannounced prices", day_pick:"Or a specific date", more_filters:"More criteria", verified_only:"Checked availability only", step_free:"Step-free access", age21_only:"21+ events only", sort_by:"Sort by", sort_date:"Date", sort_pop:"Popularity", sort_price:"Price", show_n:"Show {n} results",
   go_home:"Back to the home page",
   ppl_discover:"Discover", friends:"Friends", friends_sub:"Your friends and matches on LINK.", friends_empty:"No friends yet", friends_empty_sub:"Add people from their profile, or accept an invitation: you become friends.", add_friend:"Add friend", friend_pending:"Friend request sent", friends_yes:"Friends", friend_accepted:"{n} accepted your friend request (demo)", match:"Match", message_btn:"Message", requests_sent:"Requests sent", new_group:"New group", group_name:"Group name", group_name_ph:"e.g. Rooftop crew", group_pick:"Pick at least 2 friends", group_create:"Create group", group_need_friends:"Add at least 2 friends to create a group.", members_n:"{n} members", group_created:"Group created",
+  voice_msg:"Voice message", rec_start:"Record a voice message", recording:"Recording", rec_send:"Send", rec_save:"Keep", rec_cancel:"Cancel", mic_denied:"Microphone unavailable: allow the microphone in your browser (and open the public prototype link).", voice_prompt:"Voice prompt", voice_prompt_d:"Record your answer out loud (30 s max), like on Hinge.", voice_record:"Record my answer", voice_redo:"Redo", voice_delete:"Delete", tts_demo:"Synthetic voice (demo)", play:"Play", voice_missing:"This voice note isn't available on this device.",
   welcome_back:"Hi {n}"
 },
 fr:{
@@ -501,6 +530,7 @@ fr:{
   etype:"Type de sortie", etype_all:"Tous types", etype_public:"Publiques", etype_private:"Privées", etype_org:"Organisateurs", filters:"Filtres", filters_title:"Tes filtres", price_range:"Tranche de prix", price_min:"Prix minimum", price_max:"Prix maximum", free_only:"Gratuit uniquement", price_unknown_incl:"Inclure les prix non communiqués", day_pick:"Ou une date précise", more_filters:"Plus de critères", verified_only:"Disponibilité vérifiée uniquement", step_free:"Accès sans marche", age21_only:"Soirées 21+ uniquement", sort_by:"Trier par", sort_date:"Date", sort_pop:"Popularité", sort_price:"Prix", show_n:"Voir {n} résultats",
   go_home:"Retour à la page principale",
   ppl_discover:"Découvrir", friends:"Friends", friends_sub:"Tes amis et tes matchs sur LINK.", friends_empty:"Pas encore d'amis", friends_empty_sub:"Ajoute des gens depuis leur profil, ou accepte une invitation : vous devenez amis.", add_friend:"Ajouter en ami", friend_pending:"Demande d'ami envoyée", friends_yes:"Amis", friend_accepted:"{n} a accepté ta demande d'ami (démo)", match:"Match", message_btn:"Message", requests_sent:"Demandes envoyées", new_group:"Nouveau groupe", group_name:"Nom du groupe", group_name_ph:"Ex. : Team rooftop", group_pick:"Choisis au moins 2 amis", group_create:"Créer le groupe", group_need_friends:"Ajoute au moins 2 amis pour créer un groupe.", members_n:"{n} membres", group_created:"Groupe créé",
+  voice_msg:"Message vocal", rec_start:"Enregistrer un vocal", recording:"Enregistrement", rec_send:"Envoyer", rec_save:"Garder", rec_cancel:"Annuler", mic_denied:"Micro indisponible : autorise le micro dans ton navigateur (et ouvre le lien public du prototype).", voice_prompt:"Question vocale", voice_prompt_d:"Enregistre ta réponse à voix haute (30 s max), comme sur Hinge.", voice_record:"Enregistrer ma réponse", voice_redo:"Refaire", voice_delete:"Supprimer", tts_demo:"Voix de synthèse (démo)", play:"Écouter", voice_missing:"Ce vocal n'est pas disponible sur cet appareil.",
   welcome_back:"Salut {n}"
 },
 es:{
@@ -585,6 +615,7 @@ es:{
   etype:"Tipo de plan", etype_all:"Todos", etype_public:"Públicos", etype_private:"Privados", etype_org:"Organizadores", filters:"Filtros", filters_title:"Tus filtros", price_range:"Rango de precio", price_min:"Precio mínimo", price_max:"Precio máximo", free_only:"Solo gratis", price_unknown_incl:"Incluir precios no anunciados", day_pick:"O una fecha concreta", more_filters:"Más criterios", verified_only:"Solo disponibilidad comprobada", step_free:"Acceso sin escalones", age21_only:"Solo eventos 21+", sort_by:"Ordenar por", sort_date:"Fecha", sort_pop:"Popularidad", sort_price:"Precio", show_n:"Ver {n} resultados",
   go_home:"Volver a la página principal",
   ppl_discover:"Descubrir", friends:"Friends", friends_sub:"Tus amigos y matches en LINK.", friends_empty:"Aún no tienes amigos", friends_empty_sub:"Añade gente desde su perfil o acepta una invitación: os hacéis amigos.", add_friend:"Añadir amigo", friend_pending:"Solicitud enviada", friends_yes:"Amigos", friend_accepted:"{n} aceptó tu solicitud (demo)", match:"Match", message_btn:"Mensaje", requests_sent:"Solicitudes enviadas", new_group:"Nuevo grupo", group_name:"Nombre del grupo", group_name_ph:"Ej.: Team rooftop", group_pick:"Elige al menos 2 amigos", group_create:"Crear grupo", group_need_friends:"Añade al menos 2 amigos para crear un grupo.", members_n:"{n} miembros", group_created:"Grupo creado",
+  voice_msg:"Mensaje de voz", rec_start:"Grabar un audio", recording:"Grabando", rec_send:"Enviar", rec_save:"Guardar", rec_cancel:"Cancelar", mic_denied:"Micrófono no disponible: permite el micrófono en tu navegador (y abre el enlace público del prototipo).", voice_prompt:"Pregunta de voz", voice_prompt_d:"Graba tu respuesta en voz alta (30 s máx.), como en Hinge.", voice_record:"Grabar mi respuesta", voice_redo:"Repetir", voice_delete:"Eliminar", tts_demo:"Voz sintética (demo)", play:"Escuchar", voice_missing:"Este audio no está disponible en este dispositivo.",
   welcome_back:"Hola {n}"
 },
 de:{
@@ -669,6 +700,7 @@ de:{
   etype:"Art des Treffens", etype_all:"Alle Arten", etype_public:"Öffentlich", etype_private:"Privat", etype_org:"Veranstalter", filters:"Filter", filters_title:"Deine Filter", price_range:"Preisspanne", price_min:"Mindestpreis", price_max:"Höchstpreis", free_only:"Nur kostenlos", price_unknown_incl:"Unbekannte Preise einbeziehen", day_pick:"Oder ein bestimmtes Datum", more_filters:"Weitere Kriterien", verified_only:"Nur geprüfte Verfügbarkeit", step_free:"Stufenloser Zugang", age21_only:"Nur Events ab 21", sort_by:"Sortieren nach", sort_date:"Datum", sort_pop:"Beliebtheit", sort_price:"Preis", show_n:"{n} Ergebnisse anzeigen",
   go_home:"Zur Startseite",
   ppl_discover:"Entdecken", friends:"Friends", friends_sub:"Deine Freunde und Matches auf LINK.", friends_empty:"Noch keine Freunde", friends_empty_sub:"Füge Leute über ihr Profil hinzu oder nimm eine Einladung an: dann seid ihr befreundet.", add_friend:"Als Freund hinzufügen", friend_pending:"Anfrage gesendet", friends_yes:"Befreundet", friend_accepted:"{n} hat deine Anfrage angenommen (Demo)", match:"Match", message_btn:"Nachricht", requests_sent:"Gesendete Anfragen", new_group:"Neue Gruppe", group_name:"Gruppenname", group_name_ph:"z. B. Rooftop-Crew", group_pick:"Wähle mindestens 2 Freunde", group_create:"Gruppe erstellen", group_need_friends:"Füge mindestens 2 Freunde hinzu, um eine Gruppe zu erstellen.", members_n:"{n} Mitglieder", group_created:"Gruppe erstellt",
+  voice_msg:"Sprachnachricht", rec_start:"Sprachnachricht aufnehmen", recording:"Aufnahme", rec_send:"Senden", rec_save:"Behalten", rec_cancel:"Abbrechen", mic_denied:"Mikrofon nicht verfügbar: Erlaube das Mikrofon im Browser (und öffne den öffentlichen Link des Prototyps).", voice_prompt:"Sprach-Prompt", voice_prompt_d:"Nimm deine Antwort laut auf (max. 30 s), wie bei Hinge.", voice_record:"Antwort aufnehmen", voice_redo:"Neu aufnehmen", voice_delete:"Löschen", tts_demo:"Synthetische Stimme (Demo)", play:"Anhören", voice_missing:"Diese Sprachnachricht ist auf diesem Gerät nicht verfügbar.",
   welcome_back:"Hallo {n}"
 },
 pt:{
@@ -753,6 +785,7 @@ pt:{
   etype:"Tipo de programa", etype_all:"Todos", etype_public:"Públicos", etype_private:"Privados", etype_org:"Organizadores", filters:"Filtros", filters_title:"Os teus filtros", price_range:"Faixa de preço", price_min:"Preço mínimo", price_max:"Preço máximo", free_only:"Só grátis", price_unknown_incl:"Incluir preços não anunciados", day_pick:"Ou uma data precisa", more_filters:"Mais critérios", verified_only:"Só disponibilidade confirmada", step_free:"Acesso sem degraus", age21_only:"Só eventos 21+", sort_by:"Ordenar por", sort_date:"Data", sort_pop:"Popularidade", sort_price:"Preço", show_n:"Ver {n} resultados",
   go_home:"Voltar à página principal",
   ppl_discover:"Descobrir", friends:"Friends", friends_sub:"Os teus amigos e matches na LINK.", friends_empty:"Ainda sem amigos", friends_empty_sub:"Adiciona pessoas no perfil delas ou aceita um convite: ficam amigos.", add_friend:"Adicionar amigo", friend_pending:"Pedido enviado", friends_yes:"Amigos", friend_accepted:"{n} aceitou o teu pedido (demo)", match:"Match", message_btn:"Mensagem", requests_sent:"Pedidos enviados", new_group:"Novo grupo", group_name:"Nome do grupo", group_name_ph:"Ex.: Team rooftop", group_pick:"Escolhe pelo menos 2 amigos", group_create:"Criar grupo", group_need_friends:"Adiciona pelo menos 2 amigos para criar um grupo.", members_n:"{n} membros", group_created:"Grupo criado",
+  voice_msg:"Mensagem de voz", rec_start:"Gravar um áudio", recording:"A gravar", rec_send:"Enviar", rec_save:"Guardar", rec_cancel:"Cancelar", mic_denied:"Microfone indisponível: autoriza o microfone no navegador (e abre o link público do protótipo).", voice_prompt:"Pergunta de voz", voice_prompt_d:"Grava a tua resposta em voz alta (30 s máx.), como no Hinge.", voice_record:"Gravar a minha resposta", voice_redo:"Refazer", voice_delete:"Apagar", tts_demo:"Voz sintética (demo)", play:"Ouvir", voice_missing:"Este áudio não está disponível neste dispositivo.",
   welcome_back:"Olá {n}"
 },
 it:{
@@ -837,6 +870,7 @@ it:{
   etype:"Tipo di uscita", etype_all:"Tutti i tipi", etype_public:"Pubbliche", etype_private:"Private", etype_org:"Organizzatori", filters:"Filtri", filters_title:"I tuoi filtri", price_range:"Fascia di prezzo", price_min:"Prezzo minimo", price_max:"Prezzo massimo", free_only:"Solo gratis", price_unknown_incl:"Includi prezzi non comunicati", day_pick:"O una data precisa", more_filters:"Altri criteri", verified_only:"Solo disponibilità verificata", step_free:"Accesso senza gradini", age21_only:"Solo eventi 21+", sort_by:"Ordina per", sort_date:"Data", sort_pop:"Popolarità", sort_price:"Prezzo", show_n:"Vedi {n} risultati",
   go_home:"Torna alla pagina principale",
   ppl_discover:"Scopri", friends:"Friends", friends_sub:"I tuoi amici e match su LINK.", friends_empty:"Ancora nessun amico", friends_empty_sub:"Aggiungi persone dal loro profilo o accetta un invito: diventate amici.", add_friend:"Aggiungi amico", friend_pending:"Richiesta inviata", friends_yes:"Amici", friend_accepted:"{n} ha accettato la tua richiesta (demo)", match:"Match", message_btn:"Messaggio", requests_sent:"Richieste inviate", new_group:"Nuovo gruppo", group_name:"Nome del gruppo", group_name_ph:"Es.: Team rooftop", group_pick:"Scegli almeno 2 amici", group_create:"Crea gruppo", group_need_friends:"Aggiungi almeno 2 amici per creare un gruppo.", members_n:"{n} membri", group_created:"Gruppo creato",
+  voice_msg:"Messaggio vocale", rec_start:"Registra un vocale", recording:"Registrazione", rec_send:"Invia", rec_save:"Tieni", rec_cancel:"Annulla", mic_denied:"Microfono non disponibile: consenti il microfono nel browser (e apri il link pubblico del prototipo).", voice_prompt:"Domanda vocale", voice_prompt_d:"Registra la tua risposta a voce (max 30 s), come su Hinge.", voice_record:"Registra la mia risposta", voice_redo:"Rifai", voice_delete:"Elimina", tts_demo:"Voce sintetica (demo)", play:"Ascolta", voice_missing:"Questo vocale non è disponibile su questo dispositivo.",
   welcome_back:"Ciao {n}"
 }
 };
@@ -1062,6 +1096,16 @@ for (const p of PEOPLE) {
   p.job = x.job; p.lookingFor = x.lf; p.availability = x.av; p.prompts = x.prompts.map(([q,a])=>({q, a}));
 }
 
+/* Demo voice prompts (Hinge-style). No real recordings exist for fictional people: the answer is read aloud
+   by the phone's speech synthesis and labelled as such. */
+const VOICE_DEMO = {
+  p0:{q:"pr_ideal_night", text:{fr:"Un concert au coucher du soleil, un rooftop juste après, et on rentre à pied en refaisant le monde.", en:"A sunset gig, a rooftop right after, and walking home talking about everything."}},
+  p1:{q:"pr_best_concert", text:{fr:"Un petit club de jazz à Montmartre. Quarante personnes, et le groupe ne voulait plus s'arrêter.", en:"A tiny jazz club in Montmartre. Forty people, and the band just wouldn't stop."}},
+  p7:{q:"pr_hidden_spot", text:{fr:"Le Miradouro da Graça, à six heures quarante en octobre. Viens, je te montre.", en:"Miradouro da Graça, at six forty in October. Come, I'll show you."}},
+  p11:{q:"pr_never_no", text:{fr:"Un footing à sept heures, tant qu'il y a un café après.", en:"A seven a.m. run, as long as there's coffee after."}}
+};
+for (const p of PEOPLE) if (VOICE_DEMO[p.id]) p.voiceDemo = VOICE_DEMO[p.id];
+
 /* LINK prototype — application logic (vanilla JS, no build step).
    State lives in memory and is mirrored to localStorage on this device only. */
 (function(){
@@ -1076,7 +1120,7 @@ const DEFAULT_STATE = () => ({
   customCities:[], peopleAll:false, peopleView:"discover", friends:[], actTab:"invites", inviteDir:"in",
   profile:{name:"", bio:"", city:"paris", langs:["fr"], interests:["concerts","rooftops"], music:["House"], trips:[], dating:false, showAge:true, visibility:"public",
     photos:[], job:"", lookingFor:["friends","outings"], availability:"weekends",
-    prompts:[{q:"pr_ideal_night",a:""},{q:"pr_never_no",a:""},{q:"pr_hidden_spot",a:""}]},
+    prompts:[{q:"pr_ideal_night",a:""},{q:"pr_never_no",a:""},{q:"pr_hidden_spot",a:""}], voice:null},
   verif:"none", outings:[], invites:SEED_INVITES.map(i=>({...i})), convos:[], tickets:[], blocked:[], reports:[], joined:[],
   notif:{invites:true, messages:true, events:true, tickets:true, marketing:false, quietFrom:"23:00", quietTo:"08:00"}
 });
@@ -1167,6 +1211,9 @@ const I = {
   x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
   globe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>',
   users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5"/></svg>',
+  mic:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
+  play:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/></svg>',
   sliders:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>',
   chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>'
 };
@@ -1470,8 +1517,8 @@ function renderMessages(){
             ? `<div class="banner small"><div style="display:flex;flex-direction:column;gap:8px;flex:1"><b>${esc(t("request_pending",{n:p.name}))}</b><div class="row"><button class="btn" data-action="inviteAccept" data-id="${pin.id}">${t("accept")}</button><button class="btn ghost" data-action="inviteDecline" data-id="${pin.id}">${t("decline")}</button></div></div></div>`
             : `<div class="banner small"><p>${esc(t("waiting_reply",{n:p.name}))}</p></div>`; })()}
         <div class="banner small">${I.shield.replace('<svg','<svg style="color:var(--ok)"')}<p>${t("msg_safety")}</p></div>
-        <div class="msgs" id="msgs">${c.msgs.map(m=>`<div class="bubble${m.me?" me":""}">${esc(m.text)}<time>${m.me?esc(t("you")):(p?nameBtn(p):"")} · ${esc(m.at)}</time></div>`).join("")}</div>
-        <form class="composer" id="composer"><label class="sr" for="msgInput">${t("msg_placeholder")}</label><input id="msgInput" type="text" maxlength="1000" autocomplete="off" placeholder="${esc(t("msg_placeholder"))}"><button class="btn" type="submit">${t("send")}</button></form>`;
+        <div class="msgs" id="msgs">${c.msgs.map(m=>`<div class="bubble${m.me?" me":""}${m.voice?" voice":""}">${m.voice?voicePlayer(m.voice, m.dur, m.wave):esc(m.text)}<time>${m.me?esc(t("you")):(p?nameBtn(p):"")} · ${esc(m.at)}</time></div>`).join("")}</div>
+        <form class="composer" id="composer"><label class="sr" for="msgInput">${t("msg_placeholder")}</label><input id="msgInput" type="text" maxlength="1000" autocomplete="off" placeholder="${esc(t("msg_placeholder"))}"><button type="button" class="iconbtn mic" data-action="recChat" aria-label="${esc(t("rec_start"))}">${I.mic}</button><button class="btn" type="submit">${t("send")}</button></form>`;
     }
     openConvoId=null;
   }
@@ -1479,7 +1526,7 @@ function renderMessages(){
     <div class="list">${S.convos.length?S.convos.filter(c=>!c.with||!S.blocked.includes(c.with)).map(c=>{
       const p=c.with?person(c.with):null; const last=c.msgs[c.msgs.length-1];
       return `<article class="card"><div class="person">${p?faceBtn(p):c.members?groupFaces(c):`<div class="avatar" style="background:var(--accent-3)">${I.users.replace('<svg','<svg width="26" height="26"')}</div>`}
-        <button class="event-card" data-action="convo" data-id="${c.id}" style="flex:1;min-width:0;align-self:stretch"><h3>${esc(c.title)}</h3><p class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last?esc(last.text):""}</p></button></div></article>`;}).join(""):`<div class="empty"><h3>${t("msg_empty")}</h3><p class="muted">${t("msg_empty_sub")}</p></div>`}</div>`;
+        <button class="event-card" data-action="convo" data-id="${c.id}" style="flex:1;min-width:0;align-self:stretch"><h3>${esc(c.title)}</h3><p class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last?(last.voice?"🎙 "+esc(t("voice_msg")):esc(last.text)):""}</p></button></div></article>`;}).join(""):`<div class="empty"><h3>${t("msg_empty")}</h3><p class="muted">${t("msg_empty_sub")}</p></div>`}</div>`;
 }
 
 function toggleRow(id, label, desc, checked){
@@ -1513,6 +1560,14 @@ function renderProfile(){
       ${P.photos.map((src,i)=>`<div class="slot"><img src="${esc(src)}" alt="${esc(t("photos"))} ${i+1}"><button class="rm" data-action="photoDel" data-v="${i}" aria-label="${t("remove")}">${I.x}</button></div>`).join("")}
       ${P.photos.length<6?`<label class="slot" for="photoInput" aria-label="${t("add_photo")}">+<input id="photoInput" type="file" accept="image/*" class="sr"></label>`:""}
     </div>
+  </div></section>
+
+  <section class="card"><div class="card-body">
+    <h2>${t("voice_prompt")}</h2><p class="small muted">${t("voice_prompt_d")}</p>
+    <div class="field"><label for="vq">${t("prompt_pick")}</label><select id="vq">${PROMPT_KEYS.map(k=>`<option value="${k}"${(P.voice?P.voice.q:"pr_ideal_night")===k?" selected":""}>${esc(t(k))}</option>`).join("")}</select></div>
+    ${P.voice?`<div class="voice-card mine"><span class="q">${esc(t(P.voice.q))}</span>${voicePlayer(P.voice.id, P.voice.dur, P.voice.wave)}</div>
+      <div class="row"><button class="btn secondary" data-action="recProfile">${I.mic}${t("voice_redo")}</button><button class="btn ghost" data-action="voiceDel">${t("voice_delete")}</button></div>`
+    :`<button class="btn secondary" data-action="recProfile">${I.mic}${t("voice_record")}</button>`}
   </div></section>
 
   <section class="card"><div class="card-body">
@@ -1615,6 +1670,7 @@ function openSheet(html, onClose){
   const f = wrap.querySelector("button, input, select"); if(f) f.focus({preventScroll:true});
 }
 function closeSheet(){
+  stopPlaying();
   const w = document.getElementById("sheetWrap");
   if(w){ w.remove(); document.body.style.overflow=""; }
   if(sheetCleanup){ const c=sheetCleanup; sheetCleanup=null; c(); }
@@ -1696,6 +1752,100 @@ function openNewGroup(){
     <button class="btn block" data-action="createGroup">${t("group_create")}</button>`}`);
 }
 
+/* ---------- voice (messages + Hinge-style voice prompt) ---------- */
+const VOICE_MEM = new Map();
+const VDB = {
+  db:null,
+  open(){ if(this.db) return Promise.resolve(this.db); return new Promise(res=>{ try{ const q=indexedDB.open("link-voice",1); q.onupgradeneeded=()=>q.result.createObjectStore("v"); q.onsuccess=()=>{ this.db=q.result; res(this.db); }; q.onerror=()=>res(null); }catch(e){ res(null); } }); },
+  async put(id, blob){ VOICE_MEM.set(id, blob); const db=await this.open(); if(!db) return; try{ db.transaction("v","readwrite").objectStore("v").put(blob, id); }catch(e){} },
+  async get(id){ if(VOICE_MEM.has(id)) return VOICE_MEM.get(id); const db=await this.open(); if(!db) return null;
+    return new Promise(res=>{ try{ const r=db.transaction("v").objectStore("v").get(id); r.onsuccess=()=>{ if(r.result) VOICE_MEM.set(id, r.result); res(r.result||null); }; r.onerror=()=>res(null); }catch(e){ res(null); } }); },
+  del(id){ VOICE_MEM.delete(id); this.open().then(db=>{ try{ db && db.transaction("v","readwrite").objectStore("v").delete(id); }catch(e){} }); }
+};
+const fmtDur = s => `${Math.floor(s/60)}:${String(Math.round(s%60)).padStart(2,"0")}`;
+function waveBars(wave, n=28){ const w = (wave&&wave.length?wave:Array.from({length:n},(_,i)=>.35+.5*Math.abs(Math.sin(i*1.7)))); return w.map(v=>`<i style="height:${Math.round(18+v*82)}%"></i>`).join(""); }
+function voicePlayer(id, dur, wave){ return `<span class="vplayer" data-vid="${esc(id)}"><button type="button" class="vplay" data-action="vplay" data-id="${esc(id)}" aria-label="${esc(t("play"))}">${I.play}</button><span class="wave" aria-hidden="true">${waveBars(wave)}</span><span class="vdur">${fmtDur(dur||0)}</span></span>`; }
+function ttsPlayer(pid, text){ return `<span class="vplayer" data-vid="tts-${pid}"><button type="button" class="vplay" data-action="ttsPlay" data-id="${pid}" aria-label="${esc(t("play"))}">${I.play}</button><span class="wave" aria-hidden="true">${waveBars(null)}</span><span class="vdur">${fmtDur(Math.max(3, text.split(/\s+/).length*0.42))}</span></span>`; }
+
+let PLAYING = null; // {id, audio|utter, el}
+function stopPlaying(){
+  if(!PLAYING) return;
+  try{ if(PLAYING.audio){ PLAYING.audio.pause(); URL.revokeObjectURL(PLAYING.audio.src); } if(PLAYING.utter) speechSynthesis.cancel(); }catch(e){}
+  document.querySelectorAll(`[data-vid="${PLAYING.id}"]`).forEach(el=>{ el.classList.remove("on"); el.querySelector(".vplay").innerHTML=I.play; el.style.setProperty("--p","0%"); });
+  PLAYING = null;
+}
+function markPlaying(id, on){ document.querySelectorAll(`[data-vid="${id}"]`).forEach(el=>{ el.classList.toggle("on", on); el.querySelector(".vplay").innerHTML = on?I.pause:I.play; }); }
+async function playVoice(id){
+  if(PLAYING && PLAYING.id===id){ stopPlaying(); return; }
+  stopPlaying();
+  const blob = await VDB.get(id); if(!blob){ toast(t("voice_missing")); return; }
+  const audio = new Audio(URL.createObjectURL(blob)); PLAYING = {id, audio}; markPlaying(id, true);
+  audio.ontimeupdate = ()=>{ const d=audio.duration; if(isFinite(d)&&d>0) document.querySelectorAll(`[data-vid="${id}"]`).forEach(el=>el.style.setProperty("--p",(audio.currentTime/d*100)+"%")); };
+  audio.onended = ()=>stopPlaying();
+  audio.play().catch(()=>{ stopPlaying(); toast(t("voice_missing")); });
+}
+function playTTS(pid){
+  const id="tts-"+pid; if(PLAYING && PLAYING.id===id){ stopPlaying(); return; }
+  stopPlaying();
+  const p=person(pid); if(!p||!p.voiceDemo||!("speechSynthesis" in window)){ toast(t("voice_missing")); return; }
+  const u = new SpeechSynthesisUtterance(loc(p.voiceDemo.text)); u.lang = LOCALE[S.lang]; u.rate = 1.02;
+  PLAYING = {id, utter:u}; markPlaying(id, true);
+  u.onend = u.onerror = ()=>stopPlaying();
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+
+let REC = null; // {target, mr, chunks, stream, start, levels, timer, analyser}
+async function startRecording(target){
+  stopPlaying();
+  if(!navigator.mediaDevices || !window.MediaRecorder){ toast(t("mic_denied")); return; }
+  let stream;
+  try{ stream = await navigator.mediaDevices.getUserMedia({audio:true}); }catch(e){ toast(t("mic_denied")); return; }
+  const type = ["audio/mp4","audio/webm;codecs=opus","audio/webm"].find(x=>{ try{ return MediaRecorder.isTypeSupported(x); }catch(e){ return false; } });
+  const mr = new MediaRecorder(stream, type?{mimeType:type}:undefined);
+  const chunks=[]; mr.ondataavailable = e=>{ if(e.data && e.data.size) chunks.push(e.data); };
+  let analyser=null, buf=null; const levels=[];
+  try{ const ac=new (window.AudioContext||window.webkitAudioContext)(); const src=ac.createMediaStreamSource(stream); analyser=ac.createAnalyser(); analyser.fftSize=512; src.connect(analyser); buf=new Uint8Array(analyser.fftSize); REC_AC=ac; }catch(e){}
+  REC = {target, mr, chunks, stream, start:Date.now(), levels, max: target==="profile"?30:60};
+  mr.start(250);
+  showRecBar();
+  REC.timer = setInterval(()=>{
+    if(!REC) return;
+    if(analyser){ analyser.getByteTimeDomainData(buf); let pk=0; for(const v of buf) pk=Math.max(pk, Math.abs(v-128)); levels.push(Math.min(1, pk/60)); }
+    const el=document.getElementById("recTime"); const secs=(Date.now()-REC.start)/1000;
+    if(el) el.textContent = fmtDur(secs)+" / "+fmtDur(REC.max);
+    const lv=document.getElementById("recLevel"); if(lv && levels.length) lv.style.transform=`scaleX(${.2+levels[levels.length-1]*.8})`;
+    if(secs>=REC.max) finishRecording(true);
+  }, 100);
+}
+let REC_AC = null;
+function showRecBar(){
+  let bar=document.getElementById("recbar");
+  if(!bar){ bar=document.createElement("div"); bar.id="recbar"; bar.setAttribute("role","dialog"); bar.setAttribute("aria-label", t("recording")); document.body.appendChild(bar); }
+  bar.innerHTML = `<span class="rec-dot" aria-hidden="true"></span><span class="rec-label">${t("recording")}</span><span id="recTime" class="rec-time">0:00</span><span class="rec-level"><i id="recLevel"></i></span>
+    <button class="btn ghost" data-action="recCancel">${t("rec_cancel")}</button><button class="btn" data-action="recDone">${REC.target==="profile"?t("rec_save"):t("rec_send")}</button>`;
+}
+function hideRecBar(){ const b=document.getElementById("recbar"); if(b) b.remove(); }
+function finishRecording(keep){
+  if(!REC) return; const r=REC; REC=null; clearInterval(r.timer); hideRecBar();
+  const dur=(Date.now()-r.start)/1000;
+  r.mr.onstop = async ()=>{
+    r.stream.getTracks().forEach(tr=>tr.stop()); try{ REC_AC && REC_AC.close(); }catch(e){} REC_AC=null;
+    if(!keep || dur<0.6 || !r.chunks.length) return;
+    const blob = new Blob(r.chunks, {type: r.mr.mimeType || "audio/webm"});
+    const id = uid("v"); await VDB.put(id, blob);
+    const n=28, L=r.levels; const wave = Array.from({length:n},(_,i)=>{ const a=Math.floor(i*L.length/n), b=Math.max(a+1, Math.floor((i+1)*L.length/n)); return L.length? Math.max(...L.slice(a,b)) : .4; });
+    if(r.target==="profile"){
+      if(S.profile.voice) VDB.del(S.profile.voice.id);
+      const q = (document.getElementById("vq")||{}).value || "pr_ideal_night";
+      S.profile.voice = {q, id, dur:Math.round(dur*10)/10, wave}; save(); render(true); toast(t("saved"));
+    } else {
+      const c=S.convos.find(c=>c.id===openConvoId); if(!c) return;
+      c.msgs.push({me:true, voice:id, dur:Math.round(dur*10)/10, wave, at:now()}); save(); render();
+    }
+  };
+  try{ r.mr.stop(); }catch(e){}
+}
+
 function openCity(){
   openSheet(`${sheetHead(t("f_city"))}
     <div class="field"><label class="sr" for="citySearch">${t("search_city")}</label><input id="citySearch" type="search" placeholder="${esc(t("search_city"))}" autocomplete="off"></div>
@@ -1743,6 +1893,9 @@ function openPerson(id){
   const photos = p.photos||[]; const prompts = p.prompts||[];
   const likeBtn = (label)=> self ? "" : `<button class="like" data-action="like" data-id="${p.id}" data-v="${esc(label)}" aria-label="${esc(t("like_invite"))}">${LIKE_ICON}</button>`;
   const hPhoto = (i)=> photos[i] ? `<div class="h-photo${i>0?" sq":""}">${photo(photos[i], p.color, p.name[0], "", p.name)}${likeBtn(t("photos")+" "+(i+1))}</div>` : "";
+  const vsrc = id==="me" ? (S.profile.voice ? {q:S.profile.voice.q, id:S.profile.voice.id, dur:S.profile.voice.dur, wave:S.profile.voice.wave} : null)
+             : (p.voiceDemo ? {q:p.voiceDemo.q, tts:loc(p.voiceDemo.text)} : null);
+  const hVoice = vsrc ? `<div class="voice-card"><span class="q">${I.mic.replace('<svg','<svg width="14" height="14"')} ${esc(t(vsrc.q))}</span>${vsrc.tts?ttsPlayer(p.id, vsrc.tts):voicePlayer(vsrc.id, vsrc.dur, vsrc.wave)}${vsrc.tts?`<span class="small muted">${t("tts_demo")}</span>`:""}${likeBtn(t("voice_prompt")+" — "+t(vsrc.q))}</div>` : "";
   const hPrompt = (i)=> prompts[i] ? `<div class="prompt-card"><span class="q">${esc(t(prompts[i].q))}</span><span class="a">${esc(loc(prompts[i].a))}</span>${likeBtn(t(prompts[i].q)+" — "+loc(prompts[i].a))}</div>` : "";
   const lf = (p.lookingFor||[]).map(k=>t("lf_"+k)).join(", ");
   const vitals = `<div class="vitals">
@@ -1755,7 +1908,7 @@ function openPerson(id){
   </div>`;
   openSheet(`${sheetHead(p.name)}
     <div class="hinge">
-      ${hPhoto(0)}${hPrompt(0)}${vitals}${hPhoto(1)}${hPrompt(1)}
+      ${hPhoto(0)}${hPrompt(0)}${hVoice}${vitals}${hPhoto(1)}${hPrompt(1)}
       <div class="card"><div class="card-body"><span class="label">${t("interests")}</span><div class="tags">${p.interests.map(i=>`<span class="tag${shared.includes(i)&&!self?" match":""}">${esc(t("cat_"+i))}</span>`).join("")}</div>
         ${loc(p.bio)?`<p>${esc(loc(p.bio))}</p>`:""}
         ${p.trips.length?`<p class="small" style="color:var(--accent-3);font-weight:700">${p.trips.map(tr=>esc(t("p_trip",{x:cityById(tr.city).name}))).join(" · ")}</p>`:""}</div></div>
@@ -1917,6 +2070,13 @@ const A = {
   about(){ openAbout(); },
   event(el){ openEvent(el.dataset.id); },
   person(el){ openPerson(el.dataset.id); },
+  recChat(){ if(!requireVerified()) return; startRecording("chat"); },
+  recProfile(){ startRecording("profile"); },
+  recDone(){ finishRecording(true); },
+  recCancel(){ finishRecording(false); },
+  vplay(el){ playVoice(el.dataset.id); },
+  ttsPlay(el){ playTTS(el.dataset.id); },
+  voiceDel(){ if(S.profile.voice){ VDB.del(S.profile.voice.id); S.profile.voice=null; save(); render(true); } },
   peopleView(el){ S.peopleView=el.dataset.v; save(); render(); },
   goFriends(){ closeSheet(); S.tab="people"; S.peopleView="discover"; save(); render(); },
   addFriend(el){
@@ -2084,6 +2244,7 @@ document.addEventListener("change", e=>{
     if(map[el.id]){ map[el.id](); save(); }
   }
   if(el.id==="photoInput" && el.files && el.files[0]) addPhoto(el.files[0]);
+  if(el.id==="vq" && S.profile.voice){ S.profile.voice.q=el.value; save(); }
   if(el.id==="q_from"||el.id==="q_to"){ S.notif[el.id==="q_from"?"quietFrom":"quietTo"]=el.value; save(); render(true); }
 });
 document.addEventListener("submit", e=>{

@@ -84,3 +84,13 @@ for (const p of PEOPLE) {
   p.photoCats = ["portrait"].concat(p.interests.slice(0,2));
   p.job = x.job; p.lookingFor = x.lf; p.availability = x.av; p.prompts = x.prompts.map(([q,a])=>({q, a}));
 }
+
+/* Demo voice prompts (Hinge-style). No real recordings exist for fictional people: the answer is read aloud
+   by the phone's speech synthesis and labelled as such. */
+const VOICE_DEMO = {
+  p0:{q:"pr_ideal_night", text:{fr:"Un concert au coucher du soleil, un rooftop juste après, et on rentre à pied en refaisant le monde.", en:"A sunset gig, a rooftop right after, and walking home talking about everything."}},
+  p1:{q:"pr_best_concert", text:{fr:"Un petit club de jazz à Montmartre. Quarante personnes, et le groupe ne voulait plus s'arrêter.", en:"A tiny jazz club in Montmartre. Forty people, and the band just wouldn't stop."}},
+  p7:{q:"pr_hidden_spot", text:{fr:"Le Miradouro da Graça, à six heures quarante en octobre. Viens, je te montre.", en:"Miradouro da Graça, at six forty in October. Come, I'll show you."}},
+  p11:{q:"pr_never_no", text:{fr:"Un footing à sept heures, tant qu'il y a un café après.", en:"A seven a.m. run, as long as there's coffee after."}}
+};
+for (const p of PEOPLE) if (VOICE_DEMO[p.id]) p.voiceDemo = VOICE_DEMO[p.id];

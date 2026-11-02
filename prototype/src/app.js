@@ -12,7 +12,7 @@ const DEFAULT_STATE = () => ({
   customCities:[], peopleAll:false, peopleView:"discover", friends:[], actTab:"invites", inviteDir:"in",
   profile:{name:"", bio:"", city:"paris", langs:["fr"], interests:["concerts","rooftops"], music:["House"], trips:[], dating:false, showAge:true, visibility:"public",
     photos:[], job:"", lookingFor:["friends","outings"], availability:"weekends",
-    prompts:[{q:"pr_ideal_night",a:""},{q:"pr_never_no",a:""},{q:"pr_hidden_spot",a:""}]},
+    prompts:[{q:"pr_ideal_night",a:""},{q:"pr_never_no",a:""},{q:"pr_hidden_spot",a:""}], voice:null},
   verif:"none", outings:[], invites:SEED_INVITES.map(i=>({...i})), convos:[], tickets:[], blocked:[], reports:[], joined:[],
   notif:{invites:true, messages:true, events:true, tickets:true, marketing:false, quietFrom:"23:00", quietTo:"08:00"}
 });
@@ -103,6 +103,9 @@ const I = {
   x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
   globe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>',
   users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5"/></svg>',
+  mic:'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
+  play:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/></svg>',
   sliders:'<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>',
   chev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>'
 };
@@ -406,8 +409,8 @@ function renderMessages(){
             ? `<div class="banner small"><div style="display:flex;flex-direction:column;gap:8px;flex:1"><b>${esc(t("request_pending",{n:p.name}))}</b><div class="row"><button class="btn" data-action="inviteAccept" data-id="${pin.id}">${t("accept")}</button><button class="btn ghost" data-action="inviteDecline" data-id="${pin.id}">${t("decline")}</button></div></div></div>`
             : `<div class="banner small"><p>${esc(t("waiting_reply",{n:p.name}))}</p></div>`; })()}
         <div class="banner small">${I.shield.replace('<svg','<svg style="color:var(--ok)"')}<p>${t("msg_safety")}</p></div>
-        <div class="msgs" id="msgs">${c.msgs.map(m=>`<div class="bubble${m.me?" me":""}">${esc(m.text)}<time>${m.me?esc(t("you")):(p?nameBtn(p):"")} · ${esc(m.at)}</time></div>`).join("")}</div>
-        <form class="composer" id="composer"><label class="sr" for="msgInput">${t("msg_placeholder")}</label><input id="msgInput" type="text" maxlength="1000" autocomplete="off" placeholder="${esc(t("msg_placeholder"))}"><button class="btn" type="submit">${t("send")}</button></form>`;
+        <div class="msgs" id="msgs">${c.msgs.map(m=>`<div class="bubble${m.me?" me":""}${m.voice?" voice":""}">${m.voice?voicePlayer(m.voice, m.dur, m.wave):esc(m.text)}<time>${m.me?esc(t("you")):(p?nameBtn(p):"")} · ${esc(m.at)}</time></div>`).join("")}</div>
+        <form class="composer" id="composer"><label class="sr" for="msgInput">${t("msg_placeholder")}</label><input id="msgInput" type="text" maxlength="1000" autocomplete="off" placeholder="${esc(t("msg_placeholder"))}"><button type="button" class="iconbtn mic" data-action="recChat" aria-label="${esc(t("rec_start"))}">${I.mic}</button><button class="btn" type="submit">${t("send")}</button></form>`;
     }
     openConvoId=null;
   }
@@ -415,7 +418,7 @@ function renderMessages(){
     <div class="list">${S.convos.length?S.convos.filter(c=>!c.with||!S.blocked.includes(c.with)).map(c=>{
       const p=c.with?person(c.with):null; const last=c.msgs[c.msgs.length-1];
       return `<article class="card"><div class="person">${p?faceBtn(p):c.members?groupFaces(c):`<div class="avatar" style="background:var(--accent-3)">${I.users.replace('<svg','<svg width="26" height="26"')}</div>`}
-        <button class="event-card" data-action="convo" data-id="${c.id}" style="flex:1;min-width:0;align-self:stretch"><h3>${esc(c.title)}</h3><p class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last?esc(last.text):""}</p></button></div></article>`;}).join(""):`<div class="empty"><h3>${t("msg_empty")}</h3><p class="muted">${t("msg_empty_sub")}</p></div>`}</div>`;
+        <button class="event-card" data-action="convo" data-id="${c.id}" style="flex:1;min-width:0;align-self:stretch"><h3>${esc(c.title)}</h3><p class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last?(last.voice?"🎙 "+esc(t("voice_msg")):esc(last.text)):""}</p></button></div></article>`;}).join(""):`<div class="empty"><h3>${t("msg_empty")}</h3><p class="muted">${t("msg_empty_sub")}</p></div>`}</div>`;
 }
 
 function toggleRow(id, label, desc, checked){
@@ -449,6 +452,14 @@ function renderProfile(){
       ${P.photos.map((src,i)=>`<div class="slot"><img src="${esc(src)}" alt="${esc(t("photos"))} ${i+1}"><button class="rm" data-action="photoDel" data-v="${i}" aria-label="${t("remove")}">${I.x}</button></div>`).join("")}
       ${P.photos.length<6?`<label class="slot" for="photoInput" aria-label="${t("add_photo")}">+<input id="photoInput" type="file" accept="image/*" class="sr"></label>`:""}
     </div>
+  </div></section>
+
+  <section class="card"><div class="card-body">
+    <h2>${t("voice_prompt")}</h2><p class="small muted">${t("voice_prompt_d")}</p>
+    <div class="field"><label for="vq">${t("prompt_pick")}</label><select id="vq">${PROMPT_KEYS.map(k=>`<option value="${k}"${(P.voice?P.voice.q:"pr_ideal_night")===k?" selected":""}>${esc(t(k))}</option>`).join("")}</select></div>
+    ${P.voice?`<div class="voice-card mine"><span class="q">${esc(t(P.voice.q))}</span>${voicePlayer(P.voice.id, P.voice.dur, P.voice.wave)}</div>
+      <div class="row"><button class="btn secondary" data-action="recProfile">${I.mic}${t("voice_redo")}</button><button class="btn ghost" data-action="voiceDel">${t("voice_delete")}</button></div>`
+    :`<button class="btn secondary" data-action="recProfile">${I.mic}${t("voice_record")}</button>`}
   </div></section>
 
   <section class="card"><div class="card-body">
@@ -551,6 +562,7 @@ function openSheet(html, onClose){
   const f = wrap.querySelector("button, input, select"); if(f) f.focus({preventScroll:true});
 }
 function closeSheet(){
+  stopPlaying();
   const w = document.getElementById("sheetWrap");
   if(w){ w.remove(); document.body.style.overflow=""; }
   if(sheetCleanup){ const c=sheetCleanup; sheetCleanup=null; c(); }
@@ -632,6 +644,100 @@ function openNewGroup(){
     <button class="btn block" data-action="createGroup">${t("group_create")}</button>`}`);
 }
 
+/* ---------- voice (messages + Hinge-style voice prompt) ---------- */
+const VOICE_MEM = new Map();
+const VDB = {
+  db:null,
+  open(){ if(this.db) return Promise.resolve(this.db); return new Promise(res=>{ try{ const q=indexedDB.open("link-voice",1); q.onupgradeneeded=()=>q.result.createObjectStore("v"); q.onsuccess=()=>{ this.db=q.result; res(this.db); }; q.onerror=()=>res(null); }catch(e){ res(null); } }); },
+  async put(id, blob){ VOICE_MEM.set(id, blob); const db=await this.open(); if(!db) return; try{ db.transaction("v","readwrite").objectStore("v").put(blob, id); }catch(e){} },
+  async get(id){ if(VOICE_MEM.has(id)) return VOICE_MEM.get(id); const db=await this.open(); if(!db) return null;
+    return new Promise(res=>{ try{ const r=db.transaction("v").objectStore("v").get(id); r.onsuccess=()=>{ if(r.result) VOICE_MEM.set(id, r.result); res(r.result||null); }; r.onerror=()=>res(null); }catch(e){ res(null); } }); },
+  del(id){ VOICE_MEM.delete(id); this.open().then(db=>{ try{ db && db.transaction("v","readwrite").objectStore("v").delete(id); }catch(e){} }); }
+};
+const fmtDur = s => `${Math.floor(s/60)}:${String(Math.round(s%60)).padStart(2,"0")}`;
+function waveBars(wave, n=28){ const w = (wave&&wave.length?wave:Array.from({length:n},(_,i)=>.35+.5*Math.abs(Math.sin(i*1.7)))); return w.map(v=>`<i style="height:${Math.round(18+v*82)}%"></i>`).join(""); }
+function voicePlayer(id, dur, wave){ return `<span class="vplayer" data-vid="${esc(id)}"><button type="button" class="vplay" data-action="vplay" data-id="${esc(id)}" aria-label="${esc(t("play"))}">${I.play}</button><span class="wave" aria-hidden="true">${waveBars(wave)}</span><span class="vdur">${fmtDur(dur||0)}</span></span>`; }
+function ttsPlayer(pid, text){ return `<span class="vplayer" data-vid="tts-${pid}"><button type="button" class="vplay" data-action="ttsPlay" data-id="${pid}" aria-label="${esc(t("play"))}">${I.play}</button><span class="wave" aria-hidden="true">${waveBars(null)}</span><span class="vdur">${fmtDur(Math.max(3, text.split(/\s+/).length*0.42))}</span></span>`; }
+
+let PLAYING = null; // {id, audio|utter, el}
+function stopPlaying(){
+  if(!PLAYING) return;
+  try{ if(PLAYING.audio){ PLAYING.audio.pause(); URL.revokeObjectURL(PLAYING.audio.src); } if(PLAYING.utter) speechSynthesis.cancel(); }catch(e){}
+  document.querySelectorAll(`[data-vid="${PLAYING.id}"]`).forEach(el=>{ el.classList.remove("on"); el.querySelector(".vplay").innerHTML=I.play; el.style.setProperty("--p","0%"); });
+  PLAYING = null;
+}
+function markPlaying(id, on){ document.querySelectorAll(`[data-vid="${id}"]`).forEach(el=>{ el.classList.toggle("on", on); el.querySelector(".vplay").innerHTML = on?I.pause:I.play; }); }
+async function playVoice(id){
+  if(PLAYING && PLAYING.id===id){ stopPlaying(); return; }
+  stopPlaying();
+  const blob = await VDB.get(id); if(!blob){ toast(t("voice_missing")); return; }
+  const audio = new Audio(URL.createObjectURL(blob)); PLAYING = {id, audio}; markPlaying(id, true);
+  audio.ontimeupdate = ()=>{ const d=audio.duration; if(isFinite(d)&&d>0) document.querySelectorAll(`[data-vid="${id}"]`).forEach(el=>el.style.setProperty("--p",(audio.currentTime/d*100)+"%")); };
+  audio.onended = ()=>stopPlaying();
+  audio.play().catch(()=>{ stopPlaying(); toast(t("voice_missing")); });
+}
+function playTTS(pid){
+  const id="tts-"+pid; if(PLAYING && PLAYING.id===id){ stopPlaying(); return; }
+  stopPlaying();
+  const p=person(pid); if(!p||!p.voiceDemo||!("speechSynthesis" in window)){ toast(t("voice_missing")); return; }
+  const u = new SpeechSynthesisUtterance(loc(p.voiceDemo.text)); u.lang = LOCALE[S.lang]; u.rate = 1.02;
+  PLAYING = {id, utter:u}; markPlaying(id, true);
+  u.onend = u.onerror = ()=>stopPlaying();
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+
+let REC = null; // {target, mr, chunks, stream, start, levels, timer, analyser}
+async function startRecording(target){
+  stopPlaying();
+  if(!navigator.mediaDevices || !window.MediaRecorder){ toast(t("mic_denied")); return; }
+  let stream;
+  try{ stream = await navigator.mediaDevices.getUserMedia({audio:true}); }catch(e){ toast(t("mic_denied")); return; }
+  const type = ["audio/mp4","audio/webm;codecs=opus","audio/webm"].find(x=>{ try{ return MediaRecorder.isTypeSupported(x); }catch(e){ return false; } });
+  const mr = new MediaRecorder(stream, type?{mimeType:type}:undefined);
+  const chunks=[]; mr.ondataavailable = e=>{ if(e.data && e.data.size) chunks.push(e.data); };
+  let analyser=null, buf=null; const levels=[];
+  try{ const ac=new (window.AudioContext||window.webkitAudioContext)(); const src=ac.createMediaStreamSource(stream); analyser=ac.createAnalyser(); analyser.fftSize=512; src.connect(analyser); buf=new Uint8Array(analyser.fftSize); REC_AC=ac; }catch(e){}
+  REC = {target, mr, chunks, stream, start:Date.now(), levels, max: target==="profile"?30:60};
+  mr.start(250);
+  showRecBar();
+  REC.timer = setInterval(()=>{
+    if(!REC) return;
+    if(analyser){ analyser.getByteTimeDomainData(buf); let pk=0; for(const v of buf) pk=Math.max(pk, Math.abs(v-128)); levels.push(Math.min(1, pk/60)); }
+    const el=document.getElementById("recTime"); const secs=(Date.now()-REC.start)/1000;
+    if(el) el.textContent = fmtDur(secs)+" / "+fmtDur(REC.max);
+    const lv=document.getElementById("recLevel"); if(lv && levels.length) lv.style.transform=`scaleX(${.2+levels[levels.length-1]*.8})`;
+    if(secs>=REC.max) finishRecording(true);
+  }, 100);
+}
+let REC_AC = null;
+function showRecBar(){
+  let bar=document.getElementById("recbar");
+  if(!bar){ bar=document.createElement("div"); bar.id="recbar"; bar.setAttribute("role","dialog"); bar.setAttribute("aria-label", t("recording")); document.body.appendChild(bar); }
+  bar.innerHTML = `<span class="rec-dot" aria-hidden="true"></span><span class="rec-label">${t("recording")}</span><span id="recTime" class="rec-time">0:00</span><span class="rec-level"><i id="recLevel"></i></span>
+    <button class="btn ghost" data-action="recCancel">${t("rec_cancel")}</button><button class="btn" data-action="recDone">${REC.target==="profile"?t("rec_save"):t("rec_send")}</button>`;
+}
+function hideRecBar(){ const b=document.getElementById("recbar"); if(b) b.remove(); }
+function finishRecording(keep){
+  if(!REC) return; const r=REC; REC=null; clearInterval(r.timer); hideRecBar();
+  const dur=(Date.now()-r.start)/1000;
+  r.mr.onstop = async ()=>{
+    r.stream.getTracks().forEach(tr=>tr.stop()); try{ REC_AC && REC_AC.close(); }catch(e){} REC_AC=null;
+    if(!keep || dur<0.6 || !r.chunks.length) return;
+    const blob = new Blob(r.chunks, {type: r.mr.mimeType || "audio/webm"});
+    const id = uid("v"); await VDB.put(id, blob);
+    const n=28, L=r.levels; const wave = Array.from({length:n},(_,i)=>{ const a=Math.floor(i*L.length/n), b=Math.max(a+1, Math.floor((i+1)*L.length/n)); return L.length? Math.max(...L.slice(a,b)) : .4; });
+    if(r.target==="profile"){
+      if(S.profile.voice) VDB.del(S.profile.voice.id);
+      const q = (document.getElementById("vq")||{}).value || "pr_ideal_night";
+      S.profile.voice = {q, id, dur:Math.round(dur*10)/10, wave}; save(); render(true); toast(t("saved"));
+    } else {
+      const c=S.convos.find(c=>c.id===openConvoId); if(!c) return;
+      c.msgs.push({me:true, voice:id, dur:Math.round(dur*10)/10, wave, at:now()}); save(); render();
+    }
+  };
+  try{ r.mr.stop(); }catch(e){}
+}
+
 function openCity(){
   openSheet(`${sheetHead(t("f_city"))}
     <div class="field"><label class="sr" for="citySearch">${t("search_city")}</label><input id="citySearch" type="search" placeholder="${esc(t("search_city"))}" autocomplete="off"></div>
@@ -679,6 +785,9 @@ function openPerson(id){
   const photos = p.photos||[]; const prompts = p.prompts||[];
   const likeBtn = (label)=> self ? "" : `<button class="like" data-action="like" data-id="${p.id}" data-v="${esc(label)}" aria-label="${esc(t("like_invite"))}">${LIKE_ICON}</button>`;
   const hPhoto = (i)=> photos[i] ? `<div class="h-photo${i>0?" sq":""}">${photo(photos[i], p.color, p.name[0], "", p.name)}${likeBtn(t("photos")+" "+(i+1))}</div>` : "";
+  const vsrc = id==="me" ? (S.profile.voice ? {q:S.profile.voice.q, id:S.profile.voice.id, dur:S.profile.voice.dur, wave:S.profile.voice.wave} : null)
+             : (p.voiceDemo ? {q:p.voiceDemo.q, tts:loc(p.voiceDemo.text)} : null);
+  const hVoice = vsrc ? `<div class="voice-card"><span class="q">${I.mic.replace('<svg','<svg width="14" height="14"')} ${esc(t(vsrc.q))}</span>${vsrc.tts?ttsPlayer(p.id, vsrc.tts):voicePlayer(vsrc.id, vsrc.dur, vsrc.wave)}${vsrc.tts?`<span class="small muted">${t("tts_demo")}</span>`:""}${likeBtn(t("voice_prompt")+" — "+t(vsrc.q))}</div>` : "";
   const hPrompt = (i)=> prompts[i] ? `<div class="prompt-card"><span class="q">${esc(t(prompts[i].q))}</span><span class="a">${esc(loc(prompts[i].a))}</span>${likeBtn(t(prompts[i].q)+" — "+loc(prompts[i].a))}</div>` : "";
   const lf = (p.lookingFor||[]).map(k=>t("lf_"+k)).join(", ");
   const vitals = `<div class="vitals">
@@ -691,7 +800,7 @@ function openPerson(id){
   </div>`;
   openSheet(`${sheetHead(p.name)}
     <div class="hinge">
-      ${hPhoto(0)}${hPrompt(0)}${vitals}${hPhoto(1)}${hPrompt(1)}
+      ${hPhoto(0)}${hPrompt(0)}${hVoice}${vitals}${hPhoto(1)}${hPrompt(1)}
       <div class="card"><div class="card-body"><span class="label">${t("interests")}</span><div class="tags">${p.interests.map(i=>`<span class="tag${shared.includes(i)&&!self?" match":""}">${esc(t("cat_"+i))}</span>`).join("")}</div>
         ${loc(p.bio)?`<p>${esc(loc(p.bio))}</p>`:""}
         ${p.trips.length?`<p class="small" style="color:var(--accent-3);font-weight:700">${p.trips.map(tr=>esc(t("p_trip",{x:cityById(tr.city).name}))).join(" · ")}</p>`:""}</div></div>
@@ -853,6 +962,13 @@ const A = {
   about(){ openAbout(); },
   event(el){ openEvent(el.dataset.id); },
   person(el){ openPerson(el.dataset.id); },
+  recChat(){ if(!requireVerified()) return; startRecording("chat"); },
+  recProfile(){ startRecording("profile"); },
+  recDone(){ finishRecording(true); },
+  recCancel(){ finishRecording(false); },
+  vplay(el){ playVoice(el.dataset.id); },
+  ttsPlay(el){ playTTS(el.dataset.id); },
+  voiceDel(){ if(S.profile.voice){ VDB.del(S.profile.voice.id); S.profile.voice=null; save(); render(true); } },
   peopleView(el){ S.peopleView=el.dataset.v; save(); render(); },
   goFriends(){ closeSheet(); S.tab="people"; S.peopleView="discover"; save(); render(); },
   addFriend(el){
@@ -1020,6 +1136,7 @@ document.addEventListener("change", e=>{
     if(map[el.id]){ map[el.id](); save(); }
   }
   if(el.id==="photoInput" && el.files && el.files[0]) addPhoto(el.files[0]);
+  if(el.id==="vq" && S.profile.voice){ S.profile.voice.q=el.value; save(); }
   if(el.id==="q_from"||el.id==="q_to"){ S.notif[el.id==="q_from"?"quietFrom":"quietTo"]=el.value; save(); render(true); }
 });
 document.addEventListener("submit", e=>{
