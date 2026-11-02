@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Publishes frozen earlier versions next to the current one, each with the version switcher:
-#   docs/v0/ = first prototype (59c4dc3), docs/v1/ = Afterglow + Hinge profiles (98acdaf), docs/v2/ = Noë profile + gold, no yellow filters (c1215f5).
+#   docs/v0/ = first prototype (59c4dc3), docs/v1/ = Afterglow + Hinge profiles (98acdaf), docs/v2/ = Noë profile + gold, no yellow filters (c1215f5), docs/v3/ = FEST filters (3f33fb5).
 # Old versions share the browser storage of the current one (same site), so data created in one shows in the others.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-for spec in v0:59c4dc3 v1:98acdaf v2:c1215f5; do
+for spec in v0:59c4dc3 v1:98acdaf v2:c1215f5 v3:3f33fb5; do
   v=${spec%%:*}; c=${spec##*:}
   mkdir -p docs/$v
   sw="<script>window.LINK_VERSION=\"$v\"</script>$(cat prototype/src/version-switcher.html)"
@@ -16,4 +16,4 @@ for spec in v0:59c4dc3 v1:98acdaf v2:c1215f5; do
     python3 -c "import sys; p=sys.argv[1]; h=open(p).read(); i=h.rfind('</body>'); open(p,'w').write(h[:i]+sys.argv[2]+h[i:])" docs/$v/index.html "$css"
   fi
 done
-echo "Archived v0, v1 and v2 in docs/"
+echo "Archived v0 to v3 in docs/"
